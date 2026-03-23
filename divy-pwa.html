@@ -673,6 +673,8 @@ let CAL_MONTH=new Date(START_DATE);
 
 // Body measurements storage
 let BODY_LOG=loadS('dv4-body',{measurements:[]});
+// Progress photos
+let PHOTOS=loadS('dv4-photos',{});
 // Journal storage
 let JOURNAL=loadS('dv4-journal',{entries:{}});
 // Pack checklist storage
@@ -820,7 +822,7 @@ function closePop(toIti){
   if(toIti)goTab('iti');
 }
 
-function toggleCheck(id){CHECKS[id]=!CHECKS[id];saveCh();renderTab('day');}
+function toggleCheck(id){CHECKS[id]=!CHECKS[id];saveCh();if(CUR==='cal')renderTab('cal');else renderTab(CUR);}
 function toggleEx(id){
   const ph=EX.find(p=>p.list.find(e=>e.id===id));
   if(!ph)return;
@@ -1124,23 +1126,33 @@ function rHome(){
     <!-- MORNING SUMMARY - links to today's calendar day -->
     <div class="c" style="cursor:pointer" onclick="CAL_VIEW_DATE=TODAY;CAL_DAY_TAB='schedule';CUR='cal';document.querySelectorAll('.tb').forEach((b,i)=>b.classList.toggle('on',i===1));renderTab('cal')">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div class="ctitle" style="margin-bottom:0">Today's Schedule & Check-In</div>
+        <div class="ctitle" style="margin-bottom:0">Today's Discipline Score</div>
         <div style="font-size:11px;color:var(--gold)">Tap to open →</div>
       </div>
-      <div style="display:flex;gap:16px;margin-top:10px;align-items:center">
-        <div style="text-align:center">
-          <div style="font-size:18px;font-weight:700;color:var(--gold)">${getDayCompletion(TODAY).pct}%</div>
-          <div style="font-size:10px;color:var(--muted)">Done</div>
-        </div>
-        <div style="flex:1">
-          <div style="height:6px;background:var(--b1);border-radius:3px;overflow:hidden">
-            <div style="height:100%;width:${getDayCompletion(TODAY).pct}%;background:${getDayCompletion(TODAY).pass?'var(--green)':'linear-gradient(90deg,var(--gold),var(--teal))'};border-radius:3px"></div>
+      ${(()=>{
+        const c=getDayCompletion(TODAY);
+        return `<div style="display:flex;gap:12px;margin-top:10px;align-items:center">
+          <div style="text-align:center;flex-shrink:0">
+            <div style="font-size:26px;font-weight:700;color:${c.pass?'var(--green)':'var(--gold)'}">${c.pct}%</div>
+            <div style="font-size:9px;color:var(--muted)">of day</div>
           </div>
-          <div style="font-size:11px;color:var(--muted);margin-top:4px">
-            ${VITALS[TODAY]?'Energy: '+{1:'Low',2:'Meh',3:'Ok',4:'Good',5:'High!'}[VITALS[TODAY].energy]+' · Woke '+VITALS[TODAY].wake:'Morning check-in not done yet'}
+          <div style="flex:1">
+            <div style="height:6px;background:var(--b1);border-radius:3px;overflow:hidden;margin-bottom:6px">
+              <div style="height:100%;width:${c.pct}%;background:${c.pass?'var(--green)':'linear-gradient(90deg,var(--gold),var(--teal))'};border-radius:3px;transition:width .5s"></div>
+            </div>
+            <div style="display:flex;gap:4px;flex-wrap:wrap">
+              ${[
+                {l:'Sched',d:c.breakdown.sch.done,t:c.breakdown.sch.total,c:'var(--gold)'},
+                {l:'Meds',d:c.breakdown.med.done,t:c.breakdown.med.total,c:'var(--red)'},
+                {l:'Supps',d:c.breakdown.supp.done,t:c.breakdown.supp.total,c:'var(--green)'},
+                {l:'Cal',d:c.breakdown.cal.done,t:1,c:'var(--orange)'},
+                {l:'Water',d:c.breakdown.water.done,t:1,c:'var(--teal)'},
+              ].map(s=>`<span style="font-size:10px;color:${s.d>=s.t?s.c:'var(--muted)'};background:var(--p2);padding:2px 6px;border-radius:6px">${s.l} ${s.d}/${s.t}</span>`).join('')}
+            </div>
           </div>
         </div>
-      </div>
+        ${VITALS[TODAY]?`<div style="font-size:11px;color:var(--sub);margin-top:8px">Energy: ${{1:'Low',2:'Meh',3:'Ok',4:'Good',5:'High!'}[VITALS[TODAY].energy]} · Woke ${VITALS[TODAY].wake}</div>`:'<div style="font-size:11px;color:var(--muted);margin-top:8px">Morning check-in not done</div>'}`;
+      })()}
     </div>
 
     <!-- CONTEXTUAL PACK REMINDER -->
@@ -1720,14 +1732,49 @@ function rGoals(){
     </div>
 
     <div class="c c-gold">
-      <div class="ctitle">Realistic Timeline</div>
-      <div style="font-size:12px;color:var(--sub);line-height:1.9">
-        <span style="color:var(--gold)">Weeks 1–3:</span> Less bloating, less leg swelling, better sleep. 1–2 kg water weight.<br>
-        <span style="color:var(--gold)">Month 2–3:</span> 0.5–1 kg/month true fat loss begins.<br>
-        <span style="color:var(--gold)">Month 4–6:</span> 2–4 kg genuine. Waist shifting.<br>
-        <span style="color:var(--gold)">Month 8–12:</span> 5–8 kg. Belly reducing. Face changing.<br>
-        <span style="color:var(--gold)">18–24 months:</span> 75 kg is yours, Divy.
-      </div>
+      <div class="ctitle">Dynamic Timeline Projection</div>
+      ${(()=>{
+        const weights=Object.entries(S.weights).sort((a,b)=>a[0].localeCompare(b[0]));
+        if(weights.length<2){
+          return `<div style="font-size:12px;color:var(--sub);line-height:1.9">
+            <span style="color:var(--gold)">Log 2+ weigh-ins</span> to see your personalised projection.<br><br>
+            <span style="color:var(--gold)">Weeks 1–3:</span> Less bloating, better sleep. 1–2kg water weight.<br>
+            <span style="color:var(--gold)">Month 2–3:</span> 0.5–1kg/month true fat loss begins.<br>
+            <span style="color:var(--gold)">Month 4–6:</span> 2–4kg genuine. Waist shifting.<br>
+            <span style="color:var(--gold)">Month 8–12:</span> 5–8kg. Belly reducing. Face changing.<br>
+            <span style="color:var(--gold)">18–24 months:</span> 75kg is yours, Divy.
+          </div>`;
+        }
+        // Calculate rate from last 3 weigh-ins
+        const recent=weights.slice(-3);
+        const days=(new Date(recent[recent.length-1][0])-new Date(recent[0][0]))/(1000*60*60*24)||1;
+        const lost=recent[0][1]-recent[recent.length-1][1];
+        const ratePerDay=lost/days;
+        const ratePerWeek=(ratePerDay*7).toFixed(2);
+        const ratePerMonth=(ratePerDay*30).toFixed(1);
+
+        if(ratePerDay<=0){
+          return `<div style="font-size:12px;color:var(--sub)">Current rate: <span style="color:var(--red)">not losing yet</span>. The plan starts working from March 28. Check back after your first weigh-in.</div>`;
+        }
+
+        const projections=MILESTONES.filter(ms=>ms<S.wt).map(ms=>{
+          const kgToLose=S.wt-ms;
+          const daysNeeded=Math.round(kgToLose/ratePerDay);
+          const eta=new Date();eta.setDate(eta.getDate()+daysNeeded);
+          const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          const etaStr=eta.getDate()+' '+months[eta.getMonth()]+' '+eta.getFullYear();
+          const already=S.unlocked.includes(ms);
+          return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #2a1e06">
+            <span style="font-size:13px;font-weight:700;color:${already?'var(--green)':'var(--gold)'}">${already?'✅':''} ${ms}kg</span>
+            <span style="font-size:12px;color:${already?'var(--green)':'var(--sub)'}">${already?'Achieved!':etaStr}</span>
+          </div>`;
+        }).join('');
+
+        return `<div style="font-size:11px;color:var(--sub);margin-bottom:10px">
+          Rate: <strong style="color:var(--gold)">${ratePerWeek}kg/week</strong> · ${ratePerMonth}kg/month · based on last ${recent.length} weigh-ins
+        </div>${projections}
+        <div style="font-size:10px;color:var(--muted);margin-top:8px">Projections update automatically as you log more weigh-ins.</div>`;
+      })()}
     </div>
   `;
 }
@@ -2003,6 +2050,72 @@ function rBody(){
       `:'<div style="font-size:12px;color:var(--muted);padding:10px">Log your weight below to calculate BMI</div>'}
     </div>
 
+    <!-- WEIGHT SPARKLINE TREND -->
+    ${ms.length>=2?`
+    <div class="c">
+      <div class="ctitle">Weight Trend</div>
+      <div style="position:relative;height:80px;margin-bottom:6px">
+        ${(()=>{
+          const pts=ms.slice(0,12).reverse();
+          const weights=pts.map(m=>m.wt).filter(Boolean);
+          if(weights.length<2) return '<div style="color:var(--muted);font-size:11px">Log more readings</div>';
+          const mn=Math.min(...weights)-0.5,mx=Math.max(...weights)+0.5,rng=mx-mn||1;
+          const w=100/Math.max(weights.length-1,1);
+          const pts2=weights.map((v,i)=>`${(i*w).toFixed(1)},${(100-((v-mn)/rng*100)).toFixed(1)}`).join(' ');
+          const diff=(weights[weights.length-1]-weights[0]).toFixed(1);
+          const good=diff<0;
+          return `<svg width="100%" height="80" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
+            <polyline points="${pts2}" fill="none" stroke="${good?'var(--green)':'var(--red)'}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="1" y="12" font-size="6" fill="#6a6050">${mx.toFixed(1)}kg</text>
+            <text x="1" y="96" font-size="6" fill="#6a6050">${mn.toFixed(1)}kg</text>
+          </svg>
+          <div style="position:absolute;top:4px;right:4px;font-size:12px;font-weight:700;color:${good?'var(--green)':'var(--red)'}">${diff>0?'+':''}${diff}kg</div>`;
+        })()}
+      </div>
+      <div style="font-size:10px;color:var(--muted);text-align:center">Last ${Math.min(ms.length,12)} weigh-ins</div>
+    </div>`:''}
+
+    <!-- WAIST SPARKLINE -->
+    ${ms.filter(m=>m.wa).length>=2?`
+    <div class="c">
+      <div class="ctitle">Waist Trend</div>
+      <div style="position:relative;height:60px;margin-bottom:4px">
+        ${(()=>{
+          const pts=ms.filter(m=>m.wa).slice(0,10).reverse();
+          const vals=pts.map(m=>m.wa);
+          const mn=Math.min(...vals)-1,mx=Math.max(...vals)+1,rng=mx-mn||1;
+          const w=100/Math.max(vals.length-1,1);
+          const pts2=vals.map((v,i)=>`${(i*w).toFixed(1)},${(100-((v-mn)/rng*100)).toFixed(1)}`).join(' ');
+          const diff=(vals[vals.length-1]-vals[0]).toFixed(1);
+          const good=diff<0;
+          return `<svg width="100%" height="60" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
+            <polyline points="${pts2}" fill="none" stroke="${good?'var(--green)':'var(--red)'}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="1" y="12" font-size="7" fill="#6a6050">${mx}cm</text>
+            <text x="1" y="96" font-size="7" fill="#6a6050">${mn}cm</text>
+          </svg>
+          <div style="position:absolute;top:4px;right:4px;font-size:12px;font-weight:700;color:${good?'var(--green)':'var(--red)'}">${diff>0?'+':''}${diff}cm</div>`;
+        })()}
+      </div>
+    </div>`:''}
+
+    <!-- PROGRESS PHOTOS -->
+    <div class="c">
+      <div class="ctitle">📸 Progress Photos</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Private · stored only on this device. One photo per milestone moment.</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px">
+        ${['Start','95kg','92kg','89kg','85kg','82kg','79kg','75kg'].map(slot=>{
+          const photo=PHOTOS[slot];
+          return `<div style="aspect-ratio:1;border-radius:8px;overflow:hidden;position:relative;background:var(--p2);border:1px solid ${photo?'var(--gold)':'var(--b2)'};cursor:pointer" onclick="document.getElementById('ph-${slot}').click()">
+            ${photo
+              ?`<img src="${photo}" style="width:100%;height:100%;object-fit:cover"/><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);font-size:8px;color:var(--gold);padding:2px;text-align:center">${slot}</div>`
+              :`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:2px"><div style="font-size:16px">📷</div><div style="font-size:8px;color:var(--muted);text-align:center">${slot}</div></div>`}
+            <input id="ph-${slot}" type="file" accept="image/*" capture="user" style="display:none" onchange="savePhoto('${slot}',this)"/>
+          </div>`;
+        }).join('')}
+      </div>
+      ${Object.keys(PHOTOS).length>0?`<button class="btn btn-dim" style="font-size:11px" onclick="if(confirm('Clear all photos?')){PHOTOS={};saveS('dv4-photos',PHOTOS);renderTab('body')}">Clear All Photos</button>`:''}
+    </div>
+
     <!-- MEASUREMENT BARS -->
     <div class="c">
       <div class="ctitle">Progress to Target</div>
@@ -2046,6 +2159,16 @@ function rBody(){
     <div class="c">
       <div class="ctitle">History</div>
       ${historyRows}
+    </div>
+
+    <!-- DATA BACKUP -->
+    <div class="c" style="border-color:var(--b2)">
+      <div class="ctitle">💾 Data Backup</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Export all your data as a JSON file. Import it after reinstalling the app to restore everything.</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-dim" style="flex:1;font-size:12px" onclick="exportData()">⬇ Export Backup</button>
+        <button class="btn btn-dim" style="flex:1;font-size:12px" onclick="importData()">⬆ Import Backup</button>
+      </div>
     </div>
   `;
 }
@@ -2470,17 +2593,60 @@ function rSOS(){
 
 // ═══════════ CALENDAR DAY VIEW ═══════════
 function getDayCompletion(dateStr){
-  const dayChecks=loadS('dv4-ch-'+dateStr,{});
+  // Reset cache daily
+  if(_compCacheDate!==TODAY){_compCache={};_compCacheDate=TODAY;}
+  // Use cache for past dates only (today changes frequently)
+  if(dateStr!==TODAY&&_compCache[dateStr]) return _compCache[dateStr];
+  const isToday=dateStr===TODAY;
+  const dayChecks=isToday?CHECKS:loadS('dv4-ch-'+dateStr,{});
   const isPrep=dateStr>=PREP_START&&dateStr<START_DATE;
   const prepDay=isPrep?PREP_DAYS[dateStr]:null;
   const trip=getTripForDate(dateStr);
   let effectiveMode=S.mode;
-  if(trip){effectiveMode=trip.type==='international'?'intl':trip.type==='domestic'?'hotel':'home';}
+  if(trip) effectiveMode=trip.type==='international'?'intl':trip.type==='domestic'?'hotel':'home';
+
+  // Schedule items
   const sch=prepDay?prepDay.movement:effectiveMode==='hotel'?SCH_HOTEL:effectiveMode==='intl'?SCH_INTL:SCH_HOME;
-  const done=Object.values(dayChecks).filter(Boolean).length;
-  const total=sch.length;
+  const schDone=Object.entries(dayChecks).filter(([k,v])=>k.startsWith('d')&&v).length;
+  const schTotal=sch.length;
+
+  // Medications (6)
+  const medKeys=['m1','m2','m3','m4','m5','m6'];
+  const medDone=medKeys.filter(k=>dayChecks[k]).length;
+  const medTotal=6;
+
+  // Supplements (6) — only count for today from live SUPPS
+  const suppKeys=['ubq','fish','vitd','fiber','trunativ','mag'];
+  const suppDone=isToday?suppKeys.filter(k=>SUPPS[k]).length:loadS('dv4-supps-'+dateStr,{}) && suppKeys.filter(k=>loadS('dv4-supps-'+dateStr,{})[k]).length;
+  const suppTotal=6;
+
+  // Calories — within 1300-1500 = pass
+  const dayFood=isToday?FOOD_LOG:loadS('dv4-food-'+dateStr,[]);
+  const kcal=dayFood.reduce((s,f)=>s+(f.kcal||0),0);
+  const calPass=kcal>=1100&&kcal<=1500?1:0;
+  const calTotal=1;
+
+  // Water — >= 2500ml minimum threshold
+  const dayWater=isToday?WATER.ml:(loadS('dv4-water-'+dateStr,{ml:0}).ml||0);
+  const waterPass=dayWater>=2500?1:0;
+  const waterTotal=1;
+
+  const done=schDone+medDone+suppDone+calPass+waterPass;
+  const total=schTotal+medTotal+suppTotal+calTotal+waterTotal;
   const pct=total>0?Math.round((done/total)*100):0;
-  return {done,total,pct,pass:pct>=80};
+
+  const result={
+    done,total,pct,pass:pct>=80,
+    breakdown:{
+      sch:{done:schDone,total:schTotal},
+      med:{done:medDone,total:medTotal},
+      supp:{done:suppDone,total:suppTotal},
+      cal:{done:calPass,total:calTotal,kcal},
+      water:{done:waterPass,total:waterTotal,ml:dayWater}
+    }
+  };
+  if(dateStr!==TODAY) _compCache[dateStr]=result;
+  return result;
 }
 
 function markTravel(dateStr,type){
@@ -2570,6 +2736,9 @@ function rCalDay(dateStr){
   // ── SCHEDULE TAB ──
   if(CAL_DAY_TAB==='schedule'){
     const sch=prepDay?prepDay.movement:effectiveMode==='hotel'?SCH_HOTEL:effectiveMode==='intl'?SCH_INTL:SCH_HOME;
+    // Use live CHECKS for today
+    const liveChecks=isToday?CHECKS:dayChecks;
+
     if(isPrep){
       html+=`<div style="background:#0a1a2a;border:1px solid #4a90d0;border-radius:10px;padding:12px;margin-bottom:10px">
         <div style="font-size:11px;color:#60b0e0;font-weight:700">${prepDay.theme}</div>
@@ -2582,15 +2751,51 @@ function rCalDay(dateStr){
       </div>`;
     }
     html+=sch.map((item,i)=>`
-      <div class="si ${dayChecks['d'+i]?'dn':''}" ${isToday?`onclick="toggleCheck('d${i}');renderTab('cal')"`:''} style="${!isToday?'cursor:default':''}">
+      <div class="si ${liveChecks['d'+i]?'dn':''}" ${isToday?`onclick="toggleCheck('d${i}');renderTab('cal')"`:''} style="${!isToday?'cursor:default':''}">
         <div class="si-ic">${item.ic}</div>
         <div class="si-inf">
           <div class="si-t" style="color:${isPrep?'#60b0e0':CAT_COL[item.c]||'var(--gold)'}">${item.t}</div>
           <div class="si-a">${esc(item.a)}</div>
         </div>
-        <div class="chk">${dayChecks['d'+i]?'✓':''}</div>
+        <div class="chk">${liveChecks['d'+i]?'✓':''}</div>
       </div>`).join('');
-    html+=`<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px">${comp.pct}% complete · ${comp.pass?'✅ Day complete!':'Need '+(Math.ceil(comp.total*0.8)-comp.done)+' more for 80%'}</div>`;
+
+    // Always show medications — they never change regardless of prep/travel
+    html+=`<div style="margin-top:12px;background:#120808;border:1px solid #3a1010;border-radius:10px;padding:12px">
+      <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">💊 Medications</div>
+      ${[
+        {k:'m1',t:'7:15 AM',n:'Omnacortil 5mg + MetXL 50mg',note:'After breakfast'},
+        {k:'m2',t:'8:00 AM',n:'Mycofit 360mg',note:'Morning'},
+        {k:'m3',t:'9:00 AM',n:'Takfa 4mg',note:'Morning'},
+        {k:'m4',t:'6:30 PM',n:'MetXL 25mg',note:'Evening'},
+        {k:'m5',t:'8:00 PM',n:'Mycofit + Atorva + Telma',note:'Three together'},
+        {k:'m6',t:'9:00 PM',n:'Takfa 4mg',note:'Night'},
+      ].map(m=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid #1a0808" ${isToday?`onclick="CHECKS['${m.k}']=!CHECKS['${m.k}'];saveCh();renderTab('cal')"`:''} style="cursor:${isToday?'pointer':'default'}">
+          <div>
+            <div style="font-size:12px;color:var(--text)">${m.n}</div>
+            <div style="font-size:10px;color:var(--muted)">${m.t} · ${m.note}</div>
+          </div>
+          <div style="width:24px;height:24px;border-radius:50%;border:2px solid ${liveChecks[m.k]?'var(--green)':'#3a1010'};background:${liveChecks[m.k]?'#1a4a2a':'transparent'};display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--green)">
+            ${liveChecks[m.k]?'✓':''}
+          </div>
+        </div>`).join('')}
+    </div>`;
+
+    html+=`<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px">${comp.pct}% complete · ${comp.pass?'✅ Day complete!':'Need '+(Math.ceil(comp.total*0.8)-comp.done)+' more for 80%'}</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:8px">
+      ${[
+        {l:'Schedule',d:comp.breakdown.sch.done,t:comp.breakdown.sch.total,c:'var(--gold)'},
+        {l:'Meds',d:comp.breakdown.med.done,t:comp.breakdown.med.total,c:'var(--red)'},
+        {l:'Supps',d:comp.breakdown.supp.done,t:comp.breakdown.supp.total,c:'var(--green)'},
+        {l:'Calories',d:comp.breakdown.cal.done,t:1,c:'var(--orange)',note:comp.breakdown.cal.kcal+'kcal'},
+        {l:'Water',d:comp.breakdown.water.done,t:1,c:'var(--teal)',note:Math.round(comp.breakdown.water.ml/100)/10+'L'},
+      ].map(s=>`<div style="background:var(--p2);border-radius:8px;padding:6px 4px;text-align:center;border:1px solid ${s.d>=s.t?s.c:'var(--b1)'}">
+        <div style="font-size:10px;font-weight:700;color:${s.d>=s.t?s.c:'var(--muted)'}">${s.d}/${s.t}</div>
+        <div style="font-size:9px;color:var(--muted);margin-top:1px">${s.l}</div>
+        ${s.note?`<div style="font-size:8px;color:${s.d>=s.t?s.c:'var(--muted)'}">${s.note}</div>`:''}
+      </div>`).join('')}
+    </div>`;
 
     // Morning check-in and supplements — only show for today
     if(isToday){
@@ -2800,6 +3005,10 @@ function rRewards(){
 
 // ═══════════ CHATBOT ═══════════
 let CHAT_HISTORY=[];
+let _ctxCache='';
+let _ctxTime=0;
+let _compCache={};
+let _compCacheDate='';
 let CHAT_OPEN=false;
 let ANTHROPIC_KEY=localStorage.getItem('dv4-apikey')||'';
 
@@ -2871,6 +3080,11 @@ function renderChatContent(){
 }
 
 function buildContext(){
+  // Cache for 60 seconds to avoid rebuilding on every message
+  const now=Date.now();
+  if(_ctxCache&&(now-_ctxTime)<60000) return _ctxCache;
+  _ctxTime=now;
+  // Build fresh
   const comp=getDayCompletion(TODAY);
   const vitals=VITALS[TODAY]||null;
   const trip=getTripForDate(TODAY);
@@ -2884,7 +3098,7 @@ function buildContext(){
   const kcal=totalKcal();
   const ep=exPts();
 
-  return `You are Divy's personal health and life companion — built into his daily app. You know everything about him. Respond like a wise, warm, direct friend — not a coach, not a doctor. Never preachy. Never generic. Always specific to Divy.
+  _ctxCache=`You are Divy's personal health and life companion — built into his daily app. You know everything about him. Respond like a wise, warm, direct friend — not a coach, not a doctor. Never preachy. Never generic. Always specific to Divy.
 
 ABOUT DIVY:
 - Full name: Divyanshu Shrivastava. Called Divy. Age 37. 184cm. Current weight ${S.wt}kg. Goal 75kg.
@@ -2941,6 +3155,7 @@ TONE RULES:
 - Keep responses SHORT — 3 to 6 sentences maximum unless he asks for more.
 - Never list medications or give medical advice. You know them but you are not a doctor.
 - End with one specific actionable sentence, not a question.`;
+  return _ctxCache;
 }
 
 function toggleChat(){
@@ -3049,6 +3264,95 @@ async function sendChat(){
     }
   }
   document.getElementById('chat-send').disabled=false;
+}
+
+// ═══════════ PHOTOS ═══════════
+function savePhoto(slot,input){
+  const file=input.files[0];
+  if(!file) return;
+  // Compress to max 400px wide before storing
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const canvas=document.createElement('canvas');
+      const max=400;
+      const scale=Math.min(1,max/Math.max(img.width,img.height));
+      canvas.width=Math.round(img.width*scale);
+      canvas.height=Math.round(img.height*scale);
+      canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+      PHOTOS[slot]=canvas.toDataURL('image/jpeg',0.75);
+      saveS('dv4-photos',PHOTOS);
+      flash('Photo saved 📸');
+      renderTab('body');
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ═══════════ DATA EXPORT ═══════════
+function exportData(){
+  const data={
+    exported:new Date().toISOString(),
+    version:'divy-pwa-v4',
+    main:loadS('dv4-main',{}),
+    body:loadS('dv4-body',{}),
+    journal:loadS('dv4-journal',{}),
+    vitals:loadS('dv4-vitals',{}),
+    travel:loadS('dv4-travel',{}),
+    weights:{},
+    food:{},
+    water:{},
+    checks:{},
+    supps:{},
+  };
+  // Collect dated data from last 180 days
+  const start=new Date(START_DATE);
+  const prep=new Date(PREP_START);
+  for(let d=new Date(prep);d<=new Date();d.setDate(d.getDate()+1)){
+    const ds=d.toISOString().split('T')[0];
+    const ch=loadS('dv4-ch-'+ds,null);if(ch) data.checks[ds]=ch;
+    const f=loadS('dv4-food-'+ds,null);if(f) data.food[ds]=f;
+    const w=loadS('dv4-water-'+ds,null);if(w) data.water[ds]=w;
+    const s=loadS('dv4-supps-'+ds,null);if(s) data.supps[ds]=s;
+  }
+  const json=JSON.stringify(data,null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='divy-journey-backup-'+TODAY+'.json';
+  a.click();URL.revokeObjectURL(url);
+  flash('Data exported ✓');
+}
+
+function importData(){
+  const input=document.createElement('input');
+  input.type='file';input.accept='.json';
+  input.onchange=e=>{
+    const file=e.target.files[0];
+    if(!file) return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const data=JSON.parse(ev.target.result);
+        if(data.version!=='divy-pwa-v4'){flash('Wrong file format');return;}
+        if(data.main) saveS('dv4-main',data.main);
+        if(data.body) saveS('dv4-body',data.body);
+        if(data.journal) saveS('dv4-journal',data.journal);
+        if(data.vitals) saveS('dv4-vitals',data.vitals);
+        if(data.travel) saveS('dv4-travel',data.travel);
+        Object.entries(data.checks||{}).forEach(([k,v])=>saveS('dv4-ch-'+k,v));
+        Object.entries(data.food||{}).forEach(([k,v])=>saveS('dv4-food-'+k,v));
+        Object.entries(data.water||{}).forEach(([k,v])=>saveS('dv4-water-'+k,v));
+        Object.entries(data.supps||{}).forEach(([k,v])=>saveS('dv4-supps-'+k,v));
+        flash('Data restored ✓ — reload the app');
+        setTimeout(()=>location.reload(),1500);
+      }catch(e){flash('Could not read file');}
+    };
+    reader.readAsText(file);
+  };
+  input.click();
 }
 
 // ═══════════ INIT ═══════════
