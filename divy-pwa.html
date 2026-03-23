@@ -410,58 +410,196 @@ const MILESTONES=[95,92,89,85,82,79,75];
 
 // FOOD DATABASE (per 100g raw / 100ml liquid)
 const FOOD_DB=[
-  // Grains & Bread
-  {n:'Besan (Gram Flour)',cal:387,u:'g',cat:'Grain'},
-  {n:'Oats (Rolled, raw)',cal:389,u:'g',cat:'Grain'},
-  {n:'Basmati Rice (raw)',cal:349,u:'g',cat:'Grain'},
-  {n:'Whole Wheat Atta (raw)',cal:340,u:'g',cat:'Grain'},
-  {n:'Poha (raw)',cal:333,u:'g',cat:'Grain'},
-  {n:'Suji / Semolina (raw)',cal:360,u:'g',cat:'Grain'},
-  // Pulses
-  {n:'Moong Dal (raw)',cal:347,u:'g',cat:'Dal'},
-  {n:'Masoor Dal (raw)',cal:353,u:'g',cat:'Dal'},
-  {n:'Chana Dal (raw)',cal:364,u:'g',cat:'Dal'},
-  {n:'Soya Chunks (dry)',cal:336,u:'g',cat:'Protein'},
-  // Protein
-  {n:'Egg (whole, raw)',cal:155,u:'g',cat:'Protein'},
-  {n:'Egg White (raw)',cal:52,u:'g',cat:'Protein'},
-  {n:'Tofu (raw)',cal:76,u:'g',cat:'Protein'},
-  {n:'Chicken Breast (raw)',cal:120,u:'g',cat:'Protein'},{n:'Goat Mutton (raw, boneless)',cal:109,u:'g',cat:'Protein'},
-  {n:'Paneer (raw)',cal:265,u:'g',cat:'Protein'},
-  // Vegetables
-  {n:'Lauki / Bottle Gourd (raw)',cal:14,u:'g',cat:'Veg'},
-  {n:'Parwal (raw)',cal:20,u:'g',cat:'Veg'},
-  {n:'Palak / Spinach (raw)',cal:23,u:'g',cat:'Veg'},
-  {n:'Methi Leaves (raw)',cal:49,u:'g',cat:'Veg'},
-  {n:'Bhindi / Okra (raw)',cal:33,u:'g',cat:'Veg'},
-  {n:'Capsicum (raw)',cal:31,u:'g',cat:'Veg'},
-  {n:'Carrot (raw)',cal:41,u:'g',cat:'Veg'},
-  {n:'Cucumber (raw)',cal:15,u:'g',cat:'Veg'},
-  {n:'Onion (raw)',cal:40,u:'g',cat:'Veg'},
-  {n:'Tomato (raw)',cal:18,u:'g',cat:'Veg'},
-  {n:'Sweet Potato (raw)',cal:86,u:'g',cat:'Veg'},
-  {n:'Karela / Bitter Gourd (raw)',cal:17,u:'g',cat:'Veg'},
-  // Fruits
-  {n:'Banana (raw)',cal:89,u:'g',cat:'Fruit'},
-  {n:'Papaya (raw)',cal:43,u:'g',cat:'Fruit'},
-  {n:'Watermelon (raw)',cal:30,u:'g',cat:'Fruit'},
-  // Dairy & Fats
-  {n:'Curd / Yogurt (plain)',cal:61,u:'g',cat:'Dairy'},
-  {n:'Ghee',cal:900,u:'g',cat:'Fat'},
-  {n:'Mustard Oil',cal:884,u:'ml',cat:'Fat'},
-  {n:'Coconut Oil',cal:862,u:'ml',cat:'Fat'},
-  // Snacks
-  {n:'Makhana / Fox Nuts',cal:347,u:'g',cat:'Snack'},
-  // Spices & Condiments (negligible cal but tracked)
-  {n:'Green Chutney (coriander)',cal:50,u:'ml',cat:'Condiment'},
-  {n:'Ginger (raw)',cal:80,u:'g',cat:'Spice'},
-  {n:'Turmeric (raw)',cal:354,u:'g',cat:'Spice'},
-  // Liquids
-  {n:'Water',cal:0,u:'ml',cat:'Liquid'},
-  {n:'Green Tea (brewed)',cal:1,u:'ml',cat:'Liquid'},
-  {n:'Coconut Water',cal:19,u:'ml',cat:'Liquid'},
-  {n:'Ginger Water',cal:3,u:'ml',cat:'Liquid'},
-  {n:'Ajwain Water',cal:2,u:'ml',cat:'Liquid'},
+  // ── GRAINS & RICE ──
+  {n:'Basmati Rice (raw)',cal:349,u:'g',cat:'Grain',p:7,c:78,f:0.5,k:115,ph:115,na:5},
+  {n:'Basmati Rice (cooked)',cal:130,u:'g',cat:'Grain',p:2.7,c:28,f:0.3,k:35,ph:43,na:1},
+  {n:'Brown Rice (raw)',cal:370,u:'g',cat:'Grain',p:8,c:77,f:3,k:223,ph:333,na:7},
+  {n:'Brown Rice (cooked)',cal:216,u:'g',cat:'Grain',p:5,c:45,f:1.8,k:84,ph:162,na:10},
+  {n:'Whole Wheat Atta (raw)',cal:340,u:'g',cat:'Grain',p:13,c:71,f:2,k:363,ph:346,na:5},
+  {n:'Whole Wheat Roti (1 medium ~40g)',cal:71,u:'pcs',cat:'Grain',p:2.5,c:14,f:0.9,k:78,ph:74,na:2},
+  {n:'Multigrain Roti (1 medium)',cal:80,u:'pcs',cat:'Grain',p:3,c:15,f:1.2,k:90,ph:85,na:3},
+  {n:'Maida / Refined Flour',cal:364,u:'g',cat:'Grain',p:10,c:76,f:1,k:107,ph:108,na:2},
+  {n:'Besan (Gram Flour)',cal:387,u:'g',cat:'Grain',p:22,c:58,f:6,k:846,ph:318,na:64},
+  {n:'Poha (raw)',cal:333,u:'g',cat:'Grain',p:6,c:77,f:0.5,k:177,ph:140,na:8},
+  {n:'Poha (cooked)',cal:110,u:'g',cat:'Grain',p:2,c:25,f:0.5,k:60,ph:45,na:5},
+  {n:'Suji / Semolina (raw)',cal:360,u:'g',cat:'Grain',p:13,c:73,f:1,k:186,ph:136,na:1},
+  {n:'Oats (Rolled, raw)',cal:389,u:'g',cat:'Grain',p:17,c:66,f:7,k:429,ph:523,na:6},
+  {n:'Oats (cooked with water)',cal:68,u:'g',cat:'Grain',p:2.4,c:12,f:1.4,k:61,ph:77,na:49},
+  {n:'Bread (whole wheat, 1 slice)',cal:79,u:'pcs',cat:'Grain',p:4,c:15,f:1,k:95,ph:57,na:132},
+  {n:'Bread (white, 1 slice)',cal:75,u:'pcs',cat:'Grain',p:2.5,c:14,f:0.8,k:31,ph:25,na:148},
+  {n:'Pav (1 piece)',cal:110,u:'pcs',cat:'Grain',p:3,c:21,f:1.5,k:45,ph:35,na:180},
+  // ── MILLETS ──
+  {n:'Jowar / Sorghum (raw)',cal:349,u:'g',cat:'Millet',p:11,c:73,f:3,k:350,ph:287,na:6},
+  {n:'Jowar Roti (1 medium)',cal:88,u:'pcs',cat:'Millet',p:2.8,c:18,f:0.8,k:90,ph:72,na:2},
+  {n:'Bajra / Pearl Millet (raw)',cal:361,u:'g',cat:'Millet',p:12,c:67,f:5,k:307,ph:296,na:10},
+  {n:'Bajra Roti (1 medium)',cal:97,u:'pcs',cat:'Millet',p:3.2,c:18,f:1.3,k:82,ph:79,na:3},
+  {n:'Ragi / Finger Millet (raw)',cal:336,u:'g',cat:'Millet',p:7.3,c:72,f:1.9,k:408,ph:283,na:11},
+  {n:'Ragi Dosa (1 piece)',cal:95,u:'pcs',cat:'Millet',p:2.5,c:18,f:1.2,k:95,ph:65,na:15},
+  {n:'Ragi Roti (1 medium)',cal:105,u:'pcs',cat:'Millet',p:2,c:22,f:0.5,k:113,ph:78,na:3},
+  {n:'Foxtail Millet (raw)',cal:351,u:'g',cat:'Millet',p:12,c:63,f:4,k:250,ph:290,na:5},
+  {n:'Little Millet (raw)',cal:341,u:'g',cat:'Millet',p:9,c:65,f:4,k:130,ph:220,na:4},
+  {n:'Barnyard Millet (raw)',cal:342,u:'g',cat:'Millet',p:11,c:65,f:3.5,k:180,ph:250,na:3},
+  {n:'Kodo Millet (raw)',cal:353,u:'g',cat:'Millet',p:9,c:66,f:3,k:160,ph:188,na:3},
+  // ── DALS & PULSES ──
+  {n:'Toor / Arhar Dal (raw)',cal:343,u:'g',cat:'Dal',p:22,c:57,f:2,k:1392,ph:304,na:17},
+  {n:'Toor Dal (cooked)',cal:116,u:'g',cat:'Dal',p:7,c:21,f:0.4,k:396,ph:99,na:5},
+  {n:'Moong Dal (raw)',cal:347,u:'g',cat:'Dal',p:24,c:60,f:1.2,k:1246,ph:367,na:15},
+  {n:'Moong Dal (cooked)',cal:105,u:'g',cat:'Dal',p:7,c:19,f:0.4,k:369,ph:99,na:4},
+  {n:'Moong Dal Sprouts',cal:30,u:'g',cat:'Dal',p:3,c:4,f:0.2,k:149,ph:54,na:6},
+  {n:'Masoor Dal (raw)',cal:353,u:'g',cat:'Dal',p:26,c:60,f:1,k:955,ph:451,na:6},
+  {n:'Masoor Dal (cooked)',cal:116,u:'g',cat:'Dal',p:9,c:20,f:0.4,k:369,ph:180,na:4},
+  {n:'Urad Dal (raw)',cal:341,u:'g',cat:'Dal',p:25,c:59,f:1.4,k:983,ph:379,na:38},
+  {n:'Urad Dal (cooked)',cal:105,u:'g',cat:'Dal',p:8,c:18,f:0.4,k:362,ph:138,na:14},
+  {n:'Chana Dal (raw)',cal:364,u:'g',cat:'Dal',p:20,c:61,f:5,k:846,ph:331,na:24},
+  {n:'Chana Dal (cooked)',cal:164,u:'g',cat:'Dal',p:9,c:27,f:2.6,k:291,ph:168,na:7},
+  {n:'Rajma / Kidney Beans (raw)',cal:333,u:'g',cat:'Dal',p:24,c:60,f:1.5,k:1406,ph:407,na:24},
+  {n:'Rajma (cooked)',cal:127,u:'g',cat:'Dal',p:9,c:23,f:0.5,k:403,ph:243,na:2},
+  {n:'Chole / Chickpea (raw)',cal:364,u:'g',cat:'Dal',p:19,c:61,f:6,k:875,ph:366,na:24},
+  {n:'Chole (cooked)',cal:164,u:'g',cat:'Dal',p:9,c:27,f:2.6,k:291,ph:168,na:7},
+  {n:'Lobiya / Black Eyed Peas (cooked)',cal:116,u:'g',cat:'Dal',p:8,c:21,f:0.5,k:278,ph:156,na:4},
+  {n:'Moth Dal (cooked)',cal:107,u:'g',cat:'Dal',p:7,c:19,f:0.5,k:300,ph:140,na:5},
+  {n:'Soya Chunks (dry)',cal:336,u:'g',cat:'Protein',p:52,c:33,f:0.5,k:1243,ph:700,na:30},
+  {n:'Soya Chunks (cooked 100g dry)',cal:336,u:'g',cat:'Protein',p:52,c:33,f:0.5,k:1243,ph:700,na:30},
+  // ── SOUTH INDIAN ──
+  {n:'Idli (1 piece ~40g)',cal:39,u:'pcs',cat:'South Indian',p:1.8,c:8,f:0.3,k:35,ph:28,na:90},
+  {n:'Dosa (plain, 1 piece)',cal:112,u:'pcs',cat:'South Indian',p:3,c:20,f:2,k:50,ph:60,na:140},
+  {n:'Masala Dosa (1 piece)',cal:168,u:'pcs',cat:'South Indian',p:4,c:28,f:4,k:180,ph:80,na:250},
+  {n:'Uttapam (1 piece)',cal:120,u:'pcs',cat:'South Indian',p:4,c:20,f:2.5,k:80,ph:70,na:180},
+  {n:'Dosa Batter (raw)',cal:74,u:'g',cat:'South Indian',p:3,c:14,f:0.5,k:45,ph:50,na:180},
+  {n:'Sambar (per bowl ~200ml)',cal:80,u:'pcs',cat:'South Indian',p:4,c:12,f:1.5,k:320,ph:90,na:400},
+  {n:'Rasam (per bowl ~200ml)',cal:35,u:'pcs',cat:'South Indian',p:1,c:6,f:0.5,k:180,ph:30,na:350},
+  {n:'Coconut Chutney (2 tbsp)',cal:60,u:'pcs',cat:'South Indian',p:0.5,c:3,f:5,k:100,ph:20,na:80},
+  {n:'Upma (1 bowl ~150g)',cal:150,u:'pcs',cat:'South Indian',p:4,c:25,f:3,k:120,ph:80,na:350},
+  {n:'Pongal (1 bowl ~150g)',cal:180,u:'pcs',cat:'South Indian',p:5,c:30,f:4,k:100,ph:90,na:300},
+  {n:'Rava Idli (1 piece)',cal:65,u:'pcs',cat:'South Indian',p:2,c:11,f:1.2,k:50,ph:35,na:130},
+  // ── NORTH INDIAN DISHES ──
+  {n:'Dal Makhani (1 bowl ~150g)',cal:200,u:'pcs',cat:'Dish',p:8,c:22,f:9,k:400,ph:180,na:500},
+  {n:'Chole Masala (1 bowl ~150g)',cal:195,u:'pcs',cat:'Dish',p:9,c:28,f:6,k:350,ph:180,na:480},
+  {n:'Rajma Chawal (1 plate)',cal:380,u:'pcs',cat:'Dish',p:14,c:65,f:5,k:600,ph:280,na:450},
+  {n:'Khichdi (1 bowl ~200g)',cal:180,u:'pcs',cat:'Dish',p:7,c:32,f:3,k:200,ph:110,na:300},
+  {n:'Palak Paneer (1 bowl ~150g)',cal:200,u:'pcs',cat:'Dish',p:9,c:8,f:15,k:350,ph:250,na:420},
+  {n:'Aloo Sabzi (1 bowl)',cal:150,u:'pcs',cat:'Dish',p:3,c:25,f:4,k:400,ph:70,na:300},
+  {n:'Bhindi Masala (1 bowl)',cal:100,u:'pcs',cat:'Dish',p:3,c:12,f:4,k:280,ph:55,na:320},
+  {n:'Lauki Sabzi (1 bowl)',cal:60,u:'pcs',cat:'Dish',p:1.5,c:9,f:2,k:200,ph:25,na:280},
+  {n:'Pav Bhaji (1 plate)',cal:400,u:'pcs',cat:'Dish',p:8,c:55,f:14,k:450,ph:120,na:800},
+  {n:'Paratha (plain, 1 piece)',cal:200,u:'pcs',cat:'Dish',p:4,c:28,f:8,k:80,ph:90,na:200},
+  {n:'Paratha (aloo, 1 piece)',cal:250,u:'pcs',cat:'Dish',p:5,c:35,f:10,k:200,ph:100,na:280},
+  {n:'Thepla (1 piece)',cal:130,u:'pcs',cat:'Dish',p:3.5,c:18,f:5,k:100,ph:70,na:150},
+  {n:'Dhokla (2 pieces)',cal:120,u:'pcs',cat:'Dish',p:5,c:18,f:2,k:80,ph:60,na:350},
+  {n:'Poha (cooked bowl ~150g)',cal:165,u:'pcs',cat:'Dish',p:3,c:35,f:3,k:100,ph:65,na:150},
+  {n:'Upma (semolina, bowl)',cal:200,u:'pcs',cat:'Dish',p:5,c:32,f:5,k:140,ph:90,na:400},
+  // ── PROTEINS ──
+  {n:'Egg (whole, raw)',cal:155,u:'g',cat:'Protein',p:13,c:1.1,f:11,k:138,ph:198,na:124},
+  {n:'Egg (boiled, 1 large)',cal:78,u:'pcs',cat:'Protein',p:6,c:0.6,f:5,k:69,ph:99,na:62},
+  {n:'Egg White (raw)',cal:52,u:'g',cat:'Protein',p:11,c:0.7,f:0.2,k:163,ph:15,na:166},
+  {n:'Egg Bhurji (2 eggs)',cal:220,u:'pcs',cat:'Protein',p:14,c:5,f:16,k:200,ph:210,na:350},
+  {n:'Omelette (2 eggs)',cal:200,u:'pcs',cat:'Protein',p:13,c:2,f:15,k:180,ph:200,na:320},
+  {n:'Tofu (raw)',cal:76,u:'g',cat:'Protein',p:8,c:2,f:4.5,k:121,ph:97,na:7},
+  {n:'Tofu (grilled 100g)',cal:110,u:'g',cat:'Protein',p:12,c:3,f:6,k:150,ph:120,na:15},
+  {n:'Chicken Breast (raw)',cal:120,u:'g',cat:'Protein',p:22,c:0,f:3,k:370,ph:220,na:74},
+  {n:'Chicken Breast (grilled 100g)',cal:165,u:'g',cat:'Protein',p:31,c:0,f:4,k:256,ph:220,na:74},
+  {n:'Chicken Curry (1 bowl ~150g)',cal:220,u:'pcs',cat:'Protein',p:24,c:5,f:12,k:380,ph:230,na:550},
+  {n:'Goat Mutton (raw, boneless)',cal:109,u:'g',cat:'Protein',p:17,c:0,f:4,k:385,ph:190,na:72},
+  {n:'Mutton Curry (1 bowl ~150g)',cal:270,u:'pcs',cat:'Protein',p:22,c:6,f:17,k:400,ph:200,na:600},
+  {n:'Paneer (raw)',cal:265,u:'g',cat:'Protein',p:18,c:3,f:20,k:130,ph:478,na:42},
+  {n:'Paneer (grilled 100g)',cal:280,u:'g',cat:'Protein',p:19,c:4,f:21,k:135,ph:490,na:50},
+  // ── VEGETABLES ──
+  {n:'Spinach / Palak (raw)',cal:23,u:'g',cat:'Veg',p:2.9,c:3.6,f:0.4,k:558,ph:49,na:79},
+  {n:'Methi Leaves (raw)',cal:49,u:'g',cat:'Veg',p:4.4,c:6,f:0.9,k:770,ph:51,na:76},
+  {n:'Bhindi / Okra (raw)',cal:33,u:'g',cat:'Veg',p:1.9,c:7,f:0.2,k:299,ph:63,na:8},
+  {n:'Lauki / Bottle Gourd (raw)',cal:14,u:'g',cat:'Veg',p:0.6,c:3.4,f:0.1,k:170,ph:13,na:2},
+  {n:'Parwal (raw)',cal:20,u:'g',cat:'Veg',p:2,c:3,f:0.3,k:83,ph:28,na:3},
+  {n:'Tinda (raw)',cal:21,u:'g',cat:'Veg',p:0.9,c:4.5,f:0.1,k:90,ph:20,na:3},
+  {n:'Karela / Bitter Gourd (raw)',cal:17,u:'g',cat:'Veg',p:1,c:3.7,f:0.2,k:296,ph:31,na:5},
+  {n:'Capsicum (raw)',cal:31,u:'g',cat:'Veg',p:1,c:6,f:0.3,k:211,ph:26,na:4},
+  {n:'Carrot (raw)',cal:41,u:'g',cat:'Veg',p:0.9,c:10,f:0.2,k:320,ph:35,na:69},
+  {n:'Cucumber (raw)',cal:15,u:'g',cat:'Veg',p:0.7,c:3.6,f:0.1,k:147,ph:24,na:2},
+  {n:'Tomato (raw)',cal:18,u:'g',cat:'Veg',p:0.9,c:3.9,f:0.2,k:237,ph:24,na:5},
+  {n:'Onion (raw)',cal:40,u:'g',cat:'Veg',p:1.1,c:9,f:0.1,k:146,ph:29,na:4},
+  {n:'Cauliflower (raw)',cal:25,u:'g',cat:'Veg',p:2,c:5,f:0.3,k:299,ph:44,na:30},
+  {n:'Cabbage (raw)',cal:25,u:'g',cat:'Veg',p:1.3,c:6,f:0.1,k:170,ph:26,na:18},
+  {n:'French Beans (raw)',cal:31,u:'g',cat:'Veg',p:1.8,c:7,f:0.1,k:211,ph:38,na:6},
+  {n:'Brinjal / Eggplant (raw)',cal:25,u:'g',cat:'Veg',p:1,c:6,f:0.2,k:229,ph:24,na:2},
+  {n:'Peas (raw)',cal:81,u:'g',cat:'Veg',p:5,c:14,f:0.4,k:244,ph:108,na:5},
+  {n:'Corn / Maize (raw)',cal:86,u:'g',cat:'Veg',p:3.3,c:19,f:1.4,k:270,ph:89,na:15},
+  {n:'Sweet Potato (raw)',cal:86,u:'g',cat:'Veg',p:1.6,c:20,f:0.1,k:337,ph:47,na:55},
+  {n:'Potato (raw)',cal:77,u:'g',cat:'Veg',p:2,c:17,f:0.1,k:421,ph:57,na:6},
+  {n:'Mushroom (raw)',cal:22,u:'g',cat:'Veg',p:3.1,c:3.3,f:0.3,k:318,ph:86,na:5},
+  {n:'Broccoli (raw)',cal:34,u:'g',cat:'Veg',p:2.8,c:7,f:0.4,k:316,ph:66,na:33},
+  {n:'Drumstick / Moringa (raw)',cal:37,u:'g',cat:'Veg',p:2.1,c:8.5,f:0.2,k:461,ph:50,na:42},
+  // ── FRUITS ──
+  {n:'Apple (medium ~150g)',cal:78,u:'pcs',cat:'Fruit',p:0.4,c:21,f:0.3,k:161,ph:17,na:2},
+  {n:'Banana (medium ~100g)',cal:89,u:'pcs',cat:'Fruit',p:1.1,c:23,f:0.3,k:358,ph:22,na:1},
+  {n:'Papaya (100g)',cal:43,u:'g',cat:'Fruit',p:0.5,c:11,f:0.3,k:182,ph:10,na:8},
+  {n:'Watermelon (100g)',cal:30,u:'g',cat:'Fruit',p:0.6,c:7.6,f:0.2,k:112,ph:11,na:1},
+  {n:'Guava (medium ~100g)',cal:68,u:'pcs',cat:'Fruit',p:2.6,c:14,f:1,k:417,ph:40,na:2},
+  {n:'Mango (100g)',cal:60,u:'g',cat:'Fruit',p:0.8,c:15,f:0.4,k:168,ph:14,na:1},
+  {n:'Pear (medium ~150g)',cal:86,u:'pcs',cat:'Fruit',p:0.5,c:23,f:0.2,k:174,ph:18,na:2},
+  {n:'Orange (medium ~130g)',cal:62,u:'pcs',cat:'Fruit',p:1.2,c:15,f:0.2,k:237,ph:23,na:0},
+  {n:'Chiku / Sapodilla (100g)',cal:83,u:'g',cat:'Fruit',p:0.4,c:20,f:1.1,k:193,ph:12,na:12},
+  {n:'Pomegranate (100g)',cal:83,u:'g',cat:'Fruit',p:1.7,c:19,f:1.2,k:236,ph:36,na:3},
+  {n:'Grapes (100g)',cal:69,u:'g',cat:'Fruit',p:0.7,c:18,f:0.2,k:191,ph:20,na:2},
+  {n:'Strawberry (100g)',cal:33,u:'g',cat:'Fruit',p:0.7,c:8,f:0.3,k:153,ph:24,na:1},
+  {n:'Pineapple (100g)',cal:50,u:'g',cat:'Fruit',p:0.5,c:13,f:0.1,k:109,ph:8,na:1},
+  {n:'Kiwi (1 medium ~75g)',cal:45,u:'pcs',cat:'Fruit',p:0.8,c:11,f:0.4,k:215,ph:26,na:2},
+  {n:'Amla / Indian Gooseberry (100g)',cal:44,u:'g',cat:'Fruit',p:0.9,c:10,f:0.6,k:198,ph:27,na:1},
+  {n:'Jamun / Java Plum (100g)',cal:60,u:'g',cat:'Fruit',p:0.7,c:14,f:0.2,k:55,ph:17,na:26},
+  // ── DAIRY ──
+  {n:'Curd / Yogurt (plain)',cal:61,u:'g',cat:'Dairy',p:3.5,c:4.7,f:3.3,k:141,ph:95,na:46},
+  {n:'Low Fat Curd (100g)',cal:45,u:'g',cat:'Dairy',p:4.3,c:5,f:0.4,k:155,ph:105,na:48},
+  {n:'Greek Yogurt (100g)',cal:73,u:'g',cat:'Dairy',p:9,c:4,f:0.4,k:141,ph:135,na:36},
+  {n:'Buttermilk / Chaas (200ml)',cal:50,u:'pcs',cat:'Dairy',p:3.4,c:5,f:1.1,k:280,ph:190,na:256},
+  {n:'Lassi (plain, 200ml)',cal:130,u:'pcs',cat:'Dairy',p:5,c:16,f:4,k:280,ph:180,na:100},
+  // ── FATS & OILS ──
+  {n:'Ghee (1 tsp ~5g)',cal:45,u:'pcs',cat:'Fat',p:0,c:0,f:5,k:0,ph:0,na:0},
+  {n:'Mustard Oil (1 tsp)',cal:44,u:'pcs',cat:'Fat',p:0,c:0,f:5,k:0,ph:0,na:0},
+  {n:'Coconut Oil (1 tsp)',cal:43,u:'pcs',cat:'Fat',p:0,c:0,f:5,k:0,ph:0,na:0},
+  {n:'Olive Oil (1 tsp)',cal:44,u:'pcs',cat:'Fat',p:0,c:0,f:5,k:0,ph:1,na:0},
+  // ── SNACKS ──
+  {n:'Makhana / Fox Nuts (30g)',cal:104,u:'pcs',cat:'Snack',p:2.9,c:23,f:0.03,k:150,ph:60,na:21},
+  {n:'Almonds (10 pieces ~12g)',cal:70,u:'pcs',cat:'Snack',p:2.5,c:2.6,f:6,k:88,ph:58,na:0},
+  {n:'Walnuts (2 pieces ~14g)',cal:92,u:'pcs',cat:'Snack',p:2.1,c:2,f:9,k:62,ph:48,na:0},
+  {n:'Roasted Chana (30g)',cal:105,u:'pcs',cat:'Snack',p:6,c:16,f:2,k:230,ph:90,na:5},
+  {n:'Peanuts (roasted, 30g)',cal:174,u:'pcs',cat:'Snack',p:7.5,c:6,f:14,k:217,ph:106,na:5},
+  {n:'Murmura / Puffed Rice (30g)',cal:113,u:'pcs',cat:'Snack',p:2,c:25,f:0.3,k:30,ph:22,na:60},
+  {n:'Khakhra (1 piece ~25g)',cal:100,u:'pcs',cat:'Snack',p:3,c:15,f:3,k:75,ph:55,na:130},
+  {n:'Rice Cakes (2 pieces)',cal:70,u:'pcs',cat:'Snack',p:1.4,c:15,f:0.5,k:30,ph:25,na:30},
+  // ── PROTEIN SUPPLEMENTS ──
+  {n:'TruNativ Plant Protein (15g serving)',cal:55,u:'pcs',cat:'Supplement',p:13.5,c:1,f:0.5,k:80,ph:60,na:50},
+  {n:'ON Gold Standard Whey (1 scoop ~31g)',cal:120,u:'pcs',cat:'Supplement',p:24,c:3,f:1.5,k:160,ph:190,na:130},
+  {n:'MuscleBlaze Whey Protein (1 scoop ~33g)',cal:126,u:'pcs',cat:'Supplement',p:25,c:3.5,f:1.5,k:180,ph:200,na:120},
+  {n:'Protyze Clear Whey (1 scoop ~27g)',cal:100,u:'pcs',cat:'Supplement',p:23,c:1,f:0,k:100,ph:140,na:50},
+  {n:'Protyze Isolate (1 scoop ~30g)',cal:112,u:'pcs',cat:'Supplement',p:26,c:0.5,f:0,k:130,ph:160,na:60},
+  {n:'Pea Protein Isolate (1 scoop ~30g)',cal:110,u:'pcs',cat:'Supplement',p:24,c:2,f:1,k:70,ph:50,na:280},
+  {n:'Soy Protein Isolate (1 scoop ~30g)',cal:105,u:'pcs',cat:'Supplement',p:25,c:1,f:0.5,k:50,ph:220,na:200},
+  // ── RESTAURANT FOODS ──
+  {n:'Dal Tadka (restaurant bowl)',cal:180,u:'pcs',cat:'Restaurant',p:9,c:22,f:6,k:380,ph:160,na:700},
+  {n:'Paneer Butter Masala (restaurant bowl)',cal:320,u:'pcs',cat:'Restaurant',p:12,c:15,f:24,k:250,ph:380,na:850},
+  {n:'Butter Chicken (restaurant bowl)',cal:290,u:'pcs',cat:'Restaurant',p:24,c:10,f:18,k:340,ph:230,na:900},
+  {n:'Tandoori Chicken (2 pieces)',cal:240,u:'pcs',cat:'Restaurant',p:35,c:4,f:10,k:450,ph:280,na:850},
+  {n:'Naan (1 piece)',cal:262,u:'pcs',cat:'Restaurant',p:8,c:49,f:4,k:65,ph:65,na:400},
+  {n:'Jeera Rice (restaurant)',cal:220,u:'pcs',cat:'Restaurant',p:4,c:44,f:4,k:80,ph:60,na:350},
+  {n:'Vegetable Biryani (restaurant)',cal:350,u:'pcs',cat:'Restaurant',p:7,c:58,f:9,k:200,ph:100,na:800},
+  {n:'Chicken Biryani (restaurant)',cal:450,u:'pcs',cat:'Restaurant',p:28,c:55,f:14,k:380,ph:250,na:950},
+  {n:'Grilled Sandwich (veg)',cal:250,u:'pcs',cat:'Restaurant',p:8,c:38,f:7,k:180,ph:100,na:550},
+  {n:'Bowl Meal - Grain + Protein + Veg',cal:380,u:'pcs',cat:'Restaurant',p:25,c:45,f:8,k:400,ph:200,na:500},
+  {n:'Salad (mixed greens, no dressing)',cal:50,u:'pcs',cat:'Restaurant',p:3,c:8,f:0.5,k:300,ph:50,na:50},
+  {n:'Raita (1 bowl ~100g)',cal:55,u:'pcs',cat:'Dairy',p:3,c:5,f:2,k:130,ph:90,na:200},
+  {n:'Papad (1 piece)',cal:45,u:'pcs',cat:'Snack',p:2.5,c:6,f:1,k:70,ph:45,na:320},
+  // ── LIQUIDS ──
+  {n:'Water (per glass 250ml)',cal:0,u:'pcs',cat:'Liquid',p:0,c:0,f:0,k:0,ph:0,na:0},
+  {n:'Green Tea (brewed, 200ml)',cal:2,u:'pcs',cat:'Liquid',p:0,c:0.4,f:0,k:16,ph:2,na:2},
+  {n:'Coconut Water (200ml)',cal:38,u:'pcs',cat:'Liquid',p:1.4,c:8,f:0.4,k:500,ph:40,na:210},
+  {n:'Ginger Water (200ml)',cal:6,u:'pcs',cat:'Liquid',p:0,c:1.6,f:0,k:20,ph:4,na:2},
+  {n:'Ajwain Water (200ml)',cal:4,u:'pcs',cat:'Liquid',p:0,c:0.8,f:0,k:10,ph:2,na:2},
+  {n:'Lemon Water (200ml, no sugar)',cal:10,u:'pcs',cat:'Liquid',p:0.2,c:3,f:0,k:50,ph:8,na:2},
+  {n:'Black Coffee (200ml, no sugar)',cal:5,u:'pcs',cat:'Liquid',p:0.3,c:0.7,f:0.1,k:116,ph:7,na:5},
+  {n:'Whey Protein Shake (300ml)',cal:130,u:'pcs',cat:'Liquid',p:25,c:5,f:2,k:200,ph:250,na:180},
+  // ── CONDIMENTS & SPICES ──
+  {n:'Green Chutney (2 tbsp)',cal:25,u:'pcs',cat:'Condiment',p:0.5,c:3.5,f:1,k:90,ph:20,na:150},
+  {n:'Tomato Ketchup (1 tbsp)',cal:19,u:'pcs',cat:'Condiment',p:0.3,c:4.8,f:0,k:57,ph:6,na:155},
+  {n:'Pickle / Achar (1 tsp)',cal:15,u:'pcs',cat:'Condiment',p:0.2,c:2,f:0.8,k:30,ph:5,na:400},
+  {n:'Honey (1 tsp)',cal:21,u:'pcs',cat:'Condiment',p:0,c:5.7,f:0,k:11,ph:1,na:0},
 ];
 
 const TARGET_KCAL=1300;
@@ -616,6 +754,9 @@ let S=loadS('dv4-main',DEF);
 let TODAY=getTodayStr();
 let CHECKS=loadS('dv4-ch-'+TODAY,{});
 let FOOD_LOG=loadS('dv4-food-'+TODAY,[]);
+if(!Array.isArray(FOOD_LOG)) FOOD_LOG=[];
+function saveFood(){saveS('dv4-food-'+TODAY,FOOD_LOG);}
+function totalKcal(){return Array.isArray(FOOD_LOG)?FOOD_LOG.reduce((s,f)=>s+(f.kcal||0),0):0;}
 let EX_LOG=loadS('dv4-ex-'+TODAY,{});
 let WATER=loadS('dv4-water-'+TODAY,{ml:0});
 let ITI_D=loadS('dv4-iti',{pw:'',rewards:{},open:false});
@@ -675,6 +816,8 @@ let CAL_MONTH=new Date(START_DATE);
 let BODY_LOG=loadS('dv4-body',{measurements:[]});
 // Progress photos
 let PHOTOS=loadS('dv4-photos',{});
+// User's personal food library
+let USER_FOODS=loadS('dv4-user-foods',[]);
 // Journal storage
 let JOURNAL=loadS('dv4-journal',{entries:{}});
 // Pack checklist storage
@@ -695,19 +838,27 @@ let CAL_DAY_TAB='schedule';
 let ITI_MSGS=loadS('dv4-iti-msgs',{divy:'',iti:''});
 
 function loadS(k,def){
-  try{const d=localStorage.getItem(k);return d?{...def,...JSON.parse(d)}:def;}catch(e){return def;}
+  try{
+    const d=localStorage.getItem(k);
+    if(!d) return def;
+    const parsed=JSON.parse(d);
+    // If default is array, return parsed array directly
+    if(Array.isArray(def)) return Array.isArray(parsed)?parsed:def;
+    // If default is object, merge
+    return typeof parsed==='object'&&parsed!==null?{...def,...parsed}:def;
+  }catch(e){return def;}
 }
 function saveS(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 function saveMain(){saveS('dv4-main',S);}
 function saveCh(){saveS('dv4-ch-'+TODAY,CHECKS);}
-function saveFood(){saveS('dv4-food-'+TODAY,FOOD_LOG);}
+
 function saveEx(){saveS('dv4-ex-'+TODAY,EX_LOG);}
 function saveWater(){saveS('dv4-water-'+TODAY,WATER);}
 
 function getTodayStr(){return new Date().toISOString().split('T')[0];}
 
 function pct(){return Math.max(0,Math.min(100,Math.round(((SW-S.wt)/(SW-GW))*100)));}
-function totalKcal(){return FOOD_LOG.reduce((s,f)=>s+(f.kcal||0),0);}
+
 function exPts(){return Object.entries(EX_LOG).filter(([,v])=>v).reduce((s,[k])=>{
   for(const ph of EX) for(const ex of ph.list) if(ex.id===k) return s+ex.pts;
   return s;
@@ -843,67 +994,119 @@ function searchFood(q){
   FOOD_SEARCH=q;
   const menu=document.getElementById('food-dd');
   if(!q||q.length<2){menu.classList.remove('open');return;}
-  const results=FOOD_DB.filter(f=>f.n.toLowerCase().includes(q.toLowerCase())).slice(0,10);
+  // Search user foods first, then built-in DB
+  const allFoods=[
+    ...USER_FOODS.map((f,i)=>({...f,isUser:true,i})),
+    ...FOOD_DB.map((f,i)=>({...f,isUser:false,i}))
+  ];
+  const results=allFoods.filter(f=>f.n.toLowerCase().includes(q.toLowerCase())).slice(0,12);
   menu.innerHTML=results.map(f=>`
-    <div class="dd-item" onclick="selectFood('${esc(f.n)}',${f.cal},'${f.u}')">
-      <div class="dd-n">${esc(f.n)}</div>
-      <div class="dd-c">${f.cal} kcal per 100${f.u}</div>
+    <div class="dd-item" onclick="${f.isUser?`selectUserFood(${f.i})`:`selectFood(${f.i})`}" style="${f.isUser?'border-left:2px solid var(--gold);':''}">
+      <div class="dd-n">${esc(f.n)}${f.isUser?' <span style="font-size:9px;color:var(--gold)">MY FOOD</span>':''}</div>
+      <div class="dd-c">${f.cal} kcal · P:${f.p||0}g C:${f.c||0}g F:${f.f||0}g per 100${f.u}</div>
     </div>`).join('')+(results.length===0?'<div class="dd-item"><div class="dd-n" style="color:var(--muted)">Not found — add custom below</div></div>':'');
   menu.classList.add('open');
 }
 
-let SEL_FOOD=null;
-function selectFood(name,cal,unit){
-  SEL_FOOD={name,cal,unit};
-  document.getElementById('food-inp').value=name;
+function selectUserFood(idx){
+  const f=USER_FOODS[idx];
+  SEL_FOOD=f;
+  document.getElementById('food-inp').value=f.n;
   document.getElementById('food-dd').classList.remove('open');
   document.getElementById('food-qty-wrap').style.display='block';
-  document.getElementById('food-qty').value='100';
-  document.getElementById('food-qty-unit').textContent=unit;
+  document.getElementById('food-qty').value=f.u==='pcs'?'1':'100';
+  document.getElementById('food-qty-unit').textContent=f.u==='pcs'?'piece(s)':f.u;
+  updateFoodPreview();
+}
+
+let SEL_FOOD=null;
+function selectFood(idx){
+  const f=FOOD_DB[idx];
+  SEL_FOOD=f;
+  document.getElementById('food-inp').value=f.n;
+  document.getElementById('food-dd').classList.remove('open');
+  document.getElementById('food-qty-wrap').style.display='block';
+  document.getElementById('food-qty').value=f.u==='pcs'?'1':'100';
+  document.getElementById('food-qty-unit').textContent=f.u==='pcs'?'piece(s)':f.u;
   updateFoodPreview();
 }
 
 function updateFoodPreview(){
-  if(!SEL_FOOD)return;
+  if(!SEL_FOOD) return;
   const qty=parseFloat(document.getElementById('food-qty').value)||0;
-  const kcal=Math.round((SEL_FOOD.cal*qty)/100);
-  document.getElementById('food-preview').textContent=kcal+' kcal';
+  const isPcs=(SEL_FOOD.u||SEL_FOOD.unit||'g')==='pcs';
+  const ratio=isPcs?qty:qty/100;
+  const kcal=Math.round(SEL_FOOD.cal*ratio);
+  const p=Math.round((SEL_FOOD.p||0)*ratio*10)/10;
+  const c=Math.round((SEL_FOOD.c||0)*ratio*10)/10;
+  const f=Math.round((SEL_FOOD.f||0)*ratio*10)/10;
+  document.getElementById('food-preview').innerHTML=`<span style="color:var(--gold)">${kcal} kcal</span><br><span style="font-size:10px;color:var(--sub)">P:${p}g C:${c}g F:${f}g</span>`;
 }
 
 function addFoodItem(){
   if(!SEL_FOOD){flash('Select a food first');return;}
   const qty=parseFloat(document.getElementById('food-qty').value)||0;
   if(qty<=0){flash('Enter quantity');return;}
-  const kcal=Math.round((SEL_FOOD.cal*qty)/100);
+  const unit=SEL_FOOD.u||SEL_FOOD.unit||'g';
+  const isPcs=unit==='pcs';
+  const ratio=isPcs?qty:qty/100;
+  const kcal=Math.round(SEL_FOOD.cal*ratio);
   const meal=document.getElementById('food-meal').value||'lunch';
-  FOOD_LOG.push({name:SEL_FOOD.name,qty,unit:SEL_FOOD.unit,kcal,meal,time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})});
+  const name=SEL_FOOD.name||SEL_FOOD.n;
+  FOOD_LOG.push({
+    name,qty,unit,kcal,meal,
+    p:Math.round((SEL_FOOD.p||0)*ratio*10)/10,
+    c:Math.round((SEL_FOOD.c||0)*ratio*10)/10,
+    f:Math.round((SEL_FOOD.f||0)*ratio*10)/10,
+    k:Math.round((SEL_FOOD.k||0)*ratio),
+    ph:Math.round((SEL_FOOD.ph||0)*ratio),
+    na:Math.round((SEL_FOOD.na||0)*ratio),
+    time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})
+  });
   saveFood();
   SEL_FOOD=null;
   document.getElementById('food-inp').value='';
   document.getElementById('food-qty-wrap').style.display='none';
   document.getElementById('food-preview').textContent='';
-  flash(SEL_FOOD===null?'Added!':'Added '+kcal+' kcal');
-  renderTab('food');
+  flash('Added '+kcal+' kcal');
+  if(CUR==='cal') renderTab('cal');
+  else renderTab('food');
 }
 
 function addCustomFood(){
-  const name=document.getElementById('cf-name').value;
-  const kcal=parseInt(document.getElementById('cf-kcal').value)||0;
+  const name=document.getElementById('cf-name').value.trim();
+  const kcalPer=parseInt(document.getElementById('cf-kcal').value)||0;
   const qty=parseFloat(document.getElementById('cf-qty').value)||0;
-  const unit=document.getElementById('cf-unit').value||'g';
-  if(!name||!kcal||!qty){flash('Fill all fields');return;}
-  const meal=document.getElementById('food-meal').value||'lunch';
-  FOOD_LOG.push({name,qty,unit,kcal,meal,time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})});
+  const unit=document.getElementById('cf-unit')?document.getElementById('cf-unit').value:'g';
+  const p=parseFloat(document.getElementById('cf-p')?document.getElementById('cf-p').value:0)||0;
+  const c=parseFloat(document.getElementById('cf-c')?document.getElementById('cf-c').value:0)||0;
+  const fv=parseFloat(document.getElementById('cf-f')?document.getElementById('cf-f').value:0)||0;
+  const k=parseInt(document.getElementById('cf-k')?document.getElementById('cf-k').value:0)||0;
+  const ph=parseInt(document.getElementById('cf-ph')?document.getElementById('cf-ph').value:0)||0;
+  const na=parseInt(document.getElementById('cf-na')?document.getElementById('cf-na').value:0)||0;
+  if(!name||!kcalPer||!qty){flash('Name, kcal per 100g and quantity required');return;}
+  const ratio=qty/100;
+  const meal=document.getElementById('food-meal')?document.getElementById('food-meal').value:'lunch';
+  // Save to personal library if new
+  if(!USER_FOODS.find(uf=>uf.n.toLowerCase()===name.toLowerCase())){
+    USER_FOODS.unshift({n:name,cal:kcalPer,u:unit,cat:'My Foods',p,c,f:fv,k,ph,na});
+    saveS('dv4-user-foods',USER_FOODS);
+  }
+  FOOD_LOG.push({name,qty,unit,kcal:Math.round(kcalPer*ratio),meal,
+    p:Math.round(p*ratio*10)/10,c:Math.round(c*ratio*10)/10,f:Math.round(fv*ratio*10)/10,
+    k:Math.round(k*ratio),ph:Math.round(ph*ratio),na:Math.round(na*ratio),
+    time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})});
   saveFood();
-  document.getElementById('cf-name').value='';
-  document.getElementById('cf-kcal').value='';
-  document.getElementById('cf-qty').value='';
-  flash('Added '+kcal+' kcal');
-  renderTab('food');
+  ['cf-name','cf-kcal','cf-qty','cf-p','cf-c','cf-f','cf-k','cf-ph','cf-na'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  flash('Added to log + saved to My Foods ✓');
+  if(CUR==='cal') renderTab('cal');
+  else renderTab('food');
 }
 
 function delFood(idx){
-  FOOD_LOG.splice(idx,1);saveFood();renderTab('food');
+  FOOD_LOG.splice(idx,1);saveFood();
+  if(CUR==='cal') renderTab('cal');
+  else renderTab('food');
 }
 
 // ITI
@@ -1534,7 +1737,7 @@ function rFood(){
         <div class="food-logged">
           <div>
             <div class="fl-name">${esc(f.name)}</div>
-            <div class="fl-meta">${f.qty}${f.unit} · ${f.time}</div>
+            <div class="fl-meta">${f.qty}${f.unit||''} · ${f.time}</div>
           </div>
           <div style="display:flex;align-items:center;gap:10px">
             <div class="fl-kcal">${f.kcal}</div>
@@ -2617,7 +2820,8 @@ function getDayCompletion(dateStr){
 
   // Supplements (6) — only count for today from live SUPPS
   const suppKeys=['ubq','fish','vitd','fiber','trunativ','mag'];
-  const suppDone=isToday?suppKeys.filter(k=>SUPPS[k]).length:loadS('dv4-supps-'+dateStr,{}) && suppKeys.filter(k=>loadS('dv4-supps-'+dateStr,{})[k]).length;
+  const daySuppsData=isToday?SUPPS:loadS('dv4-supps-'+dateStr,{});
+  const suppDone=suppKeys.filter(k=>daySuppsData[k]).length;
   const suppTotal=6;
 
   // Calories — within 1300-1500 = pass
@@ -2677,6 +2881,7 @@ function rCalDay(dateStr){
   const trip=getTripForDate(dateStr);
   const comp=getDayCompletion(dateStr);
   const dayChecks=isToday?CHECKS:loadS('dv4-ch-'+dateStr,{});
+  const liveChecks=isToday?CHECKS:dayChecks;
   let effectiveMode=S.mode;
   if(trip) effectiveMode=trip.type==='international'?'intl':trip.type==='domestic'?'hotel':'home';
 
@@ -2736,8 +2941,6 @@ function rCalDay(dateStr){
   // ── SCHEDULE TAB ──
   if(CAL_DAY_TAB==='schedule'){
     const sch=prepDay?prepDay.movement:effectiveMode==='hotel'?SCH_HOTEL:effectiveMode==='intl'?SCH_INTL:SCH_HOME;
-    // Use live CHECKS for today
-    const liveChecks=isToday?CHECKS:dayChecks;
 
     if(isPrep){
       html+=`<div style="background:#0a1a2a;border:1px solid #4a90d0;border-radius:10px;padding:12px;margin-bottom:10px">
@@ -2862,63 +3065,146 @@ function rCalDay(dateStr){
       <div style="font-size:11px;color:var(--sub)">Movement points</div></div>
       <div style="text-align:right;font-size:11px;color:var(--sub)">80% of day<br>= green ✅</div>
     </div>`;
-    // Lake card — mode aware
-    if(effectiveMode==='home'){
-      html+=`<div style="background:linear-gradient(135deg,#0a1a18,#081210);border:1px solid #2a5a52;border-radius:10px;padding:12px;margin-bottom:10px">
-        <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">🌊 Jakkur Lake · Yelahanka, Bengaluru</div>
-        <div style="font-size:12px;color:var(--sub);line-height:1.9">
-          Home to lake: <strong style="color:var(--teal)">700m</strong> · Full circle: <strong style="color:var(--teal)">7km</strong><br>
-          <span style="color:var(--green)">Now:</span> Walk there + back = 1.4km<br>
-          <span style="color:var(--gold)">92kg:</span> Quarter circle (3.15km total)<br>
-          <span style="color:var(--orange)">89kg:</span> Half circle (4.9km total)<br>
-          <span style="color:var(--blue)">82kg:</span> Full circle with Iti waiting
-        </div>
+
+    if(isPrep){
+      // Prep days — show only that day's movement, no full exercise plan
+      html+=`<div style="background:#0a1a2a;border:1px solid #4a90d0;border-radius:10px;padding:12px;margin-bottom:10px">
+        <div style="font-size:11px;font-weight:700;color:#60b0e0;margin-bottom:4px">${prepDay.label}</div>
+        <div style="font-size:12px;color:var(--sub)">${prepDay.theme}</div>
+      </div>`;
+      html+=prepDay.movement.map((item,i)=>`
+        <div class="si ${liveChecks['d'+i]?'dn':''}" ${isToday?`onclick="toggleCheck('d${i}');renderTab('cal')"`:''} style="${!isToday?'cursor:default':''}">
+          <div class="si-ic">${item.ic}</div>
+          <div class="si-inf">
+            <div class="si-t" style="color:#60b0e0">${item.t}</div>
+            <div class="si-a">${esc(item.a)}</div>
+          </div>
+          <div class="chk">${liveChecks['d'+i]?'✓':''}</div>
+        </div>`).join('');
+      html+=`<div style="margin-top:12px;background:#0a1a0a;border:1px solid #2a5a2a;border-radius:10px;padding:12px">
+        <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px">Full exercise plan starts March 28</div>
+        <div style="font-size:11px;color:var(--sub)">These 5 prep days build the habit foundation. Movement is intentionally light. Trust the process.</div>
       </div>`;
     } else {
-      html+=`<div style="background:linear-gradient(135deg,#0a1a18,#081210);border:1px solid #2a5a52;border-radius:10px;padding:12px;margin-bottom:10px">
-        <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">🚶 Movement — Local Area</div>
-        <div style="font-size:12px;color:var(--sub);line-height:1.9">Hotel corridor · Airport terminal · Nearby street<br>
-          <span style="color:var(--green)">Minimum:</span> 15 min walk — always possible<br>
-          Jakkur Lake resumes at home.
-        </div>
+      // March 28+ — full exercise plan
+      if(effectiveMode==='home'){
+        html+=`<div style="background:linear-gradient(135deg,#0a1a18,#081210);border:1px solid #2a5a52;border-radius:10px;padding:12px;margin-bottom:10px">
+          <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">🌊 Jakkur Lake · Yelahanka, Bengaluru</div>
+          <div style="font-size:12px;color:var(--sub);line-height:1.9">
+            Home to lake: <strong style="color:var(--teal)">700m</strong> · Full circle: <strong style="color:var(--teal)">7km</strong><br>
+            <span style="color:var(--green)">Now:</span> Walk there + back = 1.4km<br>
+            <span style="color:var(--gold)">92kg:</span> Quarter circle (3.15km total)<br>
+            <span style="color:var(--orange)">89kg:</span> Half circle (4.9km total)<br>
+            <span style="color:var(--blue)">82kg:</span> Full circle with Iti waiting
+          </div>
+        </div>`;
+      } else {
+        html+=`<div style="background:linear-gradient(135deg,#0a1a18,#081210);border:1px solid #2a5a52;border-radius:10px;padding:12px;margin-bottom:10px">
+          <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">🚶 Movement — Local Area</div>
+          <div style="font-size:12px;color:var(--sub);line-height:1.9">Hotel corridor · Airport terminal · Nearby street<br>
+            <span style="color:var(--green)">Minimum:</span> 15 min walk — always possible<br>
+            Jakkur Lake resumes at home.
+          </div>
+        </div>`;
+      }
+      const activePhases=EX.filter(p=>p.unlockKg===999||S.wt<=p.unlockKg);
+      activePhases.forEach(ph=>{
+        html+=`<div class="c" style="margin-bottom:10px"><span class="pbadge">Phase ${ph.ph}: ${ph.name}</span>
+          <div style="font-size:12px;color:var(--sub);margin-bottom:10px">${ph.desc}</div>`;
+        ph.list.forEach(ex=>{
+          const done=EX_LOG[ex.id];
+          html+=`<div class="ei ${done?'dn':''}" ${isToday?`onclick="toggleEx('${ex.id}');renderTab('cal')"`:''} style="${!isToday?'cursor:default':''}">
+            <div class="ei-ic">${ex.ic}</div>
+            <div class="ei-inf">
+              <div class="ei-n">${esc(ex.n)}</div>
+              <div class="ei-d">${esc(ex.d)}</div>
+              <div class="ei-dur">${ex.dur}</div>
+            </div>
+            <div class="ei-pts">+${ex.pts}</div>
+            <div class="chk">${done?'✓':''}</div>
+          </div>`;
+        });
+        html+='</div>';
+      });
+      // Band guide only on March 28+
+      html+=`<div class="c c-blue"><div class="ctitle">🟡 Band Guide</div>
+        ${BAND_GUIDE.map(b=>`<div class="bg-ex"><div class="bg-name">${b.n}</div><div class="bg-step">${b.steps}</div></div>`).join('')}
       </div>`;
     }
-    // Active phases
-    const activePhases=EX.filter(p=>p.unlockKg===999||S.wt<=p.unlockKg);
-    activePhases.forEach(ph=>{
-      html+=`<div class="c" style="margin-bottom:10px"><span class="pbadge">Phase ${ph.ph}: ${ph.name}</span>
-        <div style="font-size:12px;color:var(--sub);margin-bottom:10px">${ph.desc}</div>`;
-      ph.list.forEach(ex=>{
-        const done=EX_LOG[ex.id];
-        html+=`<div class="ei ${done?'dn':''}" ${isToday?`onclick="toggleEx('${ex.id}');renderTab('cal')"`:''} style="${!isToday?'cursor:default':''}">
-          <div class="ei-ic">${ex.ic}</div>
-          <div class="ei-inf">
-            <div class="ei-n">${esc(ex.n)}</div>
-            <div class="ei-d">${esc(ex.d)}</div>
-            <div class="ei-dur">${ex.dur}</div>
-          </div>
-          <div class="ei-pts">+${ex.pts}</div>
-          <div class="chk">${done?'✓':''}</div>
-        </div>`;
-      });
-      html+='</div>';
-    });
-    // Band guide
-    html+=`<div class="c c-blue"><div class="ctitle">🟡 Band Guide</div>
-      ${BAND_GUIDE.map(b=>`<div class="bg-ex"><div class="bg-name">${b.n}</div><div class="bg-step">${b.steps}</div></div>`).join('')}
-    </div>`;
   }
 
   // ── FOOD TAB ──
   else if(CAL_DAY_TAB==='food'){
     const dayFood=isToday?FOOD_LOG:loadS('dv4-food-'+dateStr,[]);
-    const tk=dayFood.reduce((s,f)=>s+(f.kcal||0),0);
+    const daySupps=isToday?SUPPS:loadS('dv4-supps-'+dateStr,{});
+
+    // Auto-add supplement nutrition if ticked
+    const suppNutrition=[];
+    if(daySupps.trunativ) suppNutrition.push({name:'TruNativ Protein (supplement)',kcal:55,p:13.5,c:1,f:0.5,k:80,ph:60,na:50});
+    if(daySupps.fiber) suppNutrition.push({name:'Fiber / Maize Dextrin (supplement)',kcal:25,p:0,c:6,f:0,k:0,ph:0,na:0});
+
+    const allFood=[...dayFood,...suppNutrition];
+    const tk=allFood.reduce((s,f)=>s+(f.kcal||0),0);
+    const tp=allFood.reduce((s,f)=>s+(f.p||0),0);
+    const tc=allFood.reduce((s,f)=>s+(f.c||0),0);
+    const tf=allFood.reduce((s,f)=>s+(f.f||0),0);
+    const tka=allFood.reduce((s,f)=>s+(f.k||0),0);
+    const tph=allFood.reduce((s,f)=>s+(f.ph||0),0);
+    const tna=allFood.reduce((s,f)=>s+(f.na||0),0);
     const kcalOk=tk<=TARGET_KCAL;
-    html+=`<div class="c" style="text-align:center;background:#0d0b06;border-color:var(--gold)">
-      <div style="font-size:32px;font-weight:700;color:${kcalOk?'var(--gold)':'var(--red)'}">${tk} kcal</div>
-      <div style="font-size:11px;color:var(--muted)">Target: ${TARGET_KCAL} kcal</div>
+
+    // Targets
+    const TGT={p:90,k:2000,ph:800,na:1500};
+
+    html+=`<div class="c" style="background:#0d0b06;border-color:var(--gold)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div>
+          <div style="font-size:30px;font-weight:700;color:${kcalOk?'var(--gold)':'var(--red)'}">${tk} kcal</div>
+          <div style="font-size:11px;color:var(--muted)">Target ${TARGET_KCAL} kcal · ${kcalOk?(TARGET_KCAL-tk)+' remaining':(tk-TARGET_KCAL)+' over'}</div>
+        </div>
+        <div style="text-align:right;font-size:11px;color:var(--sub)">
+          <div style="color:${tp>=TGT.p?'var(--green)':'var(--sub)'}">Protein ${tp.toFixed(1)}g / ${TGT.p}g</div>
+          <div>Carbs ${tc.toFixed(1)}g</div>
+          <div>Fat ${tf.toFixed(1)}g</div>
+        </div>
+      </div>
       <div class="kb"><div class="kf ${kcalOk?'kf-ok':'kf-ov'}" style="width:${Math.min(100,(tk/TARGET_KCAL)*100)}%"></div></div>
-      <div style="font-size:11px;color:var(--muted);margin-top:5px">${kcalOk?(TARGET_KCAL-tk)+' kcal remaining':(tk-TARGET_KCAL)+' kcal over'}</div>
+
+      <!-- Macro bars -->
+      <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        ${[
+          {l:'Protein',v:tp,t:TGT.p,u:'g',c:'var(--green)'},
+          {l:'Carbs',v:tc,t:Math.round(TARGET_KCAL*0.45/4),u:'g',c:'var(--gold)'},
+          {l:'Fat',v:tf,t:Math.round(TARGET_KCAL*0.30/9),u:'g',c:'var(--orange)'},
+        ].map(m=>`<div style="background:var(--p2);border-radius:8px;padding:8px">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px">${m.l}</div>
+          <div style="font-size:14px;font-weight:700;color:${m.v>=m.t?m.c:'var(--text)'}">${m.v.toFixed(1)}g</div>
+          <div style="font-size:9px;color:var(--muted)">/ ${m.t}g</div>
+          <div style="height:4px;background:var(--b1);border-radius:2px;margin-top:4px;overflow:hidden">
+            <div style="height:100%;width:${Math.min(100,m.v/m.t*100)}%;background:${m.c};border-radius:2px"></div>
+          </div>
+        </div>`).join('')}
+      </div>
+
+      <!-- Kidney mineral panel -->
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--b1)">
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+          ${[
+            {l:'Potassium',v:tka,t:TGT.k,u:'mg',warn:tka>TGT.k},
+            {l:'Phosphorus',v:tph,t:TGT.ph,u:'mg',warn:tph>TGT.ph},
+            {l:'Sodium',v:tna,t:TGT.na,u:'mg',warn:tna>TGT.na},
+          ].map(m=>`<div style="background:${m.warn?'#1a0a0a':'var(--p2)'};border:1px solid ${m.warn?'var(--red)':'var(--b1)'};border-radius:8px;padding:7px">
+            <div style="font-size:9px;color:${m.warn?'var(--red)':'var(--muted)'};margin-bottom:2px">${m.l}</div>
+            <div style="font-size:13px;font-weight:700;color:${m.warn?'var(--red)':'var(--text)'}">${m.v}</div>
+            <div style="font-size:9px;color:var(--muted)">/ ${m.t}mg</div>
+            <div style="height:4px;background:var(--b1);border-radius:2px;margin-top:4px;overflow:hidden">
+              <div style="height:100%;width:${Math.min(100,m.v/m.t*100)}%;background:${m.warn?'var(--red)':'var(--teal)'};border-radius:2px"></div>
+            </div>
+          </div>`).join('')}
+        </div>
+        <div style="font-size:9px;color:var(--muted);margin-top:6px">Targets: K &lt;2000mg · P &lt;800mg · Na &lt;1500mg · confirm with Dr. Krishna Reddy</div>
+      </div>
     </div>`;
     if(isToday){
       // Food entry form
@@ -2943,7 +3229,36 @@ function rCalDay(dateStr){
             <div id="food-preview" style="font-size:14px;font-weight:700;color:var(--gold);min-width:70px;text-align:right"></div>
           </div>
         </div>
-        <button class="btn btn-g" onclick="addFoodItem();renderTab('cal')">Add to Log</button>
+        <button class="btn btn-g" onclick="addFoodItem()">Add to Log</button>
+
+        <!-- Custom food entry -->
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--b1)">
+          <div style="font-size:11px;font-weight:700;color:var(--sub);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Add Custom Food → Saves to My Library</div>
+          <input id="cf-name" class="inp inp-sm" type="text" placeholder="Food name" style="margin-bottom:6px"/>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px">
+            <input id="cf-qty" class="inp inp-sm" type="number" placeholder="Qty"/>
+            <select id="cf-unit" class="inp inp-sm">
+              <option value="g">g</option>
+              <option value="ml">ml</option>
+              <option value="pcs">pcs</option>
+              <option value="tbsp">tbsp</option>
+            </select>
+            <input id="cf-kcal" class="inp inp-sm" type="number" placeholder="kcal/100g"/>
+          </div>
+          <div style="font-size:10px;color:var(--sub);margin-bottom:4px">Macros per 100g (optional)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px">
+            <input id="cf-p" class="inp inp-sm" type="number" step="0.1" placeholder="Protein g"/>
+            <input id="cf-c" class="inp inp-sm" type="number" step="0.1" placeholder="Carbs g"/>
+            <input id="cf-f" class="inp inp-sm" type="number" step="0.1" placeholder="Fat g"/>
+          </div>
+          <div style="font-size:10px;color:var(--sub);margin-bottom:4px">Kidney minerals per 100g (optional)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">
+            <input id="cf-k" class="inp inp-sm" type="number" placeholder="K mg"/>
+            <input id="cf-ph" class="inp inp-sm" type="number" placeholder="P mg"/>
+            <input id="cf-na" class="inp inp-sm" type="number" placeholder="Na mg"/>
+          </div>
+          <button class="btn btn-dim" style="font-size:12px;width:100%" onclick="addCustomFood()">Add + Save to My Foods</button>
+        </div>
       </div>`;
     }
     const byMeal={breakfast:[],midMorn:[],lunch:[],evening:[],dinner:[],other:[]};
@@ -2955,7 +3270,7 @@ function rCalDay(dateStr){
       const mKcal=items.reduce((s,f)=>s+f.kcal,0);
       logged+=`<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">${mealNames[key]} · ${mKcal} kcal</div>
         ${items.map(f=>`<div class="food-logged">
-          <div><div class="fl-name">${esc(f.name)}</div><div class="fl-meta">${f.qty}${f.unit} · ${f.time}</div></div>
+          <div><div class="fl-name">${esc(f.name)}</div><div class="fl-meta">${f.qty}${f.unit||''} · ${f.time}${f.p?` · P:${f.p}g`:''}</div></div>
           <div style="display:flex;align-items:center;gap:10px">
             <div class="fl-kcal">${f.kcal}</div>
             ${isToday?`<div class="fl-del" onclick="delFood(${f.idx});renderTab('cal')">✕</div>`:''}
@@ -2963,7 +3278,35 @@ function rCalDay(dateStr){
         </div>`).join('')}
       </div>`;
     });
+    // Show supplement nutrition if any
+    if(suppNutrition.length>0){
+      logged+=`<div style="margin-bottom:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">💊 Supplements (auto)</div>
+        ${suppNutrition.map(s=>`<div class="food-logged" style="opacity:0.8">
+          <div><div class="fl-name">${s.name}</div><div class="fl-meta">Auto from supplement checklist · P:${s.p}g</div></div>
+          <div class="fl-kcal">${s.kcal}</div>
+        </div>`).join('')}
+      </div>`;
+    }
     if(logged) html+=`<div class="c"><div class="ctitle">Food Log</div>${logged}</div>`;
+    // My Foods library
+    if(USER_FOODS.length>0){
+      html+=`<div class="c" style="border-color:var(--b2)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div class="ctitle" style="margin-bottom:0">My Food Library (${USER_FOODS.length})</div>
+          <button onclick="if(confirm('Clear your saved foods?')){USER_FOODS=[];saveS('dv4-user-foods',[]);renderTab('cal')}" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer">Clear</button>
+        </div>
+        <div style="font-size:11px;color:var(--muted)">Your custom foods appear first in search. Tap to delete.</div>
+        ${USER_FOODS.slice(0,5).map((f,i)=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--b1);font-size:11px">
+          <span style="color:var(--text)">${f.n}</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="color:var(--muted)">${f.cal}kcal</span>
+            <span onclick="USER_FOODS.splice(${i},1);saveS('dv4-user-foods',USER_FOODS);renderTab('cal')" style="color:var(--red);cursor:pointer">✕</span>
+          </div>
+        </div>`).join('')}
+        ${USER_FOODS.length>5?`<div style="font-size:10px;color:var(--muted);margin-top:4px">+${USER_FOODS.length-5} more</div>`:''}
+      </div>`;
+    }
   }
 
   // ── NOTES TAB ──
@@ -2976,13 +3319,8 @@ function rCalDay(dateStr){
       <div style="font-size:11px;color:var(--muted);margin-bottom:8px">
         ${isWed?'✦ Wednesday — Mercury day. Write one honest sentence.':'Week of '+getWeekLabel(weekKey)}
       </div>
-      <textarea id="j-entry" class="inp" rows="4" placeholder="One honest sentence about this week. No sugarcoating." style="resize:none;line-height:1.6">${existing?existing.text:''}</textarea>
+      <textarea id="j-entry" class="inp" rows="5" placeholder="One honest sentence about this week. No sugarcoating." style="resize:none;line-height:1.6">${existing?existing.text:''}</textarea>
       <button class="btn btn-g" style="margin-top:8px" onclick="saveJournalEntry();renderTab('cal')">${existing?'Update':'Save This Week'}</button>
-      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--b1)">
-        <div style="font-size:11px;color:var(--sub);margin-bottom:6px">Note to Iti this week</div>
-        <textarea id="j-iti-note" class="inp" rows="2" placeholder="Something for Iti..." style="resize:none">${ITI_MSGS.divy||''}</textarea>
-        <button class="btn btn-dim" style="margin-top:6px;font-size:12px" onclick="const v=document.getElementById('j-iti-note').value;ITI_MSGS.divy=v;saveS('dv4-iti-msgs',ITI_MSGS);flash('Sent to Iti 💝')">Send to Iti 💝</button>
-      </div>
     </div>
     ${Object.entries(JOURNAL.entries).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,5).map(([key,entry])=>`
       <div style="padding:10px 0;border-bottom:1px solid #1a1610">
