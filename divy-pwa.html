@@ -1,0 +1,2912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="theme-color" content="#0a0a0f"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Divy"/>
+<title>Divy's Journey</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+input,textarea{-webkit-user-select:text;user-select:text}
+:root{
+  --bg:#0a0a0f;--p1:#12100a;--p2:#1a1610;--p3:#221e12;
+  --b1:#2a2010;--b2:#3a2e1a;--b3:#4a3e2a;
+  --gold:#d4a843;--gold2:#b8891e;--gold3:#f0c060;
+  --green:#5aac7a;--green2:#3a8c5a;
+  --red:#e06060;--blue:#60a0e0;--orange:#e08840;--teal:#50b0a0;
+  --text:#e8e0d0;--sub:#8a7a5a;--muted:#6a6050;--dim:#4a4030;
+  --ff:'DM Sans',sans-serif;--fs:'Cormorant Garamond',serif;
+  --r:12px;--r2:8px;--r3:20px;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--ff)}
+#app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;position:relative}
+
+/* HEADER */
+#hdr{background:linear-gradient(160deg,#1e1a0a 0%,#0f0d08 100%);border-bottom:1px solid var(--b1);padding:12px 16px 10px;flex-shrink:0;z-index:20}
+.hdr-row{display:flex;justify-content:space-between;align-items:center}
+.hdr-title{font-family:var(--fs);font-size:22px;font-weight:700;color:var(--gold);letter-spacing:.3px}
+.hdr-family{font-size:10px;color:var(--sub);margin-top:1px;letter-spacing:1px}
+.hdr-wt{font-size:24px;font-weight:700;color:var(--gold);text-align:right;line-height:1}
+.hdr-goal{font-size:10px;color:var(--muted);text-align:right;margin-top:2px}
+.mode-row{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.mode-tog{display:flex;background:#150f05;border-radius:8px;padding:3px;gap:3px}
+.mode-tog button{padding:5px 13px;font-size:11px;font-weight:600;border:none;border-radius:5px;font-family:var(--ff);transition:all .2s;cursor:pointer;color:var(--muted);background:transparent}
+.mode-tog .mhome{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0a0a0f}
+.mode-tog .mintl{background:linear-gradient(135deg,#1a2a4a,#0a1a2a);color:var(--blue)}
+.hdr-date{font-size:11px;color:var(--sub);font-weight:600}
+.prog-wrap{margin-top:8px}
+.prog-row{display:flex;justify-content:space-between;margin-bottom:3px;font-size:10px;color:var(--muted)}
+.prog-pct{color:var(--green);font-weight:700;font-size:11px}
+.prog-bar{height:5px;background:var(--b1);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--green));border-radius:3px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+
+/* TABS */
+#tabs{display:flex;background:#0d0b07;border-bottom:1px solid var(--b1);overflow-x:auto;flex-shrink:0;scrollbar-width:none}
+#tabs::-webkit-scrollbar{display:none}
+.tb{padding:10px 12px;font-size:11px;font-weight:600;color:var(--muted);border:none;background:none;border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;font-family:var(--ff);transition:all .2s;flex-shrink:0}
+.tb.on{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* BODY */
+#body{flex:1;overflow-y:auto;padding:14px;padding-bottom:30px;scrollbar-width:none}
+#body::-webkit-scrollbar{display:none}
+
+/* CARDS */
+.c{background:var(--p1);border:1px solid var(--b1);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.c-gold{border-color:var(--gold);background:#0d0b06}
+.c-green{border-color:var(--green2);background:#0a140e}
+.c-blue{border-color:#2a4a6a;background:#080d12}
+.ctitle{font-size:11px;font-weight:700;color:var(--gold);margin-bottom:10px;text-transform:uppercase;letter-spacing:1.5px}
+
+/* STAT GRID */
+.sg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.sb{background:var(--p1);border:1px solid var(--b1);border-radius:10px;padding:11px 8px;text-align:center}
+.sv{font-size:20px;font-weight:700}
+.sl{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* BUTTONS */
+.btn{border:none;border-radius:var(--r2);padding:11px 16px;font-size:13px;font-weight:600;cursor:pointer;width:100%;margin-top:8px;font-family:var(--ff);transition:all .2s}
+.btn:active{transform:scale(.97)}
+.btn-g{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0a0a0f}
+.btn-pk{background:linear-gradient(135deg,#8b3a52,#6b2a3a);color:#fff}
+.btn-dim{background:var(--b1);color:var(--text)}
+.btn-sm{width:auto;padding:7px 13px;font-size:12px;margin-top:0}
+.btn-teal{background:linear-gradient(135deg,#2a6a60,#1a4a42);color:#a0e0d8}
+
+/* INPUTS */
+.inp{background:var(--p2);border:1px solid var(--b2);border-radius:var(--r2);padding:10px 12px;color:var(--text);font-size:13px;width:100%;outline:none;font-family:var(--ff);transition:border-color .2s}
+.inp:focus{border-color:var(--gold)}
+.inp-sm{padding:8px 10px;font-size:12px}
+
+/* CYCLE DOTS */
+.cd-row{display:flex;gap:5px;margin-bottom:10px}
+.cd{flex:1;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:1px solid var(--b1);transition:all .3s}
+.cd-d{background:#1a4a2a;border-color:var(--green2);color:var(--green)}
+.cd-n{background:var(--gold);border-color:var(--gold);color:#0a0a0f}
+.cd-f{background:var(--p2);color:var(--dim)}
+
+/* SCHED */
+.si{display:flex;align-items:flex-start;gap:11px;padding:11px 12px;border-radius:10px;margin-bottom:7px;cursor:pointer;border:1px solid var(--b1);background:var(--p1);transition:all .2s}
+.si.dn{background:#09160d;border-color:var(--green2)}
+.si-ic{font-size:20px;margin-top:1px;flex-shrink:0}
+.si-inf{flex:1}
+.si-t{font-size:10px;margin-bottom:1px;font-weight:600}
+.si-a{font-size:13px;color:var(--text)}
+.si.dn .si-a{color:#7ac49a}
+.chk{width:26px;height:26px;border-radius:50%;border:2px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--green);flex-shrink:0;margin-top:2px;transition:all .2s}
+.si.dn .chk{background:#1a4a2a;border-color:var(--green)}
+
+/* EXERCISE */
+.ei{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:10px;margin-bottom:7px;cursor:pointer;border:1px solid var(--b1);background:var(--p1);transition:all .2s}
+.ei.dn{background:#09160d;border-color:var(--green2)}
+.ei.lk{opacity:.4;cursor:default}
+.ei-ic{font-size:22px;flex-shrink:0}
+.ei-inf{flex:1}
+.ei-n{font-size:13px;font-weight:600}
+.ei.dn .ei-n{color:var(--green)}
+.ei-d{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4}
+.ei-dur{font-size:10px;color:var(--sub);margin-top:3px}
+.ei-pts{font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;margin-right:4px}
+
+/* BAND GUIDE */
+.bg-ex{background:var(--p2);border-radius:8px;padding:10px 12px;margin-bottom:7px;border-left:3px solid var(--teal)}
+.bg-name{font-size:12px;font-weight:700;color:var(--teal);margin-bottom:3px}
+.bg-step{font-size:11px;color:var(--sub);line-height:1.6}
+
+/* FOOD */
+.food-search{position:relative;margin-bottom:10px}
+.food-results{position:absolute;top:100%;left:0;right:0;background:var(--p2);border:1px solid var(--b2);border-radius:var(--r2);z-index:50;max-height:200px;overflow-y:auto;display:none}
+.food-results.show{display:block}
+.fr-item{padding:10px 12px;cursor:pointer;border-bottom:1px solid var(--b1);transition:background .15s}
+.fr-item:hover{background:var(--b1)}
+.fr-name{font-size:13px}
+.fr-cal{font-size:11px;color:var(--gold)}
+.food-logged{background:var(--p2);border-radius:var(--r2);padding:10px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.fl-name{font-size:13px}
+.fl-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.fl-kcal{font-size:14px;font-weight:700;color:var(--gold)}
+.fl-del{font-size:16px;cursor:pointer;color:var(--muted);padding:4px}
+
+/* WATER */
+.water-wrap{display:flex;flex-direction:column;align-items:center;padding:10px 0}
+.water-bottle{position:relative;width:100px;height:180px;margin:0 auto 16px}
+.wb-outer{width:100%;height:100%;border:2.5px solid var(--teal);border-radius:20px 20px 14px 14px;overflow:hidden;position:relative;background:rgba(10,20,20,.8)}
+.wb-fill{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(30,160,140,.9),rgba(80,200,180,.6));transition:height .5s cubic-bezier(.4,0,.2,1);border-radius:0 0 11px 11px}
+.wb-lines{position:absolute;inset:0;display:flex;flex-direction:column-reverse;justify-content:space-around;padding:8px 0;pointer-events:none}
+.wb-line{height:1px;background:rgba(80,200,180,.15);margin:0 8px}
+.wb-label{position:absolute;right:-44px;font-size:10px;color:var(--teal);font-weight:600;font-family:var(--ff)}
+.water-info{text-align:center;margin-bottom:12px}
+.water-ml{font-size:28px;font-weight:700;color:var(--teal)}
+.water-target{font-size:12px;color:var(--sub);margin-top:2px}
+.water-btns{display:flex;gap:10px;width:100%;justify-content:center}
+.water-add{background:linear-gradient(135deg,#1a5a50,#0a3a32);border:1px solid var(--teal);color:var(--teal);border-radius:10px;padding:12px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--ff);transition:all .2s}
+.water-add:active{transform:scale(.95)}
+.water-reset{background:var(--b1);border:none;color:var(--muted);border-radius:10px;padding:12px 16px;font-size:12px;cursor:pointer;font-family:var(--ff)}
+.water-drops{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+.wd{width:24px;height:24px;border-radius:50% 50% 40% 60%/50% 50% 60% 40%;border:1.5px solid var(--teal);transition:all .3s}
+.wd.full{background:var(--teal)}
+
+/* CALENDAR */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:10px}
+.cal-day-hdr{font-size:10px;color:var(--muted);text-align:center;padding:4px 0;font-weight:700}
+.cal-day{height:36px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;cursor:pointer;position:relative;transition:all .2s;border:1px solid transparent}
+.cal-day.empty{background:transparent;cursor:default}
+.cal-day.future{background:var(--p2);color:var(--dim)}
+.cal-day.today{background:var(--gold);color:#0a0a0f;font-weight:700}
+.cal-day.done{background:#1a4a2a;border-color:var(--green2);color:var(--green)}
+.cal-day.skipped{background:#2a0a0a;border-color:#5a2020;color:var(--red)}
+.cal-day.start{background:var(--p3);border-color:var(--gold);color:var(--gold)}
+.cal-day.prep{background:#0a1a2a;border-color:#4a90d0;color:#60b0e0}
+.cal-day.prep-done{background:#0a2a1a;border-color:#3a8a5a;color:#50a070}
+.cal-dot{position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--gold)}
+
+/* MILESTONES */
+.ms{background:var(--p1);border:1px solid var(--b1);border-radius:var(--r);padding:14px;margin-bottom:9px;transition:all .3s}
+.ms.ms-d{background:#09160d;border-color:var(--green2)}
+.ms.ms-c{background:#120e04;border-color:var(--gold)}
+.ms-row{display:flex;justify-content:space-between;align-items:flex-start}
+.ms-kg{font-size:20px;font-weight:700}
+.ms-sub{font-size:10px;color:var(--muted);margin-top:2px}
+.ms-prog{margin-top:10px}
+.ms-plbl{display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px}
+.ms-pbar{height:8px;background:var(--b1);border-radius:4px;overflow:hidden}
+.ms-pfill{height:100%;background:linear-gradient(90deg,var(--gold),var(--green));border-radius:4px;transition:width .6s}
+
+/* ITI */
+.iti-hero{background:linear-gradient(135deg,#1a0810,#120a0e);border:1px solid #6b2a3a;border-radius:var(--r);padding:20px;text-align:center;margin-bottom:14px}
+.iti-opt{background:var(--p2);border:1px solid var(--b2);border-radius:var(--r2);padding:12px;margin-bottom:8px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px}
+.iti-opt.sel{background:#1a120a;border-color:var(--gold)}
+.iti-opt-ic{font-size:24px;flex-shrink:0}
+.iti-opt-txt{flex:1}
+.iti-opt-name{font-size:13px;font-weight:600}
+.iti-opt-desc{font-size:11px;color:var(--muted);margin-top:2px}
+.iti-opt-chk{font-size:18px;color:var(--gold)}
+
+/* NOTIF */
+.notif-bar{background:linear-gradient(135deg,#1a1a06,#12120a);border:1px solid var(--gold);border-radius:10px;padding:11px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+
+/* TOAST */
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--gold);color:#0a0a0f;padding:10px 22px;border-radius:20px;font-size:13px;font-weight:700;z-index:999;opacity:0;transition:all .35s;white-space:nowrap;pointer-events:none;font-family:var(--ff)}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* POPUP */
+#pop{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;z-index:500;padding:20px}
+#pop.on{display:flex}
+.pop-box{background:linear-gradient(160deg,#1e1a06,#0f0d08);border:2px solid var(--gold);border-radius:var(--r3);padding:32px;text-align:center;max-width:320px;width:100%;animation:popIn .4s ease}
+@keyframes popIn{from{transform:scale(.6) rotate(-3deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+
+/* WEIGH BOX */
+.wb{background:#140f04;border:1px solid var(--gold);border-radius:var(--r2);padding:12px;margin-bottom:10px}
+
+/* PHASE BADGE */
+.pbadge{display:inline-block;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0a0a0f;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;margin-bottom:8px}
+.lkbadge{display:inline-block;background:var(--b1);color:var(--muted);font-size:10px;font-weight:600;padding:3px 10px;border-radius:10px;margin-bottom:8px}
+
+/* HOTEL BANNER */
+.htl-bar{background:#120a04;border:1px solid var(--gold);border-radius:10px;padding:10px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+
+/* DIVIDER */
+.dvd{height:1px;background:var(--b1);margin:10px 0}
+
+/* KCAL BAR */
+.kb{height:10px;background:var(--b1);border-radius:5px;overflow:hidden;margin-top:6px}
+.kf{height:100%;border-radius:5px;transition:width .4s}
+.kf-ok{background:linear-gradient(90deg,var(--green),var(--gold))}
+.kf-ov{background:var(--red)}
+
+/* DROPDOWN */
+.dd-wrap{position:relative;margin-bottom:8px}
+.dd-menu{position:absolute;top:100%;left:0;right:0;background:var(--p2);border:1px solid var(--b2);border-radius:var(--r2);z-index:50;max-height:220px;overflow-y:auto;display:none;scrollbar-width:none}
+.dd-menu.open{display:block}
+.dd-item{padding:10px 12px;cursor:pointer;border-bottom:1px solid var(--b1);transition:background .15s}
+.dd-item:active{background:var(--b1)}
+.dd-n{font-size:13px;color:var(--text)}
+.dd-c{font-size:11px;color:var(--gold);margin-top:2px}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="hdr">
+    <div class="hdr-row">
+      <div>
+        <div class="hdr-title">Divy's Journey</div>
+        <div class="hdr-family">Iti · Chittu · and you</div>
+      </div>
+      <div>
+        <div class="hdr-wt" id="h-wt">98 kg</div>
+        <div class="hdr-goal">Goal: 75 kg</div>
+      </div>
+    </div>
+    <div class="mode-row">
+      <div class="mode-tog">
+        <button id="mb-h" class="mhome" onclick="setMode('home')">🏠 Home</button>
+        <button id="mb-t" onclick="setMode('hotel')">🏨 Hotel</button>
+        <button id="mb-i" onclick="setMode('intl')">✈️ Intl</button>
+      </div>
+      <div class="hdr-date" id="h-date"></div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-row">
+        <span>98 kg</span>
+        <span class="prog-pct" id="h-pct">0%</span>
+        <span>75 kg</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="h-pb" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div id="tabs">
+    <button class="tb on" onclick="goTab('home')">🏠 Home</button>
+    <button class="tb" onclick="goTab('cal')">📅 Calendar</button>
+    <button class="tb" onclick="goTab('body')">📊 Body</button>
+    <button class="tb" onclick="goTab('goals')">🎯 Goals</button>
+    <button class="tb" onclick="goTab('rewards')">🎁 Rewards</button>
+  </div>
+
+  <div id="body"></div>
+</div>
+
+<!-- FLOATING CHAT BUTTON -->
+<button id="chat-btn" onclick="toggleChat()" style="
+  position:fixed;bottom:24px;right:20px;z-index:400;
+  width:54px;height:54px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  border:none;cursor:pointer;
+  box-shadow:0 4px 20px rgba(212,168,67,0.5);
+  font-size:24px;display:flex;align-items:center;justify-content:center;
+  transition:all .3s;font-family:var(--ff)
+">✦</button>
+
+<!-- CHAT PANEL -->
+<div id="chat-panel" style="
+  position:fixed;inset:0;z-index:450;
+  background:rgba(0,0,0,.85);
+  display:none;flex-direction:column;
+  ">
+  <div style="
+    position:absolute;bottom:0;left:0;right:0;
+    max-width:480px;margin:0 auto;
+    background:linear-gradient(160deg,#1a1a0a,#0f0d08);
+    border-top:1px solid var(--gold);border-radius:20px 20px 0 0;
+    display:flex;flex-direction:column;
+    height:82vh;
+    ">
+    <!-- Chat header -->
+    <div style="padding:14px 16px 10px;border-bottom:1px solid var(--b1);display:flex;justify-content:space-between;align-items:center;flex-shrink:0">
+      <div>
+        <div style="font-family:var(--fs);font-size:18px;color:var(--gold)">✦ Divy's Companion</div>
+        <div style="font-size:10px;color:var(--sub);margin-top:1px">Knows your chart · your meds · your journey</div>
+      </div>
+      <button onclick="toggleChat()" style="background:var(--b1);border:none;color:var(--muted);border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;font-family:var(--ff)">✕ Close</button>
+    </div>
+    <!-- Messages -->
+    <div id="chat-msgs" style="flex:1;overflow-y:auto;padding:14px;scrollbar-width:none;display:flex;flex-direction:column;gap:10px"></div>
+    <!-- Input -->
+    <div style="padding:12px;border-top:1px solid var(--b1);display:flex;gap:8px;flex-shrink:0;background:#0f0d08">
+      <textarea id="chat-input" placeholder="Talk to me..." rows="2" style="
+        flex:1;background:var(--p2);border:1px solid var(--b2);border-radius:10px;
+        padding:10px 12px;color:var(--text);font-size:13px;font-family:var(--ff);
+        resize:none;outline:none;line-height:1.5;
+        -webkit-user-select:text;user-select:text
+      " onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}"></textarea>
+      <button onclick="sendChat()" id="chat-send" style="
+        background:linear-gradient(135deg,var(--gold),var(--gold2));
+        border:none;border-radius:10px;padding:0 16px;
+        color:#0a0a0f;font-size:18px;cursor:pointer;flex-shrink:0
+      ">↑</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<div id="pop">
+  <div class="pop-box">
+    <div style="font-size:60px;margin-bottom:12px">🏆</div>
+    <div style="font-family:var(--fs);font-size:24px;color:var(--gold);margin-bottom:6px">MILESTONE!</div>
+    <div style="font-size:30px;font-weight:700;color:var(--green);margin-bottom:10px" id="pop-kg"></div>
+    <div style="font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:20px">
+      Divy — you did it.<br>Ask Iti to reveal your reward. 💝
+    </div>
+    <button class="btn btn-g" onclick="closePop(true)">See My Reward 🎁</button>
+    <button class="btn btn-dim" style="margin-top:8px;font-size:12px" onclick="closePop(false)">Close</button>
+  </div>
+</div>
+
+<script>
+// ═══════════ CONSTANTS ═══════════
+const SW=98,GW=75;
+const START_DATE='2026-03-28';
+const PREP_START='2026-03-23';
+
+const PREP_DAYS={
+  '2026-03-23':{
+    label:'Prep Day 1 · Orientation',
+    theme:'Mercury energy — plan, orient, begin.',
+    movement:[
+      {t:'5:00 AM',a:'Wake up. Warm ginger water. No rush.',ic:'🌅'},
+      {t:'5:20 AM',a:'15 min gentle walk — any direction, any pace. Just go outside.',ic:'🚶'},
+      {t:'7:00 AM',a:'Breakfast as normal. Start meal timing today.',ic:'🍳'},
+      {t:'Evening',a:'Stock the kitchen — makhana, oats sachets, check compression socks.',ic:'🛒'},
+      {t:'9:30 PM',a:'Lights out. Phone down. Sleep — establish the anchor tonight.',ic:'😴'},
+    ]
+  },
+  '2026-03-24':{
+    label:'Prep Day 2 · Sleep Anchor',
+    theme:'First 5:00 AM wake. Establish the cue.',
+    movement:[
+      {t:'5:00 AM',a:'Wake at 5:00 AM — this is the most important thing today.',ic:'🌅'},
+      {t:'5:10 AM',a:'Breathwork — 4 count in, 6 count out. 5 min. First time.',ic:'🧘'},
+      {t:'5:20 AM',a:'20 min walk. Easy pace. Feel the morning air.',ic:'🚶'},
+      {t:'7:00 AM',a:'Breakfast at 7:00 AM sharp. Start the meal clock.',ic:'🍳'},
+      {t:'9:30 PM',a:'Lights out. Same time every night. This is the most important habit.',ic:'😴'},
+    ]
+  },
+  '2026-03-25':{
+    label:'Prep Day 3 · Wednesday Reset',
+    theme:'First Mercury day. Set the weekly tone.',
+    movement:[
+      {t:'5:00 AM',a:'Rise. Ginger water.',ic:'🌅'},
+      {t:'5:10 AM',a:'Breathwork — 5 min. Getting easier.',ic:'🧘'},
+      {t:'5:20 AM',a:'25 min walk — slightly brisker today.',ic:'🚶'},
+      {t:'6:00 AM',a:'5 min resistance band stretch — chest pull-apart + seated row only.',ic:'🟡'},
+      {t:'Evening',a:'Wednesday habit: review tomorrow\'s plan. Prep is working.',ic:'📋'},
+      {t:'9:30 PM',a:'Lights out. Third night. The body is learning.',ic:'😴'},
+    ]
+  },
+  '2026-03-26':{
+    label:'Prep Day 4 · Build',
+    theme:'Adding rope. Body getting the signal.',
+    movement:[
+      {t:'5:00 AM',a:'Rise. Ginger water.',ic:'🌅'},
+      {t:'5:10 AM',a:'Breathwork — 5 min.',ic:'🧘'},
+      {t:'5:20 AM',a:'30 min walk — walk to Jakkur Lake area and back.',ic:'🚶'},
+      {t:'6:00 AM',a:'Jumping rope — 1 set of 2 min, light pace. First time.',ic:'🪢'},
+      {t:'6:10 AM',a:'Band stretch — full 3 exercises, 1 round only.',ic:'🟡'},
+      {t:'9:30 PM',a:'Lights out. Four nights consistent. The anchor is set.',ic:'😴'},
+    ]
+  },
+  '2026-03-27':{
+    label:'Prep Day 5 · Full Rehearsal',
+    theme:'Saturn day. Run the full Day 1 protocol as a dry run.',
+    movement:[
+      {t:'5:00 AM',a:'Rise. Ginger water. Full protocol starts.',ic:'🌅'},
+      {t:'5:10 AM',a:'Breathwork — 5 min.',ic:'🧘'},
+      {t:'5:20 AM',a:'35 min walk — Jakkur Lake area.',ic:'🚶'},
+      {t:'6:00 AM',a:'Jumping rope — 2 sets of 2 min. Rest 1 min between.',ic:'🪢'},
+      {t:'6:15 AM',a:'Band circuit — 3 exercises, 2 rounds.',ic:'🟡'},
+      {t:'6:30 AM',a:'Surya Arghya — water to the Sun. First time. Mark this moment.',ic:'☀️'},
+      {t:'9:30 PM',a:'Lights out. Tomorrow March 28 — the real journey begins. Sleep well, Divy.',ic:'😴'},
+    ]
+  },
+};
+const MILESTONES=[95,92,89,85,82,79,75];
+
+// FOOD DATABASE (per 100g raw / 100ml liquid)
+const FOOD_DB=[
+  // Grains & Bread
+  {n:'Besan (Gram Flour)',cal:387,u:'g',cat:'Grain'},
+  {n:'Oats (Rolled, raw)',cal:389,u:'g',cat:'Grain'},
+  {n:'Basmati Rice (raw)',cal:349,u:'g',cat:'Grain'},
+  {n:'Whole Wheat Atta (raw)',cal:340,u:'g',cat:'Grain'},
+  {n:'Poha (raw)',cal:333,u:'g',cat:'Grain'},
+  {n:'Suji / Semolina (raw)',cal:360,u:'g',cat:'Grain'},
+  // Pulses
+  {n:'Moong Dal (raw)',cal:347,u:'g',cat:'Dal'},
+  {n:'Masoor Dal (raw)',cal:353,u:'g',cat:'Dal'},
+  {n:'Chana Dal (raw)',cal:364,u:'g',cat:'Dal'},
+  {n:'Soya Chunks (dry)',cal:336,u:'g',cat:'Protein'},
+  // Protein
+  {n:'Egg (whole, raw)',cal:155,u:'g',cat:'Protein'},
+  {n:'Egg White (raw)',cal:52,u:'g',cat:'Protein'},
+  {n:'Tofu (raw)',cal:76,u:'g',cat:'Protein'},
+  {n:'Chicken Breast (raw)',cal:120,u:'g',cat:'Protein'},{n:'Goat Mutton (raw, boneless)',cal:109,u:'g',cat:'Protein'},
+  {n:'Paneer (raw)',cal:265,u:'g',cat:'Protein'},
+  // Vegetables
+  {n:'Lauki / Bottle Gourd (raw)',cal:14,u:'g',cat:'Veg'},
+  {n:'Parwal (raw)',cal:20,u:'g',cat:'Veg'},
+  {n:'Palak / Spinach (raw)',cal:23,u:'g',cat:'Veg'},
+  {n:'Methi Leaves (raw)',cal:49,u:'g',cat:'Veg'},
+  {n:'Bhindi / Okra (raw)',cal:33,u:'g',cat:'Veg'},
+  {n:'Capsicum (raw)',cal:31,u:'g',cat:'Veg'},
+  {n:'Carrot (raw)',cal:41,u:'g',cat:'Veg'},
+  {n:'Cucumber (raw)',cal:15,u:'g',cat:'Veg'},
+  {n:'Onion (raw)',cal:40,u:'g',cat:'Veg'},
+  {n:'Tomato (raw)',cal:18,u:'g',cat:'Veg'},
+  {n:'Sweet Potato (raw)',cal:86,u:'g',cat:'Veg'},
+  {n:'Karela / Bitter Gourd (raw)',cal:17,u:'g',cat:'Veg'},
+  // Fruits
+  {n:'Banana (raw)',cal:89,u:'g',cat:'Fruit'},
+  {n:'Papaya (raw)',cal:43,u:'g',cat:'Fruit'},
+  {n:'Watermelon (raw)',cal:30,u:'g',cat:'Fruit'},
+  // Dairy & Fats
+  {n:'Curd / Yogurt (plain)',cal:61,u:'g',cat:'Dairy'},
+  {n:'Ghee',cal:900,u:'g',cat:'Fat'},
+  {n:'Mustard Oil',cal:884,u:'ml',cat:'Fat'},
+  {n:'Coconut Oil',cal:862,u:'ml',cat:'Fat'},
+  // Snacks
+  {n:'Makhana / Fox Nuts',cal:347,u:'g',cat:'Snack'},
+  // Spices & Condiments (negligible cal but tracked)
+  {n:'Green Chutney (coriander)',cal:50,u:'ml',cat:'Condiment'},
+  {n:'Ginger (raw)',cal:80,u:'g',cat:'Spice'},
+  {n:'Turmeric (raw)',cal:354,u:'g',cat:'Spice'},
+  // Liquids
+  {n:'Water',cal:0,u:'ml',cat:'Liquid'},
+  {n:'Green Tea (brewed)',cal:1,u:'ml',cat:'Liquid'},
+  {n:'Coconut Water',cal:19,u:'ml',cat:'Liquid'},
+  {n:'Ginger Water',cal:3,u:'ml',cat:'Liquid'},
+  {n:'Ajwain Water',cal:2,u:'ml',cat:'Liquid'},
+];
+
+const TARGET_KCAL=1300;
+const WATER_TARGET=3500;
+
+// SCHEDULES
+const SCH_HOME=[
+  {t:'5:00 AM',a:'Rise — warm ginger or ajwain water',ic:'🌅',c:'r'},
+  {t:'5:10 AM',a:'Breathwork — 4 count in, 6 count out, 5 min',ic:'🧘',c:'e'},
+  {t:'5:20 AM',a:'Morning movement — Exercise tab',ic:'🚶',c:'e'},
+  {t:'6:30 AM',a:'Surya Arghya — water offering to the Sun',ic:'☀️',c:'s'},
+  {t:'7:00 AM',a:'Breakfast — see Food tab',ic:'🍳',c:'m'},
+  {t:'7:15 AM',a:'Omnacortil 5mg + MetXL 50mg — after breakfast',ic:'💊',c:'med'},
+  {t:'8:00 AM',a:'Mycofit 360mg',ic:'💊',c:'med'},
+  {t:'9:00 AM',a:'Takfa 4mg',ic:'💊',c:'med'},
+  {t:'10:30 AM',a:'Mid-morning — makhana or 1 fruit',ic:'🥜',c:'m'},
+  {t:'1:00 PM',a:'Lunch — TruNativ mixed in + all supplements (Ubiquinol · Omega-3 · D3 alt days · Magnesium)',ic:'🍱',c:'m'},
+  {t:'4:30 PM',a:'Evening snack — makhana or 1 banana',ic:'🍌',c:'m'},
+  {t:'6:30 PM',a:'MetXL 25mg',ic:'💊',c:'med'},
+  {t:'7:00 PM',a:'Dinner — lightest meal, done by 7:30 PM',ic:'🥗',c:'m'},
+  {t:'8:00 PM',a:'Mycofit 360mg + Atorva 10mg + Telma 40mg',ic:'💊',c:'med'},
+  {t:'8:30 PM',a:'Wind down — no screens',ic:'📵',c:'r'},
+  {t:'8:30 PM',a:'Lie down with Iti — rest',ic:'🛏️',c:'r'},
+  {t:'9:00 PM',a:'Takfa 4mg',ic:'💊',c:'med'},
+  {t:'9:30 PM',a:'Sleep',ic:'😴',c:'r'},
+];
+
+const SCH_HOTEL=[
+  {t:'5:00 AM',a:'Rise — room kettle hot water',ic:'🌅',c:'r'},
+  {t:'5:10 AM',a:'Breathwork in room — 4 in, 6 out, 5 min',ic:'🧘',c:'e'},
+  {t:'5:20 AM',a:'Hotel corridor / treadmill 3.5kmph / outdoor 30 min',ic:'🚶',c:'e'},
+  {t:'6:30 AM',a:'Surya Arghya — face east window, water in cupped hands',ic:'☀️',c:'s'},
+  {t:'7:00 AM',a:'Buffet: 2 boiled eggs + plain yogurt + fruit only',ic:'🍳',c:'m'},
+  {t:'7:15 AM',a:'Omnacortil 5mg + MetXL 50mg — after breakfast',ic:'💊',c:'med'},
+  {t:'8:00 AM',a:'Mycofit 360mg — from pill organiser',ic:'💊',c:'med'},
+  {t:'9:00 AM',a:'Takfa 4mg',ic:'💊',c:'med'},
+  {t:'10:30 AM',a:'Packed makhana or hotel fruit only',ic:'🥜',c:'m'},
+  {t:'1:00 PM',a:'Dal + rice/roti at restaurant — no extra salt + all supplements with meal',ic:'🍱',c:'m'},
+  {t:'4:30 PM',a:'Plain oats with room kettle hot water',ic:'🌾',c:'m'},
+  {t:'6:30 PM',a:'MetXL 25mg',ic:'💊',c:'med'},
+  {t:'7:00 PM',a:'Dinner: steamed or grilled only — done by 7:30 PM',ic:'🥗',c:'m'},
+  {t:'8:00 PM',a:'Mycofit 360mg + Atorva 10mg + Telma 40mg',ic:'💊',c:'med'},
+  {t:'8:30 PM',a:'Wind down — room dark and cool',ic:'📵',c:'r'},
+  {t:'9:00 PM',a:'Takfa 4mg',ic:'💊',c:'med'},
+  {t:'9:30 PM',a:'Sleep — same time as home',ic:'😴',c:'r'},
+];
+
+const SCH_INTL=[
+  {t:'5:00 AM',a:'Rise — hotel room water. Adjust for time zone — keep schedule.',ic:'🌅',c:'r'},
+  {t:'5:10 AM',a:'Breathwork — 4 in, 6 out, 5 min. Grounds you in any timezone.',ic:'🧘',c:'e'},
+  {t:'5:20 AM',a:'Hotel gym or corridor walk 30 min. Treadmill 3.5kmph.',ic:'🚶',c:'e'},
+  {t:'6:30 AM',a:'Surya Arghya — face east window wherever you are.',ic:'☀️',c:'s'},
+  {t:'7:00 AM',a:'Breakfast: 2–3 boiled or scrambled eggs + plain yogurt + fruit',ic:'🍳',c:'m'},
+  {t:'7:15 AM',a:'Omnacortil 5mg + MetXL 50mg — after breakfast',ic:'💊',c:'med'},
+  {t:'8:00 AM',a:'Mycofit 360mg — local time',ic:'💊',c:'med'},
+  {t:'9:00 AM',a:'Takfa 4mg — local time',ic:'💊',c:'med'},
+  {t:'10:30 AM',a:'Mid-morning: packed makhana or local fruit',ic:'🥜',c:'m'},
+  {t:'1:00 PM',a:'Lunch: grilled chicken or goat mutton + salad + tofu if available + all supplements with meal',ic:'🍱',c:'m'},
+  {t:'4:30 PM',a:'Snack: plain oats from sachet or fruit',ic:'🌾',c:'m'},
+  {t:'6:30 PM',a:'MetXL 25mg — local time',ic:'💊',c:'med'},
+  {t:'7:00 PM',a:'Dinner: clear soup + grilled protein + steamed veg. Done by 7:30.',ic:'🥗',c:'m'},
+  {t:'8:00 PM',a:'Mycofit 360mg + Atorva 10mg + Telma 40mg — local time',ic:'💊',c:'med'},
+  {t:'8:30 PM',a:'Wind down. Call Iti and Chittu.',ic:'📵',c:'r'},
+  {t:'9:00 PM',a:'Takfa 4mg — local time',ic:'💊',c:'med'},
+  {t:'9:30 PM',a:'Sleep. Adjust to local time but protect 7.5 hrs always.',ic:'😴',c:'r'},
+];
+
+const INTL_MEALS=[
+  {key:'breakfast',label:'Breakfast',time:'7:00 AM',target:300,icon:'🍳',tip:'2–3 boiled or scrambled eggs + plain yogurt. Skip bread, pastries, cereal entirely. Fruit is fine.'},
+  {key:'midMorn',label:'Mid Morning',time:'10:30 AM',target:100,icon:'🥜',tip:'Packed makhana from India. Local fruit if unavailable. Nothing from minibar.'},
+  {key:'lunch',label:'Lunch',time:'1:00 PM',target:450,icon:'🍗',tip:'Grilled chicken breast (150-180g raw) or goat mutton + salad + tofu if available. Dressing always on the side. No creamy sauces.'},
+  {key:'evening',label:'Evening',time:'4:30 PM',target:100,icon:'🌾',tip:'Plain oats sachet with hot water from room kettle. Carry 4–5 sachets from India. Emergency backup always.'},
+  {key:'dinner',label:'Dinner',time:'7:00 PM',target:380,icon:'🥗',tip:'Clear soup (not cream based) + grilled protein + steamed vegetables. No pasta, no heavy sauces, no cheese portions. Done by 7:30 PM.'},
+];
+
+// EXERCISE PHASES
+const EX=[
+  {ph:1,name:'Foundation',unlockKg:999,desc:'Build the base. Movement every day.',
+   list:[
+    {id:'breathwork',n:'Breathwork',ic:'🧘',d:'Sit comfortably. 4 count inhale through nose. 6 count exhale through mouth. 5 min. Every morning without fail.',dur:'5 min',pts:5},
+    {id:'walk_lake',n:'Morning Walk — To Lake & Back',ic:'🚶',d:'Walk from home to Jakkur Lake (700m) and return. 1.4km total. Brisk but conversational pace. No rushing.',dur:'20 min',pts:15},
+    {id:'rope',n:'Jumping Rope',ic:'🪢',d:'Light continuous pace. 3 sets of 2 min. Rest 1 full min between sets. Stop immediately if breathless.',dur:'10 min',pts:10},
+    {id:'band_stretch',n:'Resistance Band Stretch Circuit',ic:'🟡',d:'See Band Guide below. Full body sequence, 3 rounds. Morning or evening.',dur:'15 min',pts:10},
+    {id:'eve_walk',n:'Evening Walk',ic:'🌇',d:'15 min neighborhood walk after dinner prep. Easy pace. Just move.',dur:'15 min',pts:10},
+   ]},
+  {ph:2,name:'Lake Circuit',unlockKg:92,desc:'Quarter lake added. Cycling begins.',
+   list:[
+    {id:'lake_q',n:'Lake — Quarter Circuit',ic:'🌊',d:'Walk to Jakkur Lake (700m) + quarter circle (1.75km) + return (700m) = 3.15km total. Enjoy the water.',dur:'40 min',pts:25},
+    {id:'cycle_20',n:'Cycling — 20 min',ic:'🚴',d:'Flat surface only. Easy pace RPE 4/10. Use either of your cycles. Iti joins you by car at the far point and you return together.',dur:'20 min',pts:20},
+    {id:'band_cir',n:'Band Circuit — Seated',ic:'🟡',d:'Seated rows + pull-aparts + clamshells. 3 rounds, 12 reps each. See Band Guide.',dur:'20 min',pts:15},
+   ]},
+  {ph:3,name:'Half Lake',unlockKg:89,desc:'Half circuit. Kettlebell begins.',
+   list:[
+    {id:'lake_h',n:'Lake — Half Circuit',ic:'🌊',d:'Walk to Jakkur Lake (700m) + half circle (3.5km) + return (700m) = 4.9km. Morning light on water.',dur:'60 min',pts:35},
+    {id:'cycle_30',n:'Cycling — 30 min',ic:'🚴',d:'Extended sessions. Vary the route slightly. Comfortable pace throughout.',dur:'30 min',pts:28},
+    {id:'kettle',n:'Kettlebell — Light Swings',ic:'🏋️',d:'Stand feet shoulder-width. Hinge at hips, swing kettlebell between legs then up to chest height. Light weight only. 3 sets of 10. Perfect form over weight.',dur:'10 min',pts:20},
+   ]},
+  {ph:4,name:'Full Lake + Tours',unlockKg:82,desc:'Full circle. Cycling tours with Iti.',
+   list:[
+    {id:'lake_f',n:'Lake — Full Circle',ic:'🌊',d:'700m walk to Jakkur Lake + full 7km circle + 700m return = 8.4km. This is the milestone walk. Do it first time with Iti.',dur:'100 min',pts:60},
+    {id:'cycle_iti',n:'Cycling Tour — Divy rides, Iti joins',ic:'🚴',d:'Divy cycles the route. Iti drives to a midpoint or endpoint with Chittu. You meet there. Return together. Mars Leo 3rd house fulfilled.',dur:'45 min',pts:45},
+    {id:'strength_f',n:'Full Strength Circuit',ic:'🏋️',d:'Kettlebell swings + dumbbell rows + resistance band full circuit. 30 min. RPE max 6/10.',dur:'30 min',pts:30},
+   ]},
+];
+
+const BAND_GUIDE=[
+  {n:'Chest Pull-Apart',steps:'Hold band at shoulder width in front of chest with both hands. Pull apart horizontally until arms are fully extended sideways. Slow return. Targets upper back and posture. 12 reps.'},
+  {n:'Seated Row',steps:'Sit on floor, legs extended. Loop band around feet. Hold both ends. Pull elbows back squeezing shoulder blades together. Slow return. 12 reps. Great for kidney-area posture.'},
+  {n:'Clamshell',steps:'Lie on your side, knees bent 45 degrees, band just above knees. Keep feet together and rotate top knee upward like a clamshell opening. Hold 2 sec. 12 each side. Hip strengthening.'},
+  {n:'Standing Bicep Curl',steps:'Stand on band with both feet. Hold ends, palms facing up. Curl toward shoulders without swinging. Slow lower. 12 reps.'},
+  {n:'Lateral Band Walk',steps:'Band just above ankles. Slight squat position. Step sideways 10 steps left, 10 steps right. Keeps hips strong for walking and cycling.'},
+  {n:'Overhead Press',steps:'Stand on band. Hold ends at shoulder height, palms forward. Press straight up overhead. Slow return. 10 reps. Light resistance only.'},
+];
+
+const CAT_COL={r:'var(--blue)',e:'var(--green)',s:'var(--gold)',m:'var(--orange)',med:'var(--red)'};
+
+const NOTIFS=[
+  {h:5,m:0,title:'Good morning, Divy',body:'Rise. Ginger water. Your day begins now.'},
+  {h:7,m:15,title:'Omnacortil + MetXL 50mg',body:'Take after breakfast. Always with food.'},
+  {h:8,m:0,title:'Mycofit 360mg',body:'Morning dose. On time.'},
+  {h:9,m:0,title:'Takfa 4mg',body:'Morning Takfa. Stay consistent.'},
+  {h:10,m:30,title:'Mid-morning snack',body:'Makhana or 1 fruit. Keep it light.'},
+  {h:13,m:0,title:'Lunch time',body:'Biggest meal of the day. Eat well, Divy.'},
+  {h:16,m:30,title:'Evening snack',body:'Makhana or 1 banana.'},
+  {h:18,m:30,title:'MetXL 25mg',body:'Evening dose.'},
+  {h:19,m:0,title:'Dinner time',body:'Lightest meal. Finish by 7:30 PM.'},
+  {h:20,m:0,title:'Mycofit + Atorva + Telma',body:'Three together at 8 PM.'},
+  {h:20,m:30,title:'Wind down',body:'No screens. Spend time with Iti and Chittu.'},
+  {h:21,m:0,title:'Takfa 4mg',body:'Night Takfa. Sleep well.'},
+];
+
+// ITI REWARD OPTIONS (chart-aligned)
+const ITI_OPTS=[
+  {id:'beach',ic:'🏖️',n:'Beach Escape',d:'Slow coastal town. Just the three of you. Water, silence, evening walks with Iti.'},
+  {id:'tent',ic:'⛺',n:'Camping & Tent',d:'Mountains, stars, fire. A tent as a dream fulfilled. Himachal or Western Ghats.'},
+  {id:'cycle_tour',ic:'🚴',n:'Cycling Tour Day',d:'Divy rides the route. Iti and Chittu join by car at midpoint. Return together.'},
+  {id:'intl_city',ic:'🌊',n:'International Coastal City',d:'Culture, water, unhurried pace. Mediterranean or Southeast Asia coast.'},
+  {id:'mountain',ic:'🏔️',n:'Mountain Escape',d:'Spiti, Chopta, or Kasol. Cool air, small town, meaningful silence.'},
+  {id:'dinner',ic:'🍽️',n:'Special Celebration Dinner',d:'Not a meal plan. A real table. Divy, Iti, Chittu. Dress up. Celebrate.'},
+  {id:'chittu',ic:'🎠',n:'Chittu Day Out',d:'A full day chosen by Chittu. Whatever she wants. Divy and Iti just follow.'},
+  {id:'iti_choice',ic:'💝',n:'Iti Decides',d:'Something only Iti knows Divy truly wants. Her choice, her secret.'},
+];
+
+// ═══════════ STATE ═══════════
+const DEF={
+  wt:SW,weights:{},unlocked:[],
+  cycleDay:1,totalCycles:0,streak:0,
+  notif:false,mode:'home',
+  calData:{},
+};
+let S=loadS('dv4-main',DEF);
+let TODAY=getTodayStr();
+let CHECKS=loadS('dv4-ch-'+TODAY,{});
+let FOOD_LOG=loadS('dv4-food-'+TODAY,[]);
+let EX_LOG=loadS('dv4-ex-'+TODAY,{});
+let WATER=loadS('dv4-water-'+TODAY,{ml:0});
+let ITI_D=loadS('dv4-iti',{pw:'',rewards:{},open:false});
+let CUR='home';
+let ITI_OPEN=false;
+let FOOD_SEARCH='';
+let FOOD_QTY='100';
+let CAL_MONTH=new Date(START_DATE);
+
+// Body measurements storage
+let BODY_LOG=loadS('dv4-body',{measurements:[]});
+// Journal storage
+let JOURNAL=loadS('dv4-journal',{entries:{}});
+// Pack checklist storage
+let PACK=loadS('dv4-pack',{hotel:{},intl:{}});
+// Travel planner
+let TRAVEL=loadS('dv4-travel',{trips:[]});
+// Sleep & energy log
+let VITALS=loadS('dv4-vitals',{});
+// Supplement log
+let SUPPS=loadS('dv4-supps-'+TODAY,{});
+// Day lock state
+let DAY_LOCK=loadS('dv4-lock',{lastDate:'',reason:''});
+// Calendar view date (null = today)
+let CAL_VIEW_DATE=null;
+// Inner tab within calendar day view
+let CAL_DAY_TAB='schedule';
+// Iti messages
+let ITI_MSGS=loadS('dv4-iti-msgs',{divy:'',iti:''});
+
+function loadS(k,def){
+  try{const d=localStorage.getItem(k);return d?{...def,...JSON.parse(d)}:def;}catch(e){return def;}
+}
+function saveS(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function saveMain(){saveS('dv4-main',S);}
+function saveCh(){saveS('dv4-ch-'+TODAY,CHECKS);}
+function saveFood(){saveS('dv4-food-'+TODAY,FOOD_LOG);}
+function saveEx(){saveS('dv4-ex-'+TODAY,EX_LOG);}
+function saveWater(){saveS('dv4-water-'+TODAY,WATER);}
+
+function getTodayStr(){return new Date().toISOString().split('T')[0];}
+
+function pct(){return Math.max(0,Math.min(100,Math.round(((SW-S.wt)/(SW-GW))*100)));}
+function totalKcal(){return FOOD_LOG.reduce((s,f)=>s+(f.kcal||0),0);}
+function exPts(){return Object.entries(EX_LOG).filter(([,v])=>v).reduce((s,[k])=>{
+  for(const ph of EX) for(const ex of ph.list) if(ex.id===k) return s+ex.pts;
+  return s;
+},0);}
+
+function flash(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'),2600);
+}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function dateLabel(){
+  const d=new Date();
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return days[d.getDay()]+', '+d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();
+}
+
+function daysSinceStart(){
+  const s=new Date(START_DATE);
+  const t=new Date(TODAY);
+  return Math.max(0,Math.floor((t-s)/(1000*60*60*24)));
+}
+
+// ═══════════ NOTIFICATIONS ═══════════
+function askNotif(){
+  if(!('Notification' in window)){flash('Notifications not supported');return;}
+  Notification.requestPermission().then(p=>{
+    S.notif=(p==='granted');saveMain();
+    if(p==='granted'){schedNotifs();flash('Notifications enabled!');}
+    else flash('Allow notifications in Chrome settings');
+    renderTab(CUR);
+  });
+}
+function schedNotifs(){
+  if(!S.notif||Notification.permission!=='granted')return;
+  const now=new Date();
+  NOTIFS.forEach(n=>{
+    const t=new Date();t.setHours(n.h,n.m,0,0);
+    const ms=t-now;
+    if(ms>0)setTimeout(()=>{
+      try{new Notification(n.title,{body:n.body});}catch(e){}
+    },ms);
+  });
+}
+
+// ═══════════ ACTIONS ═══════════
+function setMode(m){
+  S.mode=m;saveMain();
+  document.getElementById('mb-h').className=m==='home'?'mhome':'';
+  document.getElementById('mb-t').className=m==='hotel'?'mhotel':'';
+  document.getElementById('mb-i').className=m==='intl'?'mintl':'';
+  renderTab(CUR);
+}
+
+function goTab(t,dateStr,innerTab){
+  // Map old tab names to new
+  if(t==='iti') t='rewards';
+  if(t==='day'||t==='ex'||t==='food'||t==='journal'||t==='water'||t==='travel'||t==='pack'||t==='sos'){
+    // These all live inside calendar day view now
+    CAL_VIEW_DATE=dateStr||TODAY;
+    CAL_DAY_TAB=t==='ex'?'exercise':t==='food'?'food':t==='journal'?'notes':'schedule';
+    t='cal';
+  }
+  CUR=t;
+  if(dateStr&&t==='cal') CAL_VIEW_DATE=dateStr;
+  if(innerTab) CAL_DAY_TAB=innerTab;
+  document.querySelectorAll('.tb').forEach((b,i)=>{
+    b.classList.toggle('on',['home','cal','body','goals','rewards'][i]===t);
+  });
+  renderTab(t);
+}
+
+function openDay(dateStr,innerTab){
+  CAL_VIEW_DATE=dateStr||TODAY;
+  CAL_DAY_TAB=innerTab||'schedule';
+  CUR='cal';
+  document.querySelectorAll('.tb').forEach((b,i)=>{
+    b.classList.toggle('on',['home','cal','body','goals','rewards'][i]==='cal');
+  });
+  renderTab('cal');
+}
+
+function tickDay(){
+  const done=S.cycleDay===8;
+  const prev=S.cycleDay;
+  S.cycleDay=done?1:S.cycleDay+1;
+  if(done){S.totalCycles++;S.streak++;}
+  S.calData[TODAY]='done';
+  saveMain();
+  flash(done?'Cycle '+S.totalCycles+' complete! Reward unlocked.':'Day '+prev+' done ✓');
+  renderTab(CUR);
+}
+
+function logWt(){
+  const v=parseFloat(document.getElementById('wi').value);
+  if(!v||v<40||v>200){flash('Enter valid weight');return;}
+  S.wt=v;S.weights[TODAY]=v;
+  let hit=null;
+  MILESTONES.forEach(ms=>{if(v<=ms&&!S.unlocked.includes(ms)){S.unlocked.push(ms);hit=ms;}});
+  saveMain();updateHeader();
+  document.getElementById('wi').value='';
+  if(hit){document.getElementById('pop-kg').textContent=hit+' kg ✅';document.getElementById('pop').classList.add('on');}
+  else flash('Weight logged: '+v+' kg');
+  renderTab('home');
+}
+
+function closePop(toIti){
+  document.getElementById('pop').classList.remove('on');
+  if(toIti)goTab('iti');
+}
+
+function toggleCheck(id){CHECKS[id]=!CHECKS[id];saveCh();renderTab('day');}
+function toggleEx(id){
+  const ph=EX.find(p=>p.list.find(e=>e.id===id));
+  if(!ph)return;
+  if(ph.unlockKg!==999&&S.wt>ph.unlockKg){flash('Unlocks at '+ph.unlockKg+' kg');return;}
+  EX_LOG[id]=!EX_LOG[id];saveEx();
+  if(EX_LOG[id]){const ex=ph.list.find(e=>e.id===id);flash('+'+ex.pts+' pts — '+ex.n);}
+  renderTab('ex');
+}
+
+function addWater(){
+  WATER.ml=Math.min(4000,WATER.ml+250);
+  saveWater();renderTab('water');
+}
+function resetWater(){WATER.ml=0;saveWater();renderTab('water');}
+
+// FOOD
+function searchFood(q){
+  FOOD_SEARCH=q;
+  const menu=document.getElementById('food-dd');
+  if(!q||q.length<2){menu.classList.remove('open');return;}
+  const results=FOOD_DB.filter(f=>f.n.toLowerCase().includes(q.toLowerCase())).slice(0,10);
+  menu.innerHTML=results.map(f=>`
+    <div class="dd-item" onclick="selectFood('${esc(f.n)}',${f.cal},'${f.u}')">
+      <div class="dd-n">${esc(f.n)}</div>
+      <div class="dd-c">${f.cal} kcal per 100${f.u}</div>
+    </div>`).join('')+(results.length===0?'<div class="dd-item"><div class="dd-n" style="color:var(--muted)">Not found — add custom below</div></div>':'');
+  menu.classList.add('open');
+}
+
+let SEL_FOOD=null;
+function selectFood(name,cal,unit){
+  SEL_FOOD={name,cal,unit};
+  document.getElementById('food-inp').value=name;
+  document.getElementById('food-dd').classList.remove('open');
+  document.getElementById('food-qty-wrap').style.display='block';
+  document.getElementById('food-qty').value='100';
+  document.getElementById('food-qty-unit').textContent=unit;
+  updateFoodPreview();
+}
+
+function updateFoodPreview(){
+  if(!SEL_FOOD)return;
+  const qty=parseFloat(document.getElementById('food-qty').value)||0;
+  const kcal=Math.round((SEL_FOOD.cal*qty)/100);
+  document.getElementById('food-preview').textContent=kcal+' kcal';
+}
+
+function addFoodItem(){
+  if(!SEL_FOOD){flash('Select a food first');return;}
+  const qty=parseFloat(document.getElementById('food-qty').value)||0;
+  if(qty<=0){flash('Enter quantity');return;}
+  const kcal=Math.round((SEL_FOOD.cal*qty)/100);
+  const meal=document.getElementById('food-meal').value||'lunch';
+  FOOD_LOG.push({name:SEL_FOOD.name,qty,unit:SEL_FOOD.unit,kcal,meal,time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})});
+  saveFood();
+  SEL_FOOD=null;
+  document.getElementById('food-inp').value='';
+  document.getElementById('food-qty-wrap').style.display='none';
+  document.getElementById('food-preview').textContent='';
+  flash(SEL_FOOD===null?'Added!':'Added '+kcal+' kcal');
+  renderTab('food');
+}
+
+function addCustomFood(){
+  const name=document.getElementById('cf-name').value;
+  const kcal=parseInt(document.getElementById('cf-kcal').value)||0;
+  const qty=parseFloat(document.getElementById('cf-qty').value)||0;
+  const unit=document.getElementById('cf-unit').value||'g';
+  if(!name||!kcal||!qty){flash('Fill all fields');return;}
+  const meal=document.getElementById('food-meal').value||'lunch';
+  FOOD_LOG.push({name,qty,unit,kcal,meal,time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})});
+  saveFood();
+  document.getElementById('cf-name').value='';
+  document.getElementById('cf-kcal').value='';
+  document.getElementById('cf-qty').value='';
+  flash('Added '+kcal+' kcal');
+  renderTab('food');
+}
+
+function delFood(idx){
+  FOOD_LOG.splice(idx,1);saveFood();renderTab('food');
+}
+
+// ITI
+function saveItiSetup(){
+  const pw=document.getElementById('iti-pw').value;
+  if(!pw){flash('Set a password first');return;}
+  const rewards={};
+  MILESTONES.forEach(ms=>{
+    const sel=document.querySelector('.iti-opt.sel[data-ms="'+ms+'"]');
+    if(sel)rewards[ms]=sel.dataset.reward+':'+sel.dataset.label;
+    const custom=document.getElementById('iti-custom-'+ms);
+    if(custom&&custom.value)rewards[ms]='custom:'+custom.value;
+  });
+  ITI_D={pw,rewards,open:false};saveS('dv4-iti',ITI_D);
+  flash('Saved secretly 💝');ITI_OPEN=true;renderTab('iti');
+}
+
+function tryItiPw(){
+  const v=document.getElementById('iti-pw-try').value;
+  if(v===ITI_D.pw){ITI_OPEN=true;renderTab('iti');}
+  else flash('Wrong password ✗');
+}
+
+function itiSelect(ms,optId,label){
+  document.querySelectorAll('.iti-opt[data-ms="'+ms+'"]').forEach(el=>el.classList.remove('sel'));
+  const el=document.querySelector('.iti-opt[data-ms="'+ms+'"][data-opt="'+optId+'"]');
+  if(el){el.classList.add('sel');el.dataset.label=label;}
+}
+
+function updateIti(){
+  const rewards={};
+  MILESTONES.forEach(ms=>{
+    const sel=document.querySelector('.iti-opt.sel[data-ms="'+ms+'"]');
+    if(sel)rewards[ms]=sel.dataset.reward+':'+sel.dataset.label;
+    const custom=document.getElementById('iti-custom-'+ms);
+    if(custom&&custom.value)rewards[ms]='custom:'+custom.value;
+  });
+  const np=document.getElementById('iti-npw')&&document.getElementById('iti-npw').value;
+  ITI_D.rewards=rewards;
+  if(np)ITI_D.pw=np;
+  saveS('dv4-iti',ITI_D);flash('Updated 💝');
+}
+
+// ═══════════ HEADER ═══════════
+function updateHeader(){
+  document.getElementById('h-wt').textContent=S.wt+' kg';
+  const p=pct();
+  document.getElementById('h-pct').textContent=p+'% there';
+  document.getElementById('h-pb').style.width=p+'%';
+  document.getElementById('h-date').textContent=dateLabel();
+}
+
+// ═══════════ RENDERS ═══════════
+function renderTab(t){
+  try{
+    let html='';
+    if(t==='home') html=rHome();
+    else if(t==='cal') html=CAL_VIEW_DATE?rCalDay(CAL_VIEW_DATE):rCal();
+    else if(t==='body') html=rBody();
+    else if(t==='goals') html=rGoals();
+    else if(t==='rewards') html=rRewards();
+    document.getElementById('body').innerHTML=html;
+  }catch(e){
+    document.getElementById('body').innerHTML='<div class="c"><div style="color:var(--red);font-size:12px;font-family:sans-serif">Tab error: '+e.message+'</div></div>';
+    console.error('Tab error:',t,e);
+  }
+}
+
+// HOME
+function rHome(){
+  const tk=totalKcal();
+  const ep=exPts();
+  const p=pct();
+  const days=daysSinceStart();
+
+  let dots='';
+  for(let d=1;d<=8;d++){
+    const cls=d<S.cycleDay?'cd cd-d':d===S.cycleDay?'cd cd-n':'cd cd-f';
+    dots+=`<div class="${cls}">${d<S.cycleDay?'✓':d}</div>`;
+  }
+
+  const rType=S.totalCycles%2===0?'Celebration Meal 🍗':'Book or Experience 📚';
+  const dLeft=8-S.cycleDay+1;
+
+  const weighBox=S.cycleDay===8?`
+    <div class="wb">
+      <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:8px">⚖️ Day 8 — Weigh-in</div>
+      <div style="display:flex;gap:8px">
+        <input id="wi" class="inp" type="number" step="0.1" placeholder="Enter weight (kg)" style="flex:1"/>
+        <button class="btn btn-g btn-sm" onclick="logWt()">Log</button>
+      </div>
+    </div>`:'';
+
+  const notifBar=!S.notif?`
+    <div class="notif-bar">
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--gold)">Enable Daily Reminders</div>
+        <div style="font-size:11px;color:var(--sub);margin-top:2px">Medication alerts at 7:15AM, 8AM, 9AM, 6:30PM, 8PM, 9PM</div>
+      </div>
+      <button class="btn btn-g btn-sm" onclick="askNotif()">Enable</button>
+    </div>`:'';
+
+  const hotelBar=S.mode==='hotel'?`
+    <div class="htl-bar">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--gold)">🏨 Hotel Mode Active</div>
+        <div style="font-size:10px;color:var(--sub)">Schedule adapted. Medications unchanged.</div>
+      </div>
+      <button class="btn btn-dim btn-sm" onclick="setMode('home')">Switch to Home</button>
+    </div>`:S.mode==='intl'?`
+    <div class="htl-bar" style="border-color:var(--blue);background:#080d12">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--blue)">✈️ International Mode Active</div>
+        <div style="font-size:10px;color:var(--sub)">Chicken + tofu + salad protocol. Local time · meds follow local clock abroad.</div>
+      </div>
+      <button class="btn btn-dim btn-sm" onclick="setMode('home')">Switch to Home</button>
+    </div>`:'';
+
+  const kcalFill=Math.min(100,(tk/TARGET_KCAL)*100);
+  const kcalOk=tk<=TARGET_KCAL;
+
+  return `
+    ${notifBar}${hotelBar}
+    ${TODAY>=PREP_START&&TODAY<START_DATE?`
+    <div class="sg">
+      <div class="sb"><div class="sv" style="color:#60b0e0">${['2026-03-23','2026-03-24','2026-03-25','2026-03-26','2026-03-27'].indexOf(TODAY)+1}</div><div class="sl">Prep Day</div></div>
+      <div class="sb"><div class="sv" style="font-size:13px;color:#60b0e0">of 5</div><div class="sl">Building</div></div>
+      <div class="sb"><div class="sv" style="font-size:16px;color:var(--green)">${ep}pts</div><div class="sl">Movement</div></div>
+    </div>
+    <div class="c" style="background:#0a1a2a;border-color:#4a90d0">
+      <div class="ctitle" style="color:#60b0e0">Prep Day ${['2026-03-23','2026-03-24','2026-03-25','2026-03-26','2026-03-27'].indexOf(TODAY)+1} of 5</div>
+      <div style="font-size:12px;color:var(--sub);margin-bottom:10px">${PREP_DAYS[TODAY]?PREP_DAYS[TODAY].theme:'Building the foundation.'}</div>
+      <div style="display:flex;gap:5px;margin-bottom:10px">
+        ${['2026-03-23','2026-03-24','2026-03-25','2026-03-26','2026-03-27'].map((d,i)=>{
+          const comp=getDayCompletion(d);
+          const isPast=d<TODAY;const isToday=d===TODAY;
+          return '<div style="flex:1;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:'+(isPast&&comp.pass?'#1a4a2a':isToday?'#60b0e0':isPast?'#2a1010':'var(--b1)')+';color:'+(isPast&&comp.pass?'var(--green)':isToday?'#0a0a0f':isPast?'var(--red)':'var(--dim)')+'">'+( isPast&&comp.pass?'✓':isToday?'Today':'P'+(i+1))+'</div>';
+        }).join('')}
+      </div>
+      <button class="btn btn-g" onclick="CAL_VIEW_DATE=TODAY;CAL_DAY_TAB='schedule';CUR='cal';document.querySelectorAll('.tb').forEach((b,i)=>b.classList.toggle('on',i===1));renderTab('cal')">Open Today's Schedule →</button>
+    </div>`:`
+    <div class="sg">
+      <div class="sb"><div class="sv" style="color:var(--gold)">${S.streak}</div><div class="sl">Cycles</div></div>
+      <div class="sb"><div class="sv" style="font-size:15px;color:var(--sub)">Day ${S.cycleDay}/8</div><div class="sl">Saturn</div></div>
+      <div class="sb"><div class="sv" style="font-size:16px;color:var(--green)">${ep}pts</div><div class="sl">Exercise</div></div>
+    </div>
+    <div class="c">
+      <div class="ctitle">8-Day Discipline Cycle</div>
+      <div class="cd-row">${dots}</div>
+      <div style="font-size:11px;color:var(--sub);margin-bottom:10px">
+        ${S.cycleDay===8?'Cycle complete! Reward: '+rType:'Next reward: '+rType+' · '+dLeft+' days'}
+      </div>
+      ${weighBox}
+      <button class="btn btn-g" onclick="tickDay()">${S.cycleDay===8?'Complete Cycle & Claim Reward':'Mark Day '+S.cycleDay+' Done →'}</button>
+    </div>`}
+
+    <div class="c">
+      <div class="ctitle">Today's Fuel</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:24px;font-weight:700;color:${kcalOk?'var(--gold)':'var(--red)'}">${tk} kcal</div>
+        <div style="font-size:12px;color:var(--muted)">Target ${TARGET_KCAL}</div>
+      </div>
+      <div class="kb"><div class="kf ${kcalOk?'kf-ok':'kf-ov'}" style="width:${kcalFill}%"></div></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:5px">
+        ${kcalOk?(TARGET_KCAL-tk)+' kcal remaining':(tk-TARGET_KCAL)+' kcal over — lighten dinner'}
+      </div>
+    </div>
+
+    <div class="c" id="water-card">
+      <div class="ctitle">Hydration</div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:10px">
+        <!-- Mini bottle visual -->
+        <div style="width:44px;height:80px;border:2px solid var(--teal);border-radius:10px 10px 8px 8px;overflow:hidden;position:relative;background:rgba(10,20,20,.8);flex-shrink:0">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(30,160,140,.9),rgba(80,200,180,.6));height:${Math.min(100,(WATER.ml/WATER_TARGET)*100)}%;transition:height .5s"></div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:22px;font-weight:700;color:var(--teal)">${WATER.ml>=1000?(WATER.ml/1000).toFixed(2)+'L':WATER.ml+'ml'}</div>
+          <div style="font-size:11px;color:var(--sub);margin-bottom:8px">${Math.floor(WATER.ml/250)} of 14 glasses · Target 3.5L</div>
+          <div style="height:6px;background:var(--b1);border-radius:3px;overflow:hidden">
+            <div style="height:100%;width:${Math.min(100,(WATER.ml/WATER_TARGET)*100)}%;background:linear-gradient(90deg,var(--teal),#80e0d0);border-radius:3px"></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="WATER.ml=Math.min(4000,WATER.ml+250);saveWater();renderTab('home')" style="flex:1;background:linear-gradient(135deg,#1a5a50,#0a3a32);border:1px solid var(--teal);color:var(--teal);border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--ff)">+ 250ml</button>
+        <button onclick="WATER.ml=Math.max(0,WATER.ml-250);saveWater();renderTab('home')" style="background:var(--b1);border:none;color:var(--muted);border-radius:10px;padding:11px 14px;font-size:13px;cursor:pointer;font-family:var(--ff)">−</button>
+        <button onclick="WATER.ml=0;saveWater();renderTab('home')" style="background:var(--b1);border:none;color:var(--muted);border-radius:10px;padding:11px 14px;font-size:11px;cursor:pointer;font-family:var(--ff)">Reset</button>
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:10px">
+        ${Array.from({length:14},(_,i)=>`<div style="width:20px;height:20px;border-radius:50% 50% 40% 60%/50% 50% 60% 40%;border:1.5px solid var(--teal);background:${i<Math.floor(WATER.ml/250)?'var(--teal)':'transparent'};transition:all .3s"></div>`).join('')}
+      </div>
+    </div>
+
+    <div class="c">
+      <div class="ctitle">Medications Today</div>
+      ${[
+        {k:'m1',t:'7:15 AM',n:'Omnacortil 5mg + MetXL 50mg',note:'After breakfast'},
+        {k:'m2',t:'8:00 AM',n:'Mycofit 360mg',note:'Morning dose'},
+        {k:'m3',t:'9:00 AM',n:'Takfa 4mg',note:'Morning Takfa'},
+        {k:'m4',t:'6:30 PM',n:'MetXL 25mg',note:'Evening dose'},
+        {k:'m5',t:'8:00 PM',n:'Mycofit 360mg + Atorva 10mg + Telma 40mg',note:'Three together'},
+        {k:'m6',t:'9:00 PM',n:'Takfa 4mg',note:'Night Takfa'},
+      ].map(m=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1a1610">
+          <div>
+            <div style="font-size:12px;color:var(--text)">${m.n}</div>
+            <div style="font-size:10px;color:var(--muted)">${m.t} · ${m.note}</div>
+          </div>
+          <div onclick="CHECKS['${m.k}']=!CHECKS['${m.k}'];saveCh();renderTab('home')"
+            style="width:28px;height:28px;border-radius:50%;border:2px solid ${CHECKS[m.k]?'var(--green)':'var(--b2)'};background:${CHECKS[m.k]?'#1a4a2a':'transparent'};display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--green)">
+            ${CHECKS[m.k]?'✓':''}
+          </div>
+        </div>`).join('')}
+    </div>
+
+    <!-- MORNING SUMMARY - links to today's calendar day -->
+    <div class="c" style="cursor:pointer" onclick="CAL_VIEW_DATE=TODAY;CAL_DAY_TAB='schedule';CUR='cal';document.querySelectorAll('.tb').forEach((b,i)=>b.classList.toggle('on',i===1));renderTab('cal')">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="ctitle" style="margin-bottom:0">Today's Schedule & Check-In</div>
+        <div style="font-size:11px;color:var(--gold)">Tap to open →</div>
+      </div>
+      <div style="display:flex;gap:16px;margin-top:10px;align-items:center">
+        <div style="text-align:center">
+          <div style="font-size:18px;font-weight:700;color:var(--gold)">${getDayCompletion(TODAY).pct}%</div>
+          <div style="font-size:10px;color:var(--muted)">Done</div>
+        </div>
+        <div style="flex:1">
+          <div style="height:6px;background:var(--b1);border-radius:3px;overflow:hidden">
+            <div style="height:100%;width:${getDayCompletion(TODAY).pct}%;background:${getDayCompletion(TODAY).pass?'var(--green)':'linear-gradient(90deg,var(--gold),var(--teal))'};border-radius:3px"></div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px">
+            ${VITALS[TODAY]?'Energy: '+{1:'Low',2:'Meh',3:'Ok',4:'Good',5:'High!'}[VITALS[TODAY].energy]+' · Woke '+VITALS[TODAY].wake:'Morning check-in not done yet'}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTEXTUAL PACK REMINDER -->
+    ${(()=>{
+      const soon=TRAVEL.trips.filter(t=>t.date>=TODAY&&t.date<=new Date(new Date(TODAY).getTime()+7*86400000).toISOString().split('T')[0]);
+      if(!soon.length) return '';
+      const next=soon[0];
+      const daysAway=Math.ceil((new Date(next.date)-new Date(TODAY))/86400000);
+      return `<div style="background:#120a04;border:1px solid var(--gold);border-radius:10px;padding:12px 14px;margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--gold)">${next.type==='international'?'✈️':'🏨'} Travel in ${daysAway} day${daysAway===1?'':'s'} · ${next.date}</div>
+            <div style="font-size:11px;color:var(--sub);margin-top:2px">Check your pack list before you leave.</div>
+          </div>
+          <button onclick="CAL_VIEW_DATE='${next.date}';CAL_DAY_TAB='schedule';CUR='cal';document.querySelectorAll('.tb').forEach((b,i)=>{b.classList.toggle('on',i===1)});renderTab('cal')" style="background:var(--gold);border:none;color:#0a0a0f;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--ff)">View Day</button>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--sub)">
+          ${(()=>{
+            const mode=next.type==='international'?'intl':'hotel';
+            const items=[...HOTEL_ITEMS,...(mode==='intl'?INTL_EXTRAS:[])];
+            const packed=items.filter(i=>PACK[mode]&&PACK[mode][i.id]).length;
+            const critical=items.filter(i=>i.critical);
+            const critPacked=critical.filter(i=>PACK[mode]&&PACK[mode][i.id]).length;
+            return `${packed}/${items.length} packed · <span style="color:${critPacked===critical.length?'var(--green)':'var(--red)'}">${critPacked}/${critical.length} critical</span>`;
+          })()}
+        </div>
+        <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">
+          ${(()=>{
+            const mode=next.type==='international'?'intl':'hotel';
+            const items=[...HOTEL_ITEMS,...(mode==='intl'?INTL_EXTRAS:[])];
+            const unpacked=items.filter(i=>i.critical&&!(PACK[mode]&&PACK[mode][i.id])).slice(0,3);
+            return unpacked.map(i=>`<span style="background:#2a0a0a;border:1px solid var(--red);border-radius:6px;padding:3px 8px;font-size:10px;color:var(--red)">${i.name.split('—')[0].trim()}</span>`).join('');
+          })()}
+        </div>
+      </div>`;
+    })()}
+
+    <!-- SOS QUICK ACCESS -->
+    <button onclick="document.getElementById('body').innerHTML=rSOS();document.querySelector('.tb.on') && document.querySelector('.tb.on').classList.remove('on')" style="background:linear-gradient(135deg,#2a0808,#1a0505);border:1px solid var(--red);border-radius:10px;padding:12px 16px;width:100%;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--ff);margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px">
+      🆘 Emergency Card · Dr. Krishna Reddy · Iti · Papa
+    </button>
+
+    <div class="c c-gold">
+      <div style="font-size:11px;color:var(--sub);line-height:1.9">
+        ${TODAY>=PREP_START&&TODAY<START_DATE
+          ?`✦ <strong style="color:#60b0e0">PREP DAY ${['2026-03-23','2026-03-24','2026-03-25','2026-03-26','2026-03-27'].indexOf(TODAY)+1} of 5</strong> — ${PREP_DAYS[TODAY]?PREP_DAYS[TODAY].theme:'Building the foundation.'}<br>
+        ✦ <strong style="color:var(--gold)">March 28</strong> — Full plan launches in ${Math.ceil((new Date(START_DATE)-new Date(TODAY))/(1000*60*60*24))} days.<br>`
+          :`✦ Day <strong style="color:var(--gold)">${days}</strong> of the journey. Started March 28, 2026.<br>`}
+        ✦ <strong style="color:var(--gold)">Wednesday</strong> — Mercury day, your weekly review.<br>
+        ✦ <strong style="color:var(--gold)">June–July 2026</strong> — Jupiter window opens. Build now.<br>
+        ✦ Panna in gold on Mercury finger — your Lagna lord, always.
+      </div>
+    </div>
+
+    <!-- DAY LOCK MODAL -->
+    <div id="lock-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);align-items:center;justify-content:center;z-index:500;padding:20px">
+      <div style="background:linear-gradient(160deg,#1a1206,#0f0d08);border:1px solid var(--gold);border-radius:16px;padding:24px;max-width:320px;width:100%">
+        <div style="font-family:var(--fs);font-size:18px;color:var(--gold);margin-bottom:6px">Yesterday incomplete</div>
+        <div style="font-size:12px;color:var(--sub);margin-bottom:16px;line-height:1.6">What happened? Be honest. Your streak depends on your answer.</div>
+        ${[
+          ['travel','✈️ Travel disruption','Flight, transit, early departure or late arrival'],
+          ['health','🤒 Health issue','Genuine physical issue that prevented movement'],
+          ['work','💼 Work emergency','Unavoidable — limited to once per month'],
+          ['honest','🤝 I chose not to','Own it. One reward defers. Streak resets.'],
+        ].map(([r,lbl,desc])=>`
+          <div onclick="resolvelock('${r}')" style="padding:12px;background:var(--b1);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:all .2s">
+            <div style="font-size:13px;font-weight:600;color:var(--text)">${lbl}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">${desc}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
+
+// CALENDAR
+function rCal(){
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const d=new Date(CAL_MONTH.getFullYear(),CAL_MONTH.getMonth(),1);
+  const firstDay=d.getDay();
+  const daysInMonth=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
+  const todayStr=getTodayStr();
+  const startD=new Date(START_DATE);
+
+  let grid='<div class="cal-grid">';
+  ['S','M','T','W','T','F','S'].forEach(d=>grid+=`<div class="cal-day-hdr">${d}</div>`);
+  for(let i=0;i<firstDay;i++)grid+=`<div class="cal-day empty"></div>`;
+
+  for(let day=1;day<=daysInMonth;day++){
+    const ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const dt=new Date(ds);
+    const isToday=ds===todayStr;
+    const isStart=ds===START_DATE;
+    const isPrep=ds>=PREP_START&&ds<START_DATE;
+    const isPast=dt<new Date(todayStr)&&!isToday;
+    const isFuture=dt>new Date(todayStr);
+    const calEntry=S.calData[ds];
+
+    let cls='cal-day';
+    const comp=getDayCompletion(ds);
+    const tripDay=getTripForDate(ds);
+    if(isToday&&isPrep)cls+=' today';
+    else if(isToday)cls+=' today';
+    else if(isStart)cls+=' start';
+    else if(isPrep&&comp.pass)cls+=' prep-done';
+    else if(isPrep)cls+=' prep';
+    else if(comp.pass&&isPast)cls+=' done';
+    else if(isPast&&dt>=startD&&ds>=START_DATE)cls+=' skipped';
+    else if(isFuture)cls+=' future';
+    else cls+=' future';
+
+    const dot=S.weights[ds]?'<div class="cal-dot"></div>':'';
+    const prepDot=isPrep?'<div style="position:absolute;top:2px;right:3px;width:4px;height:4px;border-radius:50%;background:#60b0e0;opacity:0.7"></div>':'';
+    const travelDot=tripDay?`<div style="position:absolute;top:2px;left:3px;width:4px;height:4px;border-radius:50%;background:${tripDay.type==='international'?'var(--blue)':'var(--orange)'};opacity:0.8"></div>`:'';
+    const clickable=true;
+    grid+=`<div class="${cls}" style="position:relative;cursor:pointer" onclick="CAL_VIEW_DATE='${ds}';CAL_DAY_TAB='schedule';renderTab('cal')">${day}${dot}${prepDot}${travelDot}</div>`;
+  }
+  grid+='</div>';
+
+  const prev=new Date(CAL_MONTH);prev.setMonth(prev.getMonth()-1);
+  const next=new Date(CAL_MONTH);next.setMonth(next.getMonth()+1);
+
+  return `
+    <div class="c">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <button class="btn btn-dim btn-sm" onclick="CAL_MONTH=new Date(${prev.getFullYear()},${prev.getMonth()},1);renderTab('cal')">←</button>
+        <div style="font-size:15px;font-weight:700;color:var(--gold)">${months[d.getMonth()]} ${d.getFullYear()}</div>
+        <button class="btn btn-dim btn-sm" onclick="CAL_MONTH=new Date(${next.getFullYear()},${next.getMonth()},1);renderTab('cal')">→</button>
+      </div>
+      ${grid}
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+        ${[
+          ['done','var(--green2)','var(--green)','Done'],
+          ['today','var(--gold)','#0a0a0f','Today'],
+          ['skipped','#3a1a1a','var(--red)','Missed'],
+          ['start','var(--b1)','var(--gold)','Mar 28 Start'],
+          ['prep','#0a1a2a','#60b0e0','Prep (23–27)'],
+          ['prep-done','#0a2a1a','#50a070','Prep Done'],
+        ].map(([,bg,col,lbl])=>`
+          <div style="display:flex;align-items:center;gap:5px">
+            <div style="width:12px;height:12px;border-radius:3px;background:${bg};border:1px solid ${col}"></div>
+            <span style="font-size:10px;color:var(--muted)">${lbl}</span>
+          </div>`).join('')}
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--gold)"></div>
+          <span style="font-size:10px;color:var(--muted)">Weight logged</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="c">
+      <div class="ctitle">Journey Stats</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        ${[
+          ['Day',daysSinceStart()+' of journey'],
+          ['Start','March 28, 2026'],
+          ['Cycles',S.totalCycles+' completed'],
+          ['Lost',Math.max(0,SW-S.wt).toFixed(1)+' kg so far'],
+        ].map(([l,v])=>`<div style="background:var(--p2);border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:var(--muted)">${l}</div>
+          <div style="font-size:14px;font-weight:700;color:var(--gold);margin-top:2px">${v}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="c">
+      <div class="ctitle">Weight History</div>
+      ${Object.entries(S.weights).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,10).map(([date,wt])=>`
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #1a1610">
+          <div style="font-size:12px;color:var(--sub)">${date}</div>
+          <div style="font-size:13px;font-weight:700;color:var(--gold)">${wt} kg</div>
+        </div>`).join('')||'<div style="font-size:12px;color:var(--muted)">No weights logged yet. Log on Day 8 of each cycle.</div>'}
+    </div>
+  `;
+}
+
+// DAY
+function rDay(){
+  const viewDate=CAL_VIEW_DATE||TODAY;
+  const isToday=viewDate===TODAY;
+  const isFuture=viewDate>TODAY;
+  const trip=getTripForDate(viewDate);
+
+  // Auto-set mode based on trip type
+  let effectiveMode=S.mode;
+  if(trip){
+    if(trip.type==='international') effectiveMode='intl';
+    else if(trip.type==='domestic') effectiveMode='hotel';
+    else effectiveMode='home';
+  }
+
+  // Check if prep day
+  const isPrep=viewDate>=PREP_START&&viewDate<START_DATE;
+  const prepDay=isPrep?PREP_DAYS[viewDate]:null;
+
+  // Header for non-today viewing
+  const viewHeader=!isToday?`
+    <div style="background:${isFuture?'#0a1a0a':'#0a0a1a'};border:1px solid ${isFuture?'var(--green2)':'var(--b2)'};border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:${isFuture?'var(--green)':'var(--sub)'}">
+          ${isFuture?'📅 Preview: '+viewDate:'🗓️ Reviewing: '+viewDate}
+        </div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px">${isFuture?'Planned schedule':'Read-only — past day'}${trip?' · '+trip.type+' travel':''}</div>
+      </div>
+      <button onclick="CAL_VIEW_DATE=null;renderTab('day')" style="background:var(--gold);border:none;color:#0a0a0f;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--ff)">Today</button>
+    </div>`:''
+
+  if(prepDay){
+    const dayChecks=isToday?CHECKS:loadS('dv4-ch-'+viewDate,{});
+    const done=Object.values(dayChecks).filter(Boolean).length;
+    return viewHeader+`
+      <div style="background:#0a1a2a;border:1px solid #4a90d0;border-radius:12px;padding:14px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:700;color:#60b0e0;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px">${prepDay.label}</div>
+        <div style="font-size:11px;color:var(--sub);font-style:italic">${prepDay.theme}</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;align-items:center">
+        <div style="font-size:11px;color:var(--muted)">Prep protocol${!isToday?' (read-only)':' — tap to mark done'}</div>
+        <div style="font-size:12px;font-weight:700;color:#60b0e0">${done}/${prepDay.movement.length}</div>
+      </div>
+      ${prepDay.movement.map((item,i)=>`
+        <div class="si ${dayChecks['d'+i]?'dn':''}" ${isToday?`onclick="toggleCheck('d${i}')"`:'style="cursor:default"'}>
+          <div class="si-ic">${item.ic}</div>
+          <div class="si-inf">
+            <div class="si-t" style="color:#60b0e0">${item.t}</div>
+            <div class="si-a">${esc(item.a)}</div>
+          </div>
+          <div class="chk">${dayChecks['d'+i]?'✓':''}</div>
+        </div>`).join('')}
+      <div style="background:#0a1a2a;border:1px solid #2a4a6a;border-radius:10px;padding:12px;margin-top:10px">
+        <div style="font-size:11px;color:#60b0e0;font-weight:700;margin-bottom:4px">Medications — unchanged during prep</div>
+        <div style="font-size:11px;color:var(--sub);line-height:1.7">
+          Omnacortil + MetXL 50 after breakfast · Mycofit 8 AM · Takfa 9 AM<br>
+          MetXL 25 at 6:30 PM · Mycofit + Atorva + Telma 8 PM · Takfa 9 PM
+        </div>
+      </div>
+      ${isToday?`<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:12px;font-style:italic">Full plan launches March 28. ${Math.ceil((new Date(START_DATE)-new Date(TODAY))/(1000*60*60*24))} days to go.</div>`:''}
+    `;
+  }
+
+  const sch=effectiveMode==='hotel'?SCH_HOTEL:effectiveMode==='intl'?SCH_INTL:SCH_HOME;
+  const dayChecks=isToday?CHECKS:loadS('dv4-ch-'+viewDate,{});
+  const done=Object.values(dayChecks).filter(Boolean).length;
+
+  // Trip banner
+  const tripBanner=trip?`
+    <div style="background:${trip.type==='international'?'#080d12':'#1a1206'};border:1px solid ${trip.type==='international'?'var(--blue)':'var(--gold)'};border-radius:10px;padding:10px 14px;margin-bottom:10px">
+      <div style="font-size:12px;font-weight:700;color:${trip.type==='international'?'var(--blue)':'var(--gold)'}">
+        ${trip.type==='international'?'✈️ International Travel':'🏨 Domestic Travel'} · ${viewDate}
+      </div>
+      ${trip.dep?`<div style="font-size:11px;color:var(--sub);margin-top:2px">Dep ${trip.dep}${trip.arr?' · Arr '+trip.arr:''}</div>`:''}
+      <div style="font-size:11px;color:var(--muted);margin-top:2px">Minimum: 15 min walk + breathwork + all medications. Non-negotiable.</div>
+    </div>`:''
+
+  return viewHeader+tripBanner+`
+    <div style="display:flex;justify-content:space-between;margin-bottom:10px;align-items:center">
+      <div style="font-size:11px;color:var(--muted)">${effectiveMode==='hotel'?'Hotel Mode':effectiveMode==='intl'?'International Mode':isToday?'Tap each item to mark complete':'Schedule for this day'}</div>
+      <div style="font-size:12px;font-weight:700;color:var(--green)">${done}/${sch.length}</div>
+    </div>
+    ${sch.map((item,i)=>`
+      <div class="si ${dayChecks['d'+i]?'dn':''}" ${isToday?`onclick="toggleCheck('d${i}')"`:'style="cursor:default"'}>
+        <div class="si-ic">${item.ic}</div>
+        <div class="si-inf">
+          <div class="si-t" style="color:${CAT_COL[item.c]||'var(--gold)'}">${item.t}</div>
+          <div class="si-a">${esc(item.a)}</div>
+        </div>
+        <div class="chk">${dayChecks['d'+i]?'✓':''}</div>
+      </div>`).join('')}
+  `;
+}
+
+// EXERCISE
+function rEx(mode){
+  mode=mode||S.mode;
+  const ep=exPts();
+  const activePhases=EX.filter(p=>p.unlockKg===999||S.wt<=p.unlockKg);
+  const lockedPhases=EX.filter(p=>p.unlockKg!==999&&S.wt>p.unlockKg);
+
+  let html=`
+    <div style="background:linear-gradient(135deg,#1a1206,#12100a);border:1px solid var(--gold);border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-size:26px;font-weight:700;color:var(--gold)">${ep} pts</div>
+        <div style="font-size:11px;color:var(--sub)">Today's movement points</div>
+      </div>
+      <div style="text-align:right;font-size:11px;color:var(--sub)">6 of 8 days<br>earns your reward</div>
+    </div>
+
+    ${mode==='home'?`<div style="background:linear-gradient(135deg,#0a1a18,#081210);border:1px solid #2a5a52;border-radius:10px;padding:12px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">🌊 Jakkur Lake · Yelahanka, Bengaluru</div>
+      <div style="font-size:12px;color:var(--sub);line-height:1.9">
+        Home to lake: <strong style="color:var(--teal)">700m</strong> · Full circle: <strong style="color:var(--teal)">7km</strong><br>
+        <span style="color:var(--green)">Now:</span> Walk there + back = 1.4km warm-up<br>
+        <span style="color:var(--gold)">92kg:</span> Add quarter circle (3.15km round trip)<br>
+        <span style="color:var(--orange)">89kg:</span> Half circle (4.9km round trip)<br>
+        <span style="color:var(--blue)">82kg:</span> Full circle with Iti waiting at the end
+      </div>
+    </div>`:`<div style="background:linear-gradient(135deg,#0a1a18,#081210);border:1px solid #2a5a52;border-radius:10px;padding:12px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">🚶 Movement — Local Area Walk</div>
+      <div style="font-size:12px;color:var(--sub);line-height:1.9">
+        Hotel corridor · Airport terminal · Nearby park or road<br>
+        <span style="color:var(--green)">Minimum:</span> 15 min walk — non-negotiable regardless of location<br>
+        <span style="color:var(--gold)">Target:</span> 30+ min at RPE 4–5<br>
+        <span style="color:var(--blue)">Jakkur Lake</span> resumes when you are back home
+      </div>
+    </div>`}
+  `;
+
+  activePhases.forEach(ph=>{
+    html+=`<div class="c" style="margin-bottom:10px">
+      <span class="pbadge">Phase ${ph.ph}: ${ph.name}</span>
+      <div style="font-size:12px;color:var(--sub);margin-bottom:10px">${ph.desc}</div>`;
+    ph.list.forEach(ex=>{
+      const done=EX_LOG[ex.id];
+      html+=`
+        <div class="ei ${done?'dn':''}" onclick="toggleEx('${ex.id}')">
+          <div class="ei-ic">${ex.ic}</div>
+          <div class="ei-inf">
+            <div class="ei-n">${esc(ex.n)}</div>
+            <div class="ei-d">${esc(ex.d)}</div>
+            <div class="ei-dur">${ex.dur}</div>
+          </div>
+          <div class="ei-pts">+${ex.pts}</div>
+          <div class="chk">${done?'✓':''}</div>
+        </div>`;
+    });
+    html+='</div>';
+  });
+
+  if(lockedPhases.length>0){
+    lockedPhases.forEach(ph=>{
+      html+=`<div class="c" style="opacity:.4;margin-bottom:10px">
+        <span class="lkbadge">🔒 Unlocks at ${ph.unlockKg}kg — Phase ${ph.ph}: ${ph.name}</span>
+        <div style="font-size:12px;color:var(--muted)">${ph.desc}</div>
+      </div>`;
+    });
+  }
+
+  // Band Guide
+  html+=`<div class="c c-blue">
+    <div class="ctitle">🟡 Resistance Band Guide</div>
+    <div style="font-size:11px;color:var(--sub);margin-bottom:10px">Full circuit = all 6 exercises below, 3 rounds, 12 reps each unless stated. Rest 45 sec between exercises.</div>
+    ${BAND_GUIDE.map(b=>`
+      <div class="bg-ex">
+        <div class="bg-name">${b.n}</div>
+        <div class="bg-step">${b.steps}</div>
+      </div>`).join('')}
+  </div>
+
+  <div class="c c-gold">
+    <div class="ctitle">Equipment at Home</div>
+    <div style="font-size:12px;color:var(--sub);line-height:1.9">
+      🟡 Resistance band — Phase 1, active now<br>
+      🪢 Jumping rope — Phase 1, active now<br>
+      🚴 Two cycles — Phase 2, unlocks at 92kg<br>
+      🏋️ Kettlebell — Phase 3, unlocks at 89kg<br>
+      🏋️ Dumbbells — Phase 3, unlocks at 89kg<br>
+      <span style="color:var(--red);font-size:11px">RPE max 6/10 always. No heavy compound. No HIIT.</span>
+    </div>
+  </div>`;
+
+  return html;
+}
+
+// FOOD
+function rFood(){
+  const tk=totalKcal();
+  const byMeal={breakfast:[],midMorn:[],lunch:[],evening:[],dinner:[],other:[]};
+  FOOD_LOG.forEach((f,i)=>{(byMeal[f.meal]||byMeal.other).push({...f,idx:i});});
+  const mealNames={breakfast:'Breakfast',midMorn:'Mid Morning',lunch:'Lunch',evening:'Evening',dinner:'Dinner',other:'Other'};
+  const kcalFill=Math.min(100,(tk/TARGET_KCAL)*100);
+  const ok=tk<=TARGET_KCAL;
+
+  let loggedHtml='';
+  Object.entries(byMeal).forEach(([key,items])=>{
+    if(items.length===0)return;
+    const mKcal=items.reduce((s,f)=>s+f.kcal,0);
+    loggedHtml+=`<div style="margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">${mealNames[key]} · ${mKcal} kcal</div>
+      ${items.map(f=>`
+        <div class="food-logged">
+          <div>
+            <div class="fl-name">${esc(f.name)}</div>
+            <div class="fl-meta">${f.qty}${f.unit} · ${f.time}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="fl-kcal">${f.kcal}</div>
+            <div class="fl-del" onclick="delFood(${f.idx})">✕</div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+  });
+
+  return `
+    <div class="c" style="text-align:center">
+      <div style="font-size:32px;font-weight:700;color:${ok?'var(--gold)':'var(--red)'}">${tk} kcal</div>
+      <div style="font-size:11px;color:var(--muted)">Target: ${TARGET_KCAL} kcal</div>
+      <div class="kb"><div class="kf ${ok?'kf-ok':'kf-ov'}" style="width:${kcalFill}%"></div></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:5px">${ok?(TARGET_KCAL-tk)+' kcal remaining':(tk-TARGET_KCAL)+' kcal over'}</div>
+    </div>
+
+    <div class="c">
+      <div class="ctitle">Add Food</div>
+      <div style="margin-bottom:8px">
+        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Meal</label>
+        <select id="food-meal" class="inp">
+          <option value="breakfast">Breakfast</option>
+          <option value="midMorn">Mid Morning</option>
+          <option value="lunch" selected>Lunch</option>
+          <option value="evening">Evening</option>
+          <option value="dinner">Dinner</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="dd-wrap">
+        <input id="food-inp" class="inp" type="text" placeholder="Search food (e.g. eggs, dal, tofu...)" oninput="searchFood(this.value)" autocomplete="off"/>
+        <div id="food-dd" class="dd-menu"></div>
+      </div>
+      <div id="food-qty-wrap" style="display:none;margin-bottom:10px">
+        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Quantity (raw) — <span id="food-qty-unit">g</span></label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="food-qty" class="inp" type="number" step="1" value="100" oninput="updateFoodPreview()" style="flex:1"/>
+          <div id="food-preview" style="font-size:14px;font-weight:700;color:var(--gold);min-width:70px;text-align:right"></div>
+        </div>
+      </div>
+      <button class="btn btn-g" onclick="addFoodItem()">Add to Log</button>
+    </div>
+
+    <div class="c">
+      <div class="ctitle">Add Custom Food</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px">For cheela, mixed dishes, or anything not in the list</div>
+      <input id="cf-name" class="inp" type="text" placeholder="Food name (e.g. Besan Cheela)" style="margin-bottom:8px"/>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">
+        <input id="cf-qty" class="inp inp-sm" type="number" placeholder="Qty"/>
+        <select id="cf-unit" class="inp inp-sm">
+          <option value="g">grams</option>
+          <option value="ml">ml</option>
+          <option value="piece">piece</option>
+        </select>
+        <input id="cf-kcal" class="inp inp-sm" type="number" placeholder="kcal"/>
+      </div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:8px">For cheela: add besan + soya + veg separately for accuracy, or enter total kcal of the whole dish</div>
+      <button class="btn btn-g" onclick="addCustomFood()">Add Custom</button>
+    </div>
+
+    ${loggedHtml?`<div class="c"><div class="ctitle">Today's Log</div>${loggedHtml}</div>`:''}
+
+    ${S.mode==='intl'?`
+    <div class="c c-blue">
+      <div class="ctitle">✈️ International Plate Formula</div>
+      <div style="font-size:12px;color:var(--sub);line-height:1.9">
+        <span style="color:var(--blue)">Your default abroad: Grilled chicken 150-180g raw + salad with olive oil + tofu when available = 350-420 kcal. Your anchor meal everywhere.<br><br>
+        <span style="color:var(--green)">Always safe:</span> Boiled or scrambled eggs · Plain yogurt · Steamed veg · Clear soup · Fruit · Olive oil · Grilled chicken<br><br>
+        <span style="color:var(--gold)">Ask every time:</span> Dressing on the side · No added salt · Steamed not fried · No cream sauce<br><br>
+        <span style="color:var(--red)">Avoid abroad:</span> Creamy soups · Pasta · Heavy sauces · Cold cuts · Sausages · Large cheese · Fried anything · Alcohol<br><br>
+        <span style="color:var(--teal)">Carry from India:</span> Sealed makhana · 4–5 plain oats sachets · Pill organiser clearly labelled
+      </div>
+    </div>`:''}
+
+    <div class="c c-gold">
+      <div class="ctitle">${S.mode==='intl'?'Abroad Essentials':'Your Kitchen'}</div>
+      <div style="font-size:12px;color:var(--sub);line-height:1.9">
+        ${S.mode==='intl'?`
+        <span style="color:var(--green)">Protein:</span> Grilled chicken · Goat mutton — goat only, never lamb (when available) · Boiled eggs · Tofu<br>
+        <span style="color:var(--green)">Veg:</span> Any steamed or roasted vegetables · Mixed salad greens<br>
+        <span style="color:var(--green)">Fat:</span> Olive oil · Lemon juice for dressing<br>
+        <span style="color:var(--teal)">Emergency:</span> Oats sachet · Makhana · Hotel fruit<br>
+        <span style="color:var(--red)">Never:</span> Fish · Seafood · Beef · Pork · Lamb · Grapefruit · Pomelo · Creamy sauces · Alcohol<br>
+        <span style="color:var(--red)">Sodium:</span> Ask no added salt at every meal — restaurant food abroad is very salty`:`
+        <span style="color:var(--green)">Veg:</span> Lauki · Parwal · Palak · Methi · Bhindi · Capsicum · Carrot · Cucumber<br>
+        <span style="color:var(--green)">Dal:</span> Moong · Masoor · Chana (soaked well)<br>
+        <span style="color:var(--green)">Protein:</span> Eggs · Tofu · Soya · Besan · Chicken (Sat/Sun) · Goat Mutton (occasional)<br>
+        <span style="color:var(--red)">Never:</span> Milk · Torai · Tinda · Gilki · Grapefruit · Pomelo · Fish · Seafood · Beef · Pork · Lamb<br>
+        <span style="color:var(--teal)">Favourites:</span> Besan cheela with green chutney · Soya tofu cheela`}
+      </div>
+    </div>
+  `;
+}
+
+// WATER
+function rWater(){
+  const ml=WATER.ml;
+  const fillPct=Math.min(100,(ml/WATER_TARGET)*100);
+  const glasses=Math.floor(ml/250);
+  const totalGlasses=14;
+
+  let drops='';
+  for(let i=0;i<totalGlasses;i++){
+    drops+=`<div class="wd ${i<glasses?'full':''}"></div>`;
+  }
+
+  const labels=[
+    {pct:25,ml:'875ml'},{pct:50,ml:'1.75L'},{pct:75,ml:'2.625L'},{pct:100,ml:'3.5L'}
+  ];
+
+  return `
+    <div class="c" style="text-align:center">
+      <div class="ctitle">Daily Hydration</div>
+      <div class="water-wrap">
+        <div class="water-bottle">
+          <div class="wb-outer">
+            <div class="wb-fill" style="height:${fillPct}%"></div>
+            <div class="wb-lines">
+              ${[0,1,2,3,4,5,6,7,8].map(()=>'<div class="wb-line"></div>').join('')}
+            </div>
+            ${labels.map(l=>`<div class="wb-label" style="bottom:calc(${l.pct}% - 8px)">${l.ml}</div>`).join('')}
+          </div>
+        </div>
+        <div class="water-info">
+          <div class="water-ml">${ml>=1000?(ml/1000).toFixed(2)+'L':ml+'ml'}</div>
+          <div class="water-target">${glasses} of ${totalGlasses} glasses · Target 3.5L</div>
+        </div>
+        <div class="water-btns">
+          <button class="water-add" onclick="addWater()">+ 250ml</button>
+          <button class="water-reset" onclick="resetWater()">Reset</button>
+        </div>
+        <div class="water-drops">${drops}</div>
+      </div>
+    </div>
+
+    <div class="c c-blue">
+      <div class="ctitle">Why This Matters</div>
+      <div style="font-size:12px;color:var(--sub);line-height:1.9">
+        Consistent hydration reduces fluid retention and facial puffiness faster than any other single change.<br><br>
+        Spread through the day — a glass on waking, one with each meal, one between meals. Never gulp large amounts at once.<br><br>
+        <span style="color:var(--teal)">On travel days:</span> Always carry your bottle. Hotel rooms are dehydrating.
+      </div>
+    </div>
+  `;
+}
+
+// GOALS
+function rGoals(){
+  const mCards=MILESTONES.map((ms,i)=>{
+    const prev=MILESTONES[i-1]||SW;
+    const done=S.unlocked.includes(ms);
+    const cur=S.wt>ms&&S.wt<=prev;
+    const p=cur?Math.min(100,Math.round(((prev-S.wt)/(prev-ms))*100)):0;
+    const cls='ms'+(done?' ms-d':cur?' ms-c':'');
+    const reward=ITI_D.rewards&&ITI_D.rewards[ms];
+    const rewardLabel=reward?reward.split(':').slice(1).join(':'):'';
+
+    return `<div class="${cls}">
+      <div class="ms-row">
+        <div>
+          <div class="ms-kg" style="color:${done?'var(--green)':cur?'var(--gold)':'var(--dim)'}">${done?'✅':cur?'🎯':'🔒'} ${ms} kg</div>
+          <div class="ms-sub">Lose ${SW-ms} kg total${ms===75?' · Final Goal':''}</div>
+        </div>
+        <div style="font-size:${done&&rewardLabel?11:20}px">
+          ${done&&rewardLabel?`<span style="color:var(--green);max-width:120px;display:block;text-align:right">${esc(rewardLabel)}</span>`:'🎁'}
+        </div>
+      </div>
+      ${cur?`<div class="ms-prog">
+        <div class="ms-plbl">
+          <span style="color:var(--gold)">${p}% there</span>
+          <span style="color:var(--muted)">${(S.wt-ms).toFixed(1)} kg to go</span>
+        </div>
+        <div class="ms-pbar"><div class="ms-pfill" style="width:${p}%"></div></div>
+      </div>`:''}
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="c" style="text-align:center">
+      <div style="font-size:13px;color:var(--sub)">Today</div>
+      <div style="font-size:40px;font-weight:700;color:var(--gold)">${S.wt} kg</div>
+      <div style="font-size:14px;color:var(--green)">${(S.wt-GW).toFixed(1)} kg to the finish line</div>
+    </div>
+
+    ${mCards}
+
+    <div class="c">
+      <div class="ctitle">Activity Unlocks</div>
+      ${[[92,'Cycling begins — 20 min flat route'],[89,'Kettlebell + cycling 30 min'],[85,'Full strength circuit 3x/week'],[82,'Full lake circle · Cycling tour with Iti'],[75,'Everything open — you made it, Divy']].map(([kg,d])=>`
+        <div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid #1a1610;align-items:flex-start">
+          <span>${S.wt<=kg?'✅':'🔒'}</span>
+          <div style="font-size:12px"><span style="color:var(--gold);font-weight:700">${kg} kg: </span><span style="color:var(--sub)">${d}</span></div>
+        </div>`).join('')}
+    </div>
+
+    <div class="c c-gold">
+      <div class="ctitle">Realistic Timeline</div>
+      <div style="font-size:12px;color:var(--sub);line-height:1.9">
+        <span style="color:var(--gold)">Weeks 1–3:</span> Less bloating, less leg swelling, better sleep. 1–2 kg water weight.<br>
+        <span style="color:var(--gold)">Month 2–3:</span> 0.5–1 kg/month true fat loss begins.<br>
+        <span style="color:var(--gold)">Month 4–6:</span> 2–4 kg genuine. Waist shifting.<br>
+        <span style="color:var(--gold)">Month 8–12:</span> 5–8 kg. Belly reducing. Face changing.<br>
+        <span style="color:var(--gold)">18–24 months:</span> 75 kg is yours, Divy.
+      </div>
+    </div>
+  `;
+}
+
+// ITI
+function rIti(){
+  if(!ITI_D.pw){
+    const fields=MILESTONES.map(ms=>{
+      const hints={95:'First 3 kg. Something warm and personal.',92:'Cycling begins. A shared experience?',89:'He is serious. Show him you noticed.',85:'Double digits lost. A meaningful moment.',82:'Cycling tours. A memory to plan together.',79:'Almost there. Something only you know he wants.',75:'23 kg. The finish line. Make it unforgettable.'};
+      const opts=ITI_OPTS.map(o=>`
+        <div class="iti-opt" data-ms="${ms}" data-opt="${o.id}" data-reward="${o.ic}" data-label="${esc(o.n)}" onclick="itiSelect(${ms},'${o.id}','${esc(o.n)}')">
+          <div class="iti-opt-ic">${o.ic}</div>
+          <div class="iti-opt-txt">
+            <div class="iti-opt-name">${o.n}</div>
+            <div class="iti-opt-desc">${o.d}</div>
+          </div>
+          <div class="iti-opt-chk">○</div>
+        </div>`).join('');
+
+      return `<div class="c" style="margin-bottom:10px">
+        <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:4px">At ${ms} kg (-${SW-ms} kg achieved)</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;font-style:italic">${hints[ms]}</div>
+        ${opts}
+        <input id="iti-custom-${ms}" class="inp" type="text" placeholder="Or write something specific for Divy..." style="margin-top:8px"/>
+      </div>`;
+    }).join('');
+
+    return `
+      <div class="iti-hero">
+        <div class="iti-emoji">💝</div>
+        <div style="font-family:var(--fs);font-size:22px;color:var(--gold);margin-bottom:6px">Hello Iti</div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.7">
+          Pick a reward for each of Divy's milestones.<br>Set your secret password — he cannot peek.<br>Each reward stays hidden until he achieves that goal.<br><br>
+          <span style="color:var(--gold)">All options are chosen from Divy's chart — what truly makes him happy.</span>
+        </div>
+      </div>
+      ${fields}
+      <div class="c" style="margin-bottom:10px">
+        <div style="font-size:13px;font-weight:700;color:#c06070;margin-bottom:4px">Your Secret Password</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Something only you would know. Divy cannot see this.</div>
+        <input id="iti-pw" class="inp" type="password" placeholder="Your secret..."/>
+      </div>
+      <button class="btn btn-pk" onclick="saveItiSetup()">Save Divy's Surprises 💝</button>
+    `;
+  }
+
+  if(!ITI_OPEN){
+    return `
+      <div style="text-align:center;padding:24px 0">
+        <div style="font-size:60px;margin-bottom:14px">💝</div>
+        <div style="font-family:var(--fs);font-size:22px;color:var(--gold);margin-bottom:8px">Iti's Secret Rewards</div>
+        <div style="font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:24px">
+          Only Iti knows the password.<br>
+          Divy — achieve a milestone first!<br>
+          Each reward unlocks when you get there.
+        </div>
+        <input id="iti-pw-try" class="inp" type="password" placeholder="Iti's password..." style="margin-bottom:10px"/>
+        <button class="btn btn-pk" onclick="tryItiPw()">Unlock 💝</button>
+      </div>
+    `;
+  }
+
+  // Edit
+  const editFields=MILESTONES.map(ms=>{
+    const existing=ITI_D.rewards[ms]||'';
+    const parts=existing.split(':');
+    const existingId=parts[0]==='custom'?'iti_choice':ITI_OPTS.find(o=>o.ic===parts[0])?.id||'';
+    const opts=ITI_OPTS.map(o=>`
+      <div class="iti-opt ${existingId===o.id?'sel':''}" data-ms="${ms}" data-opt="${o.id}" data-reward="${o.ic}" data-label="${esc(o.n)}" onclick="itiSelect(${ms},'${o.id}','${esc(o.n)}')">
+        <div class="iti-opt-ic">${o.ic}</div>
+        <div class="iti-opt-txt">
+          <div class="iti-opt-name">${o.n}</div>
+          <div class="iti-opt-desc">${o.d}</div>
+        </div>
+        <div class="iti-opt-chk">${existingId===o.id?'✓':'○'}</div>
+      </div>`).join('');
+
+    return `<div class="c" style="margin-bottom:10px">
+      <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:8px">At ${ms} kg</div>
+      ${opts}
+      <input id="iti-custom-${ms}" class="inp" type="text" placeholder="Or write something specific..." value="${parts[0]==='custom'?esc(parts.slice(1).join(':')):''})" style="margin-top:8px"/>
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="iti-hero">
+      <div style="font-size:18px;color:var(--gold);font-weight:700">Welcome back, Iti 💝</div>
+      <div style="font-size:12px;color:var(--sub);margin-top:4px">Edit rewards or change your password.</div>
+    </div>
+    ${editFields}
+    <div class="c" style="margin-bottom:10px">
+      <div style="font-size:13px;font-weight:700;color:#c06070;margin-bottom:6px">Change Password</div>
+      <input id="iti-npw" class="inp" type="password" placeholder="New password (blank = keep current)"/>
+    </div>
+    <button class="btn btn-pk" onclick="updateIti()">Update Rewards 💝</button>
+
+    <div class="c" style="margin-top:10px;border-color:#8b3a52;background:#120a0e">
+      <div class="ctitle" style="color:#c06070">Weekly Note Exchange</div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:11px;color:var(--sub);margin-bottom:6px">Divy's note this week</div>
+        <div style="font-size:13px;color:var(--text);background:var(--p2);border-radius:8px;padding:10px;min-height:40px;font-style:italic">
+          ${ITI_MSGS.divy||'<span style="color:var(--muted)">Nothing written yet this week</span>'}
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--sub);margin-bottom:6px">Iti's reply</div>
+        <textarea id="iti-msg" class="inp" rows="3" placeholder="Write something back to Divy..." style="resize:none">${ITI_MSGS.iti||''}</textarea>
+        <button class="btn btn-pk" onclick="const v=document.getElementById('iti-msg').value;ITI_MSGS.iti=v;saveS('dv4-iti-msgs',ITI_MSGS);flash('Saved 💝')">Save Reply 💝</button>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════ BODY MEASUREMENTS ═══════════
+function saveBody(){saveS('dv4-body',BODY_LOG);}
+
+function logMeasurement(){
+  const fields=['wt','sh','ch','wa','hi','th','lg','bi'];
+  const vals={};
+  fields.forEach(f=>{
+    const el=document.getElementById('bm-'+f);
+    if(el&&el.value) vals[f]=parseFloat(el.value)||null;
+  });
+  if(!vals.wt&&!vals.wa){flash('Enter at least weight or waist');return;}
+  vals.bmi=vals.wt?parseFloat((vals.wt/(1.84*1.84)).toFixed(1)):null;
+  vals.date=TODAY;
+  BODY_LOG.measurements.unshift(vals);
+  if(BODY_LOG.measurements.length>36)BODY_LOG.measurements=BODY_LOG.measurements.slice(0,36);
+  saveBody();flash('Measurements saved');renderTab('body');
+}
+
+function generateHolisticSuggestions(m){
+  let html='';
+  const wh=m.wa&&m.ch&&m.wa/m.ch>0.9;
+  const hh=m.hi&&m.ch&&m.hi>m.ch;
+  const ah=m.bi&&m.bi<28;
+
+  html+='<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Body Insight</div>';
+  if(wh) html+='<div style="font-size:12px;color:var(--sub);margin-bottom:4px">⚡ <b style="color:var(--gold)">Jupiter dominance</b> — abdominal zone is the primary focus area.</div>';
+  if(hh) html+='<div style="font-size:12px;color:var(--sub);margin-bottom:4px">🌙 <b style="color:var(--gold)">Venus influence</b> — lower body storage pattern active.</div>';
+  if(ah) html+='<div style="font-size:12px;color:var(--sub);margin-bottom:4px">🔥 <b style="color:var(--gold)">Mars activation needed</b> — upper body strength is the lagging zone.</div>';
+  if(!wh&&!hh&&!ah) html+='<div style="font-size:12px;color:var(--sub)">Balanced distribution. Maintain consistency.</div>';
+  html+='</div>';
+
+  html+='<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Numerology · Life Path 8</div>';
+  html+='<div style="font-size:12px;color:var(--sub);line-height:1.7">Saturn governs your path. Central fat accumulation is the signature pattern. Discipline and structure are your tools. Systems work. Bursts do not.</div></div>';
+
+  html+='<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Astro Influence</div>';
+  html+='<div style="font-size:12px;color:var(--sub);line-height:1.7"><span style="color:var(--gold)">Venus Mahadasha</span> — comfort-seeking phase, requires override.<br><span style="color:var(--gold)">Saturn 6th house</span> — rewards consistent daily routine.<br><span style="color:var(--gold)">June 2026</span> — Jupiter antardasha opens. Build the base now.</div></div>';
+
+  html+='<div><div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Actions</div>';
+  const acts=[];
+  if(wh) acts.push({ic:'🚶',t:'Saturn Walk',a:'40 min at 6:30 AM. Waist responds to sustained low-intensity movement.'});
+  if(wh) acts.push({ic:'🧘',t:'Breathwork',a:'5 min at 5:10 AM daily. Reduces cortisol — the direct driver of abdominal fat.'});
+  if(ah) acts.push({ic:'🟡',t:'Mars Activation',a:'Resistance band circuit — rows, pull-aparts, curls. Phase 1 in Exercise tab.'});
+  if(hh) acts.push({ic:'🌿',t:'Venus Balance',a:'Clamshells and lateral band walks. Lower body control before adding load.'});
+  acts.push({ic:'⏰',t:'Timing',a:'Best movement: 6:30–7:45 AM. Wednesday = review day. Saturday = light only.'});
+  acts.push({ic:'🍽️',t:'Food Timing',a:'Dinner done by 7:30 PM. Late eating + Omnacortil = waist fat accumulation.'});
+  html+=acts.map(a=>'<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #1a1610;align-items:flex-start"><span style="font-size:18px;flex-shrink:0">'+a.ic+'</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">'+a.t+'</div><div style="font-size:11px;color:var(--sub);margin-top:2px;line-height:1.5">'+a.a+'</div></div></div>').join('');
+  html+='</div>';
+  return html;
+}
+
+// Measurement targets for Divy at 184cm goal-weight 75kg
+const MEAS_TARGETS={
+  wt:  {label:'Weight',    unit:'kg', current:98, target:75,  max:120, better:'down', color:'var(--gold)'},
+  wa:  {label:'Waist',     unit:'cm', current:42, target:32,  max:55,  better:'down', color:'var(--red)'},
+  ch:  {label:'Chest',     unit:'cm', current:46, target:44,  max:60,  better:'down', color:'var(--blue)'},
+  hi:  {label:'Hip',       unit:'cm', current:46, target:40,  max:60,  better:'down', color:'var(--orange)'},
+  th:  {label:'Thigh',     unit:'cm', current:28, target:24,  max:40,  better:'down', color:'var(--purple)'},
+  sh:  {label:'Shoulder',  unit:'cm', current:50, target:50,  max:60,  better:'same', color:'var(--teal)'},
+  bi:  {label:'Bicep',     unit:'cm', current:16, target:18,  max:25,  better:'up',   color:'var(--green)'},
+  lg:  {label:'Calf',      unit:'cm', current:17, target:16,  max:28,  better:'down', color:'var(--sub)'},
+};
+
+function rBody(){
+  const ms=BODY_LOG.measurements;
+  const latest=ms[0]||null;
+  const prev=ms[1]||null;
+
+  function chg(key,unit){
+    if(!latest||!prev||!latest[key]||!prev[key])return '';
+    const d=(latest[key]-prev[key]).toFixed(1);
+    const t=MEAS_TARGETS[key];
+    const good=t?( t.better==='down'?d<0 : t.better==='up'?d>0 : Math.abs(d)<1 ):d<0;
+    return '<span style="color:'+(good?'var(--green)':'var(--red)')+';font-size:10px;margin-left:5px">'+(d>0?'+':'')+d+unit+'</span>';
+  }
+
+  const bmi=latest&&latest.bmi?latest.bmi:null;
+  const bmiCol=bmi?bmi>30?'var(--red)':bmi>25?'var(--orange)':'var(--green)':'var(--muted)';
+  const bmiLbl=bmi?bmi>35?'Obese III':bmi>30?'Obese II':bmi>27?'Obese I':bmi>25?'Overweight':bmi>18.5?'Healthy':'Underweight':'';
+
+  // Build measurement bar charts
+  function measBar(key){
+    const t=MEAS_TARGETS[key];
+    const val=latest&&latest[key]?latest[key]:t.current;
+    const prev_val=prev&&prev[key]?prev[key]:null;
+    const pct=Math.min(100,Math.max(0,Math.round(((t.max-val)/(t.max-t.target))*100)));
+    const onTarget=t.better==='down'?val<=t.target:t.better==='up'?val>=t.target:Math.abs(val-t.target)<=2;
+    const barCol=onTarget?'var(--green)':t.better==='down'&&val>t.target*1.15?'var(--red)':t.color;
+    const diff=prev_val?parseFloat((val-prev_val).toFixed(1)):null;
+    const diffGood=diff!==null?(t.better==='down'?diff<0:t.better==='up'?diff>0:Math.abs(diff)<1):null;
+    return `
+      <div style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+          <div style="font-size:12px;font-weight:600;color:var(--text)">${t.label}</div>
+          <div style="display:flex;align-items:baseline;gap:6px">
+            ${diff!==null?`<span style="font-size:10px;color:${diffGood?'var(--green)':'var(--red)'}">${diff>0?'+':''}${diff}${t.unit}</span>`:''}
+            <span style="font-size:14px;font-weight:700;color:${barCol}">${val}${t.unit}</span>
+            <span style="font-size:10px;color:var(--muted)">→${t.target}${t.unit}</span>
+          </div>
+        </div>
+        <div style="height:8px;background:var(--b1);border-radius:4px;overflow:hidden;position:relative">
+          <div style="position:absolute;right:0;top:0;bottom:0;width:2px;background:var(--green);opacity:0.4;border-radius:2px"></div>
+          <div style="height:100%;width:${pct}%;background:${barCol};border-radius:4px;transition:width .5s ease;max-width:100%"></div>
+        </div>
+        <div style="font-size:9px;color:var(--muted);margin-top:2px;text-align:right">Target: ${t.target}${t.unit} · Max range: ${t.max}${t.unit}</div>
+      </div>`;
+  }
+
+  const val=k=>latest&&latest[k]?latest[k]:'';
+
+  // Holistic guidance from latest or defaults
+  const hm={
+    wa:latest&&latest.wa||42,
+    ch:latest&&latest.ch||46,
+    hi:latest&&latest.hi||46,
+    bi:latest&&latest.bi||16,
+  };
+
+  const historyRows=ms.length===0
+    ?'<div style="font-size:12px;color:var(--muted)">No measurements yet. Log on Day 8 of each cycle.</div>'
+    :ms.map(m=>'<div style="padding:10px 0;border-bottom:1px solid #1a1610"><div style="font-size:11px;color:var(--sub);margin-bottom:5px">'+m.date+(m.bmi?' · <span style="color:'+(m.bmi>30?'var(--red)':m.bmi>25?'var(--orange)':'var(--green)')+'">BMI '+m.bmi+'</span>':'')+'</div><div style="display:flex;gap:10px;flex-wrap:wrap">'
+      +(m.wt?'<span style="font-size:11px"><span style="color:var(--muted)">Wt </span><b style="color:var(--gold)">'+m.wt+'kg</b></span>':'')
+      +(m.wa?'<span style="font-size:11px"><span style="color:var(--muted)">Waist </span><b style="color:var(--blue)">'+m.wa+'cm</b></span>':'')
+      +(m.ch?'<span style="font-size:11px"><span style="color:var(--muted)">Chest </span><b style="color:var(--sub)">'+m.ch+'cm</b></span>':'')
+      +(m.hi?'<span style="font-size:11px"><span style="color:var(--muted)">Hip </span><b style="color:var(--sub)">'+m.hi+'cm</b></span>':'')
+      +(m.th?'<span style="font-size:11px"><span style="color:var(--muted)">Thigh </span><b style="color:var(--sub)">'+m.th+'cm</b></span>':'')
+      +'</div></div>').join('');
+
+  return `
+    <!-- BMI CARD -->
+    <div class="c" style="text-align:center;background:#0d0b06;border-color:var(--gold)">
+      <div class="ctitle">Body Stats · ${latest?latest.date:'No data yet'}</div>
+      ${bmi?`
+        <div style="font-size:36px;font-weight:700;color:${bmiCol};font-family:var(--ff)">${bmi}</div>
+        <div style="font-size:13px;color:${bmiCol};margin-bottom:8px">${bmiLbl}</div>
+        <div style="font-size:11px;color:var(--muted)">Height 184cm · Target BMI 22–24</div>
+      `:'<div style="font-size:12px;color:var(--muted);padding:10px">Log your weight below to calculate BMI</div>'}
+    </div>
+
+    <!-- MEASUREMENT BARS -->
+    <div class="c">
+      <div class="ctitle">Progress to Target</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:14px">Bar fills toward target. Green = at goal. Red = needs work.</div>
+      ${Object.keys(MEAS_TARGETS).map(k=>measBar(k)).join('')}
+    </div>
+
+    <!-- LOG FORM -->
+    <div class="c">
+      <div class="ctitle">Log Measurements</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Day 8 of each cycle. First thing morning. Tape relaxed, not tight.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+        ${[['wt','Weight','kg','98'],['sh','Shoulder width','cm','50'],['ch','Chest ⌀','cm','44'],['wa','Waist ⌀','cm','40'],['hi','Hip ⌀','cm','42'],['th','Thigh ⌀','cm','24'],['lg','Calf ⌀','cm','17'],['bi','Bicep ⌀','cm','16']].map(([id,lbl,unit,ph])=>`<div><label style="font-size:10px;color:var(--sub);display:block;margin-bottom:3px">${lbl} <span style="color:var(--muted);font-size:9px">${unit}</span></label><input id="bm-${id}" class="inp inp-sm" type="number" step="0.5" placeholder="${ph}" value="${val(id)}"/></div>`).join('')}
+      </div>
+      <button class="btn btn-g" onclick="logMeasurement()">Save This Reading</button>
+    </div>
+
+    <!-- COMPARISON GRID -->
+    ${latest?`
+    <div class="c">
+      <div class="ctitle">Latest vs Previous</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        ${['wt','wa','ch','hi','th','bi'].map(k=>{
+          const t=MEAS_TARGETS[k];
+          return latest[k]?`<div style="background:var(--p2);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:10px;color:var(--muted)">${t.label}</div>
+            <div style="font-size:15px;font-weight:700;color:${t.color}">${latest[k]}${t.unit}</div>
+            ${chg(k,t.unit)}
+          </div>`:'';
+        }).join('')}
+      </div>
+    </div>`:''}
+
+    <!-- HOLISTIC GUIDANCE -->
+    <div class="c" style="background:#0d0b06;border-color:var(--gold)">
+      <div class="ctitle">🧠 Holistic Body Guidance</div>
+      <div style="font-size:12px;color:var(--sub)">${generateHolisticSuggestions(hm)}</div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="c">
+      <div class="ctitle">History</div>
+      ${historyRows}
+    </div>
+  `;
+}
+
+// ═══════════ JOURNAL ═══════════
+function saveJournal(){saveS('dv4-journal',JOURNAL);}
+
+function saveJournalEntry(){
+  const text=document.getElementById('j-entry').value.trim();
+  if(!text){flash('Write something first');return;}
+  const weekKey=getWeekKey();
+  JOURNAL.entries[weekKey]={text,date:TODAY,saved:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})};
+  saveJournal();flash('Saved ✓');renderTab('journal');
+}
+
+function getWeekKey(){
+  const d=new Date(TODAY);
+  const day=d.getDay();
+  const diff=d.getDate()-day+(day===0?-6:1);
+  const mon=new Date(d.setDate(diff));
+  return mon.toISOString().split('T')[0];
+}
+
+function getWeekLabel(key){
+  const d=new Date(key);
+  const end=new Date(key);end.setDate(end.getDate()+6);
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${d.getDate()} ${months[d.getMonth()]} – ${end.getDate()} ${months[end.getMonth()]}`;
+}
+
+function isWednesday(){return new Date().getDay()===3;}
+
+function rJournal(){
+  const weekKey=getWeekKey();
+  const existing=JOURNAL.entries[weekKey];
+  const isWed=isWednesday();
+  const entries=Object.entries(JOURNAL.entries).sort((a,b)=>b[0].localeCompare(a[0]));
+
+  return `
+    <div class="c ${isWed?'c-gold':''}">
+      <div class="ctitle">Wednesday Review</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px">
+        ${isWed?'✦ Today is Wednesday — Mercury day. Your weekly reset. Write one honest sentence.':'Write anytime. Best on Wednesday — your Mercury review day.'}
+      </div>
+      <div style="font-size:11px;color:var(--sub);margin-bottom:8px">Week of ${getWeekLabel(weekKey)}</div>
+      <textarea id="j-entry" class="inp" rows="4" placeholder="One honest sentence about this week. How did discipline feel? What worked? What needs adjusting? No sugarcoating." style="resize:none;line-height:1.6">${existing?existing.text:''}</textarea>
+      <button class="btn btn-g" onclick="saveJournalEntry()">${existing?'Update This Week':'Save This Week'}</button>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--b1)">
+        <div style="font-size:11px;color:var(--sub);margin-bottom:6px">Note to Iti this week (she sees this in her tab)</div>
+        <textarea id="j-iti-note" class="inp" rows="2" placeholder="Something for Iti to read this week..." style="resize:none">${ITI_MSGS.divy||''}</textarea>
+        <button class="btn btn-dim" style="margin-top:6px;font-size:12px" onclick="const v=document.getElementById('j-iti-note').value;ITI_MSGS.divy=v;saveS('dv4-iti-msgs',ITI_MSGS);flash('Note saved for Iti 💝')">Send to Iti 💝</button>
+      </div>
+    </div>
+
+    <div class="c">
+      <div class="ctitle">Past Entries</div>
+      ${entries.length===0?'<div style="font-size:12px;color:var(--muted)">No entries yet. Start this Wednesday.</div>':
+        entries.map(([key,entry])=>`
+          <div style="padding:12px 0;border-bottom:1px solid #1a1610">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+              <div style="font-size:11px;font-weight:700;color:var(--gold)">${getWeekLabel(key)}</div>
+              <div style="font-size:10px;color:var(--muted)">${entry.date}</div>
+            </div>
+            <div style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic">"${esc(entry.text)}"</div>
+          </div>`).join('')}
+    </div>
+
+    <div class="c c-blue">
+      <div class="ctitle">What to Reflect On Each Wednesday</div>
+      <div style="font-size:12px;color:var(--sub);line-height:1.9">
+        Did I complete at least 6 of the last 8 days?<br>
+        Was there a meal, day, or situation that derailed me — and why?<br>
+        What did my body feel like this week compared to last?<br>
+        Did I drink enough water? Did I sleep on time?<br>
+        What is one thing I will do differently next week?<br><br>
+        <span style="color:var(--blue)">Saturn Life Path 8 principle:</span> Self-accounting is not self-criticism. It is how you build the evidence that discipline works.
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════ PACK CHECKLIST ═══════════
+function savePack(){saveS('dv4-pack',PACK);}
+
+const HOTEL_ITEMS=[
+  {id:'meds_box',cat:'Medications',name:'Pill organiser — 7-day labelled',critical:true},
+  {id:'takfa',cat:'Medications',name:'Takfa 4mg strips — count doses + 2 extra',critical:true},
+  {id:'mycofit',cat:'Medications',name:'Mycofit 360mg — count doses + 2 extra',critical:true},
+  {id:'metxl',cat:'Medications',name:'MetXL 50mg + 25mg — count doses + 2 extra',critical:true},
+  {id:'omna',cat:'Medications',name:'Omnacortil 5mg — count doses + 2 extra',critical:true},
+  {id:'telma',cat:'Medications',name:'Telma 40mg + Atorva 10mg — count + extra',critical:true},
+  {id:'makhana',cat:'Food',name:'Roasted unsalted makhana — 2 sealed packs',critical:false},
+  {id:'oats',cat:'Food',name:'Plain oats sachets — 4 minimum',critical:false},
+  {id:'ajwain',cat:'Food',name:'Small ajwain packet for morning water',critical:false},
+  {id:'comp_socks',cat:'Travel Health',name:'Compression socks 15–20 mmHg for flights',critical:true},
+  {id:'water_bottle',name:'Refillable water bottle — track 3.5L daily',cat:'Travel Health',critical:false},
+  {id:'panna',cat:'Essentials',name:'Panna ring — gold, Mercury finger',critical:false},
+  {id:'nazar',cat:'Essentials',name:'Nazarbattu and protective bracelet',critical:false},
+  {id:'emer_card',cat:'Essentials',name:'Medical summary card in wallet',critical:true},
+];
+
+const INTL_EXTRAS=[
+  {id:'intl_meds_extra',cat:'Medications',name:'Extra 5-day medication supply beyond trip length',critical:true},
+  {id:'intl_adapter',cat:'Travel',name:'Universal power adapter for devices',critical:false},
+  {id:'extra_makhana',cat:'Food',name:'Makhana — double quantity for longer trip',critical:false},
+  {id:'extra_oats',cat:'Food',name:'Oats sachets — 8 minimum for international',critical:false},
+  {id:'ginger_tea',cat:'Food',name:'Ginger or ajwain tea sachets',critical:false},
+];
+
+function togglePack(mode,id){
+  if(!PACK[mode])PACK[mode]={};
+  PACK[mode][id]=!PACK[mode][id];
+  savePack();renderTab('pack');
+}
+
+function resetPack(mode){
+  PACK[mode]={};savePack();renderTab('pack');
+}
+
+function rPack(){
+  const mode=S.mode==='intl'?'intl':'hotel';
+  const items=mode==='intl'?[...HOTEL_ITEMS,...INTL_EXTRAS]:HOTEL_ITEMS;
+  const cats=[...new Set(items.map(i=>i.cat))];
+  const packed=items.filter(i=>PACK[mode]&&PACK[mode][i.id]).length;
+  const critical=items.filter(i=>i.critical);
+  const critPacked=critical.filter(i=>PACK[mode]&&PACK[mode][i.id]).length;
+  const allCritical=critPacked===critical.length;
+
+  return `
+    <div class="c ${allCritical?'c-green':'c-gold'}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <div class="ctitle" style="margin-bottom:0">${mode==='intl'?'✈️ International Pack':'🏨 Hotel Pack'}</div>
+        <button class="btn btn-dim btn-sm" onclick="resetPack('${mode}')">Reset</button>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px">
+        ${S.mode!=='intl'?'Switch to ✈️ Intl mode for international checklist.':''}
+        Switch mode in header to change list.
+      </div>
+      <div style="display:flex;gap:16px">
+        <div style="text-align:center">
+          <div style="font-size:22px;font-weight:700;color:${allCritical?'var(--green)':'var(--gold)'}">${packed}/${items.length}</div>
+          <div style="font-size:10px;color:var(--muted)">Total packed</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:22px;font-weight:700;color:${allCritical?'var(--green)':'var(--red)'}">${critPacked}/${critical.length}</div>
+          <div style="font-size:10px;color:var(--muted)">Critical items</div>
+        </div>
+      </div>
+      <div class="kb" style="margin-top:10px"><div class="kf kf-ok" style="width:${(packed/items.length)*100}%"></div></div>
+    </div>
+
+    ${cats.map(cat=>{
+      const catItems=items.filter(i=>i.cat===cat);
+      return `<div class="c" style="margin-bottom:10px">
+        <div class="ctitle">${cat}</div>
+        ${catItems.map(item=>{
+          const done=PACK[mode]&&PACK[mode][item.id];
+          return `<div onclick="togglePack('${mode}','${item.id}')"
+            style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #1a1610;cursor:pointer">
+            <div style="width:26px;height:26px;border-radius:6px;border:2px solid ${done?'var(--green)':item.critical?'var(--red)':'var(--b2)'};background:${done?'#1a4a2a':'transparent'};display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--green);flex-shrink:0">
+              ${done?'✓':''}
+            </div>
+            <div style="flex:1">
+              <div style="font-size:13px;color:${done?'var(--muted)':item.critical?'var(--text)':'var(--sub)'}${done?';text-decoration:line-through':''}">${item.name}</div>
+              ${item.critical&&!done?'<div style="font-size:10px;color:var(--red);margin-top:2px">Critical — do not leave without this</div>':''}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    }).join('')}
+  `;
+}
+
+// ═══════════ UPDATED rDay WITH LOCK + DATE AWARENESS ═══════════
+
+// ═══════════ DAY LOCK ═══════════
+function checkDayLock(){
+  const yesterday=new Date(TODAY);
+  yesterday.setDate(yesterday.getDate()-1);
+  const yd=yesterday.toISOString().split('T')[0];
+  if(yd<START_DATE&&yd<PREP_START) return false; // before journey
+  if(DAY_LOCK.lastDate===TODAY) return false; // already handled today
+  const ydChecks=loadS('dv4-ch-'+yd,{});
+  const ydSched=PREP_DAYS[yd]?PREP_DAYS[yd].movement:SCH_HOME;
+  const done=Object.values(ydChecks).filter(Boolean).length;
+  const total=ydSched.length;
+  if(done>=Math.floor(total*0.8)) return false; // 80% = pass
+  return yd; // return yesterday date if lock needed
+}
+
+function resolvelock(reason){
+  const lockDate=checkDayLock();
+  if(!lockDate){flash('All good!');return;}
+  const grace=['travel','health','work'];
+  if(grace.includes(reason)){
+    S.calData[lockDate]='grace-'+reason;
+    DAY_LOCK={lastDate:TODAY,reason};
+    saveS('dv4-lock',DAY_LOCK);
+    flash('Grace noted. Streak protected.');
+  } else {
+    // forfeit — push current cycle reward to next
+    S.streak=Math.max(0,S.streak-1);
+    S.calData[lockDate]='skipped';
+    DAY_LOCK={lastDate:TODAY,reason:'forfeit'};
+    saveS('dv4-lock',DAY_LOCK);
+    flash('Honest. One reward deferred. Streak resets.');
+  }
+  saveMain();
+  document.getElementById('lock-modal').style.display='none';
+  renderTab('home');
+}
+
+// ═══════════ SLEEP & ENERGY LOG ═══════════
+function saveVitals(){saveS('dv4-vitals',VITALS);}
+function logVitals(){
+  const sleep=document.getElementById('v-sleep').value;
+  const wake=document.getElementById('v-wake').value;
+  const energy=document.getElementById('v-energy').value;
+  if(!energy){flash('Tap an energy level');return;}
+  VITALS[TODAY]={sleep,wake,energy:parseInt(energy),date:TODAY};
+  saveVitals();
+
+  // Auto-check tasks based on logged times
+  const isPrep=TODAY>=PREP_START&&TODAY<START_DATE;
+  const sch=isPrep&&PREP_DAYS[TODAY]?PREP_DAYS[TODAY].movement:SCH_HOME;
+
+  if(wake){
+    const [wh,wm]=wake.split(':').map(Number);
+    const wakeMinutes=wh*60+wm;
+    // Auto-check 5 AM rise if woke by 5:30 AM
+    if(wakeMinutes<=330){
+      sch.forEach((item,i)=>{
+        if(item.t==='5:00 AM') CHECKS['d'+i]=true;
+      });
+    }
+  }
+  if(sleep){
+    const [sh,sm]=sleep.split(':').map(Number);
+    const sleepMin=sh*60+sm;
+    // Auto-check 9:30 PM sleep if slept by 10:00 PM (or before midnight)
+    const sleepOk=sleepMin>=0&&sleepMin<=120||sleepMin>=1290; // before midnight or after 9:30pm
+    if(sleepOk){
+      sch.forEach((item,i)=>{
+        if(item.t==='9:30 PM'||item.t==='9:30 PM') CHECKS['d'+i]=true;
+      });
+    }
+  }
+  saveCh();
+  flash('Morning check-in saved ✓');
+  renderTab(CUR);
+}
+
+// ═══════════ SUPPLEMENT LOG ═══════════
+function saveSupps(){saveS('dv4-supps-'+TODAY,SUPPS);}
+function toggleSupp(id){
+  SUPPS[id]=!SUPPS[id];saveSupps();renderTab('home');
+}
+
+// ═══════════ TRAVEL PLANNER ═══════════
+function saveTripForm(){
+  const date=document.getElementById('tr-date').value;
+  const dep=document.getElementById('tr-dep').value;
+  const arr=document.getElementById('tr-arr').value;
+  const type=document.getElementById('tr-type').value;
+  const note=document.getElementById('tr-note').value;
+  if(!date||!type){flash('Date and type required');return;}
+  TRAVEL.trips=TRAVEL.trips.filter(t=>t.date!==date);
+  TRAVEL.trips.push({date,dep,arr,type,note,id:Date.now()});
+  TRAVEL.trips.sort((a,b)=>a.date.localeCompare(b.date));
+  saveS('dv4-travel',TRAVEL);
+  flash('Trip saved');renderTab('travel');
+}
+
+function deleteTrip(id){
+  TRAVEL.trips=TRAVEL.trips.filter(t=>t.id!==id);
+  saveS('dv4-travel',TRAVEL);
+  renderTab('travel');
+}
+
+function getTripForDate(ds){
+  return TRAVEL.trips.find(t=>t.date===ds)||null;
+}
+
+function rTravel(){
+  const upcoming=TRAVEL.trips.filter(t=>t.date>=TODAY);
+  const past=TRAVEL.trips.filter(t=>t.date<TODAY).reverse().slice(0,5);
+
+  return `
+    <div class="c c-gold">
+      <div class="ctitle">Add Travel Day</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Feed travel days in advance. The app modifies your Day schedule automatically.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div>
+          <label style="font-size:10px;color:var(--sub);display:block;margin-bottom:3px">Date</label>
+          <input id="tr-date" class="inp inp-sm" type="date" min="${TODAY}"/>
+        </div>
+        <div>
+          <label style="font-size:10px;color:var(--sub);display:block;margin-bottom:3px">Type</label>
+          <select id="tr-type" class="inp inp-sm">
+            <option value="domestic">🏨 Domestic</option>
+            <option value="international">✈️ International</option>
+            <option value="return">🏠 Return Day</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:10px;color:var(--sub);display:block;margin-bottom:3px">Departure</label>
+          <input id="tr-dep" class="inp inp-sm" type="time"/>
+        </div>
+        <div>
+          <label style="font-size:10px;color:var(--sub);display:block;margin-bottom:3px">Arrival</label>
+          <input id="tr-arr" class="inp inp-sm" type="time"/>
+        </div>
+      </div>
+      <input id="tr-note" class="inp inp-sm" type="text" placeholder="Notes (flight no, hotel, etc)" style="margin-bottom:8px;width:100%"/>
+      <button class="btn btn-g" onclick="saveTripForm()">Save Travel Day</button>
+    </div>
+
+    ${upcoming.length>0?`
+    <div class="c">
+      <div class="ctitle">Upcoming Travel</div>
+      ${upcoming.map(t=>`
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #1a1610">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text)">${t.date} · ${t.type==='domestic'?'🏨 Domestic':t.type==='international'?'✈️ International':'🏠 Return'}</div>
+            ${t.dep?`<div style="font-size:11px;color:var(--sub)">Dep ${t.dep}${t.arr?' · Arr '+t.arr:''}</div>`:''}
+            ${t.note?`<div style="font-size:11px;color:var(--muted)">${t.note}</div>`:''}
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="font-size:11px;color:var(--blue)">${t.type==='domestic'?'Hotel mode':'Intl mode'} auto-set</div>
+            <button onclick="deleteTrip(${t.id})" style="background:var(--b1);border:none;color:var(--muted);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:11px">✕</button>
+          </div>
+        </div>`).join('')}
+    </div>`:''}
+
+    ${past.length>0?`
+    <div class="c">
+      <div class="ctitle">Recent Travel</div>
+      ${past.map(t=>`
+        <div style="padding:8px 0;border-bottom:1px solid #1a1610">
+          <div style="font-size:12px;color:var(--sub)">${t.date} · ${t.type==='international'?'✈️ International':'🏨 Domestic'}${t.note?' · '+t.note:''}</div>
+        </div>`).join('')}
+    </div>`:''}
+
+    <div class="c c-blue">
+      <div class="ctitle">How This Works</div>
+      <div style="font-size:12px;color:var(--sub);line-height:1.8">
+        When a travel day is logged, the Day tab automatically shows the modified schedule for that date — shorter walk, breathwork in transit, hotel-adapted meals.<br><br>
+        Early morning departure: walk moves to airport terminal or hotel corridor on arrival.<br>
+        Late night arrival: evening protocol compresses. Minimum is always 15 min walk + breathwork + medications. Non-negotiable.<br><br>
+        <span style="color:var(--blue)">The habit does not break. It adapts.</span>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════ SOS EMERGENCY CARD ═══════════
+function rSOS(){
+  return `
+    <div style="background:linear-gradient(135deg,#1a0808,#0f0505);border:2px solid var(--red);border-radius:16px;padding:20px;margin-bottom:12px;text-align:center">
+      <div style="font-size:28px;margin-bottom:6px">🆘</div>
+      <div style="font-family:var(--fs);font-size:20px;color:var(--red);font-weight:700;margin-bottom:4px">Emergency Card</div>
+      <div style="font-size:11px;color:var(--sub)">Divyanshu Shrivastava · DOB: 19 Sep 1987 · 184cm</div>
+    </div>
+
+    <div class="c" style="border-color:var(--red);background:#120808">
+      <div class="ctitle" style="color:var(--red)">⚕️ Medical Summary</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.9">
+        <strong style="color:var(--gold)">Condition:</strong> Post kidney transplant (June 27, 2023)<br>
+        <strong style="color:var(--gold)">Blood group:</strong> O+<br>
+        <strong style="color:var(--gold)">DOB (documents):</strong> 19 Feb 1988<br>
+        <strong style="color:var(--gold)">Allergies:</strong> Fish · Seafood<br>
+        <strong style="color:var(--gold)">Never give:</strong> NSAIDs · Grapefruit · Pomelo
+      </div>
+    </div>
+
+    <div class="c" style="border-color:var(--red);background:#120808">
+      <div class="ctitle" style="color:var(--red)">💊 Current Medications</div>
+      ${[
+        ['Tacrolimus (Takfa)','4mg · 9 AM and 9 PM','CRITICAL — immunosuppressant'],
+        ['Mycophenolate (Mycofit)','360mg · 8 AM and 8 PM','CRITICAL — immunosuppressant'],
+        ['Prednisolone (Omnacortil)','5mg · morning after breakfast','Do not stop abruptly'],
+        ['Metoprolol (MetXL)','50mg morning · 25mg 6:30 PM','Beta-blocker'],
+        ['Telmisartan (Telma)','40mg · 8 PM','BP medication'],
+        ['Atorvastatin (Atorva)','10mg · 8 PM','Statin'],
+      ].map(([n,d,note])=>`
+        <div style="padding:8px 0;border-bottom:1px solid #2a1010">
+          <div style="font-size:13px;font-weight:600;color:var(--text)">${n}</div>
+          <div style="font-size:11px;color:var(--gold)">${d}</div>
+          <div style="font-size:10px;color:var(--sub)">${note}</div>
+        </div>`).join('')}
+    </div>
+
+    <div class="c" style="border-color:var(--red);background:#120808">
+      <div class="ctitle" style="color:var(--red)">📞 Emergency Contacts</div>
+      ${[
+        {name:'Dr. Krishna Reddy',role:'Nephrologist · Manipal Hospital Bengaluru',num:'+918008094845'},
+        {name:'Iti',role:'Wife · Primary contact',num:'+919988844538'},
+        {name:'Papa',role:'Father · Family emergency',num:'+919770343563'},
+      ].map(c=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #2a1010">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:var(--text)">${c.name}</div>
+            <div style="font-size:11px;color:var(--sub)">${c.role}</div>
+          </div>
+          <a href="tel:${c.num}" style="background:var(--red);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;font-family:var(--ff)">📞 Call</a>
+        </div>`).join('')}
+    </div>
+
+    <div class="c" style="border-color:var(--red)">
+      <div class="ctitle" style="color:var(--red)">⚠️ Critical Notes for Medical Staff</div>
+      <div style="font-size:12px;color:var(--sub);line-height:1.9">
+        This patient is on chronic immunosuppression following renal transplant.<br>
+        <span style="color:var(--red)">DO NOT give NSAIDs</span> (ibuprofen, diclofenac etc) — nephrotoxic.<br>
+        <span style="color:var(--red)">DO NOT stop Tacrolimus or Mycophenolate</span> without transplant physician approval — risk of acute rejection.<br>
+        <span style="color:var(--red)">DO NOT give grapefruit juice</span> — dangerous interaction with Tacrolimus.<br>
+        Check Tacrolimus trough levels if any new medication is added.<br>
+        Treating nephrologist: Dr. Krishna Reddy, Manipal Hospital Bengaluru.
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════ CALENDAR DAY VIEW ═══════════
+function getDayCompletion(dateStr){
+  const dayChecks=loadS('dv4-ch-'+dateStr,{});
+  const isPrep=dateStr>=PREP_START&&dateStr<START_DATE;
+  const prepDay=isPrep?PREP_DAYS[dateStr]:null;
+  const trip=getTripForDate(dateStr);
+  let effectiveMode=S.mode;
+  if(trip){effectiveMode=trip.type==='international'?'intl':trip.type==='domestic'?'hotel':'home';}
+  const sch=prepDay?prepDay.movement:effectiveMode==='hotel'?SCH_HOTEL:effectiveMode==='intl'?SCH_INTL:SCH_HOME;
+  const done=Object.values(dayChecks).filter(Boolean).length;
+  const total=sch.length;
+  const pct=total>0?Math.round((done/total)*100):0;
+  return {done,total,pct,pass:pct>=80};
+}
+
+function markTravel(dateStr,type){
+  if(type==='none'){
+    TRAVEL.trips=TRAVEL.trips.filter(t=>t.date!==dateStr);
+  } else {
+    TRAVEL.trips=TRAVEL.trips.filter(t=>t.date!==dateStr);
+    TRAVEL.trips.push({date:dateStr,type,dep:'',arr:'',note:'',id:Date.now()});
+    TRAVEL.trips.sort((a,b)=>a.date.localeCompare(b.date));
+    // Auto set mode if marking today
+    if(dateStr===TODAY){
+      S.mode=type==='international'?'intl':type==='domestic'?'hotel':'home';
+      saveMain();
+      updateHeader();
+    }
+  }
+  saveS('dv4-travel',TRAVEL);
+  flash(type==='none'?'Travel removed':'Marked as '+type);
+  renderTab('cal');
+}
+
+function rCalDay(dateStr){
+  const isToday=dateStr===TODAY;
+  const isFuture=dateStr>TODAY;
+  const isPast=dateStr<TODAY;
+  const isPrep=dateStr>=PREP_START&&dateStr<START_DATE;
+  const prepDay=isPrep?PREP_DAYS[dateStr]:null;
+  const trip=getTripForDate(dateStr);
+  const comp=getDayCompletion(dateStr);
+  const dayChecks=isToday?CHECKS:loadS('dv4-ch-'+dateStr,{});
+  let effectiveMode=S.mode;
+  if(trip) effectiveMode=trip.type==='international'?'intl':trip.type==='domestic'?'hotel':'home';
+
+  const d=new Date(dateStr);
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dayLabel=days[d.getDay()]+', '+d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();
+
+  // Header
+  let html=`
+    <div style="background:${comp.pass?'#091a09':isPrep?'#0a1a2a':'#0d0b06'};border:1px solid ${comp.pass?'var(--green2)':isPrep?'#4a90d0':'var(--gold)'};border-radius:12px;padding:14px;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:${comp.pass?'var(--green)':isPrep?'#60b0e0':'var(--gold)'}">${dayLabel}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">
+            ${isToday?'Today':isFuture?'Upcoming':isPast?'Past day':''}
+            ${trip?' · '+(trip.type==='international'?'✈️ International':trip.type==='domestic'?'🏨 Domestic':'🏠 Return'):''}
+            ${isPrep?' · '+prepDay.label:''}
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:18px;font-weight:700;color:${comp.pass?'var(--green)':'var(--gold)'}">${comp.pct}%</div>
+          <div style="font-size:10px;color:var(--muted)">${comp.done}/${comp.total} done</div>
+        </div>
+      </div>
+      <div style="height:6px;background:var(--b1);border-radius:3px;overflow:hidden;margin-bottom:10px">
+        <div style="height:100%;width:${comp.pct}%;background:${comp.pass?'var(--green)':'linear-gradient(90deg,var(--gold),var(--teal))'};border-radius:3px;transition:width .5s"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <button onclick="CAL_VIEW_DATE=null;renderTab('cal')" style="background:var(--b1);border:none;color:var(--sub);border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:var(--ff)">← Calendar</button>
+        <div style="display:flex;gap:6px">
+          ${!isPrep?`
+          <select onchange="markTravel('${dateStr}',this.value)" style="background:var(--b1);border:1px solid var(--b2);color:var(--sub);border-radius:6px;padding:4px 8px;font-size:11px;font-family:var(--ff);cursor:pointer">
+            <option value="none" ${!trip?'selected':''}>📍 Home</option>
+            <option value="domestic" ${trip&&trip.type==='domestic'?'selected':''}>🏨 Domestic</option>
+            <option value="international" ${trip&&trip.type==='international'?'selected':''}>✈️ International</option>
+            <option value="return" ${trip&&trip.type==='return'?'selected':''}>🏠 Return</option>
+          </select>`:''}
+        </div>
+      </div>
+    </div>`;
+
+  // Inner tabs
+  const tabs=[
+    {id:'schedule',label:'Schedule'},
+    {id:'exercise',label:'Exercise'},
+    {id:'food',label:'Food'},
+    {id:'notes',label:'Notes'},
+  ];
+  html+=`<div style="display:flex;background:#0d0b07;border:1px solid var(--b1);border-radius:10px;padding:3px;gap:3px;margin-bottom:12px">
+    ${tabs.map(t=>`<button onclick="CAL_DAY_TAB='${t.id}';renderTab('cal')"
+      style="flex:1;padding:8px 4px;font-size:11px;font-weight:700;border:none;border-radius:7px;font-family:var(--ff);cursor:pointer;transition:all .2s;
+      background:${CAL_DAY_TAB===t.id?'linear-gradient(135deg,var(--gold),var(--gold2))':'transparent'};
+      color:${CAL_DAY_TAB===t.id?'#0a0a0f':'var(--muted)'}">${t.label}</button>`).join('')}
+  </div>`;
+
+  // ── SCHEDULE TAB ──
+  if(CAL_DAY_TAB==='schedule'){
+    const sch=prepDay?prepDay.movement:effectiveMode==='hotel'?SCH_HOTEL:effectiveMode==='intl'?SCH_INTL:SCH_HOME;
+    if(isPrep){
+      html+=`<div style="background:#0a1a2a;border:1px solid #4a90d0;border-radius:10px;padding:12px;margin-bottom:10px">
+        <div style="font-size:11px;color:#60b0e0;font-weight:700">${prepDay.theme}</div>
+      </div>`;
+    }
+    if(trip&&!isPrep){
+      html+=`<div style="background:${trip.type==='international'?'#080d12':'#120e04'};border:1px solid ${trip.type==='international'?'var(--blue)':'var(--gold)'};border-radius:10px;padding:10px 14px;margin-bottom:10px">
+        <div style="font-size:12px;font-weight:700;color:${trip.type==='international'?'var(--blue)':'var(--gold)'}">${trip.type==='international'?'✈️ International':'🏨 Domestic'} Travel Day</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Minimum: 15 min walk + breathwork + all medications. Non-negotiable.</div>
+      </div>`;
+    }
+    html+=sch.map((item,i)=>`
+      <div class="si ${dayChecks['d'+i]?'dn':''}" ${isToday?`onclick="toggleCheck('d${i}');renderTab('cal')"`:''} style="${!isToday?'cursor:default':''}">
+        <div class="si-ic">${item.ic}</div>
+        <div class="si-inf">
+          <div class="si-t" style="color:${isPrep?'#60b0e0':CAT_COL[item.c]||'var(--gold)'}">${item.t}</div>
+          <div class="si-a">${esc(item.a)}</div>
+        </div>
+        <div class="chk">${dayChecks['d'+i]?'✓':''}</div>
+      </div>`).join('');
+    html+=`<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px">${comp.pct}% complete · ${comp.pass?'✅ Day complete!':'Need '+(Math.ceil(comp.total*0.8)-comp.done)+' more for 80%'}</div>`;
+
+    // Morning check-in and supplements — only show for today
+    if(isToday){
+      html+=`<div class="c" style="margin-top:10px;background:#0d0b06;border-color:var(--gold)">
+        <div class="ctitle">Morning Check-In</div>
+        ${VITALS[TODAY]?`
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--gold)">${{1:'Low 😴',2:'Meh 😐',3:'Ok 🙂',4:'Good 😊',5:'High! ⚡'}[VITALS[TODAY].energy]||'—'}</div>
+              <div style="font-size:11px;color:var(--sub);margin-top:2px">${VITALS[TODAY].sleep?'Slept '+VITALS[TODAY].sleep+' · Woke '+VITALS[TODAY].wake:''}</div>
+            </div>
+            <button onclick="delete VITALS['${TODAY}'];saveVitals();renderTab('cal')" style="background:var(--b1);border:none;color:var(--muted);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:var(--ff)">Edit</button>
+          </div>`:`
+          <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Takes 10 seconds. Wake/sleep auto-checks your rise and sleep tasks.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+            <div>
+              <label style="font-size:10px;color:var(--sub);display:block;margin-bottom:3px">Bedtime last night</label>
+              <input id="v-sleep" class="inp inp-sm" type="time" value="21:00"/>
+            </div>
+            <div>
+              <label style="font-size:10px;color:var(--sub);display:block;margin-bottom:3px">Wake time</label>
+              <input id="v-wake" class="inp inp-sm" type="time" value="05:00"/>
+            </div>
+          </div>
+          <div style="margin-bottom:10px">
+            <div style="font-size:10px;color:var(--sub);margin-bottom:6px">Energy level today</div>
+            <div style="display:flex;gap:6px">
+              ${[{n:1,l:'Low'},{n:2,l:'Meh'},{n:3,l:'Ok'},{n:4,l:'Good'},{n:5,l:'High!'}].map(({n,l})=>`
+                <div onclick="document.querySelectorAll('.e-btn').forEach(b=>{b.style.background='var(--b1)';b.style.color='var(--sub)'});this.style.background='var(--gold)';this.style.color='#0a0a0f';document.getElementById('v-energy').value='${n}'"
+                  class="e-btn" style="flex:1;height:38px;border-radius:8px;background:var(--b1);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--sub);font-size:11px;font-weight:700">${l}</div>`).join('')}
+            </div>
+            <input id="v-energy" type="hidden" value=""/>
+          </div>
+          <button class="btn btn-g" onclick="logVitals()">Save Check-In</button>`}
+      </div>
+
+      <div class="c" style="margin-top:10px">
+        <div class="ctitle">💊 Supplements Today</div>
+        ${[
+          {id:'ubq',name:'Ubiquinol 100mg',dose:'With lunch · 1:00–1:30 PM'},
+          {id:'fish',name:'Omega-3',dose:'With lunch · 1:00–1:30 PM · 1 cap'},
+          {id:'vitd',name:'Vitamin D3 2000 IU',dose:'Alternate days · with lunch'},
+          {id:'fiber',name:'Fiber 6g',dose:'11:00 AM · in water'},
+          {id:'trunativ',name:'TruNativ Protein',dose:'Mixed in lunch'},
+          {id:'mag',name:'Magnesium 1 cap',dose:'With lunch · 1:00–1:30 PM'},
+        ].map(s=>`
+          <div onclick="toggleSupp('${s.id}');renderTab('cal')" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1a1610;cursor:pointer">
+            <div>
+              <div style="font-size:13px;color:var(--text)">${s.name}</div>
+              <div style="font-size:10px;color:var(--muted)">${s.dose}</div>
+            </div>
+            <div style="width:26px;height:26px;border-radius:50%;border:2px solid ${SUPPS[s.id]?'var(--green)':'var(--b2)'};background:${SUPPS[s.id]?'#1a4a2a':'transparent'};display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--green)">
+              ${SUPPS[s.id]?'✓':''}
+            </div>
+          </div>`).join('')}
+      </div>`;
+    }
+  }
+
+  // ── EXERCISE TAB ──
+  else if(CAL_DAY_TAB==='exercise'){
+    html+=`<div style="background:linear-gradient(135deg,#1a1206,#12100a);border:1px solid var(--gold);border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+      <div><div style="font-size:26px;font-weight:700;color:var(--gold)">${exPts()} pts</div>
+      <div style="font-size:11px;color:var(--sub)">Movement points</div></div>
+      <div style="text-align:right;font-size:11px;color:var(--sub)">80% of day<br>= green ✅</div>
+    </div>`;
+    // Lake card — mode aware
+    if(effectiveMode==='home'){
+      html+=`<div style="background:linear-gradient(135deg,#0a1a18,#081210);border:1px solid #2a5a52;border-radius:10px;padding:12px;margin-bottom:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">🌊 Jakkur Lake · Yelahanka, Bengaluru</div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.9">
+          Home to lake: <strong style="color:var(--teal)">700m</strong> · Full circle: <strong style="color:var(--teal)">7km</strong><br>
+          <span style="color:var(--green)">Now:</span> Walk there + back = 1.4km<br>
+          <span style="color:var(--gold)">92kg:</span> Quarter circle (3.15km total)<br>
+          <span style="color:var(--orange)">89kg:</span> Half circle (4.9km total)<br>
+          <span style="color:var(--blue)">82kg:</span> Full circle with Iti waiting
+        </div>
+      </div>`;
+    } else {
+      html+=`<div style="background:linear-gradient(135deg,#0a1a18,#081210);border:1px solid #2a5a52;border-radius:10px;padding:12px;margin-bottom:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">🚶 Movement — Local Area</div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.9">Hotel corridor · Airport terminal · Nearby street<br>
+          <span style="color:var(--green)">Minimum:</span> 15 min walk — always possible<br>
+          Jakkur Lake resumes at home.
+        </div>
+      </div>`;
+    }
+    // Active phases
+    const activePhases=EX.filter(p=>p.unlockKg===999||S.wt<=p.unlockKg);
+    activePhases.forEach(ph=>{
+      html+=`<div class="c" style="margin-bottom:10px"><span class="pbadge">Phase ${ph.ph}: ${ph.name}</span>
+        <div style="font-size:12px;color:var(--sub);margin-bottom:10px">${ph.desc}</div>`;
+      ph.list.forEach(ex=>{
+        const done=EX_LOG[ex.id];
+        html+=`<div class="ei ${done?'dn':''}" ${isToday?`onclick="toggleEx('${ex.id}');renderTab('cal')"`:''} style="${!isToday?'cursor:default':''}">
+          <div class="ei-ic">${ex.ic}</div>
+          <div class="ei-inf">
+            <div class="ei-n">${esc(ex.n)}</div>
+            <div class="ei-d">${esc(ex.d)}</div>
+            <div class="ei-dur">${ex.dur}</div>
+          </div>
+          <div class="ei-pts">+${ex.pts}</div>
+          <div class="chk">${done?'✓':''}</div>
+        </div>`;
+      });
+      html+='</div>';
+    });
+    // Band guide
+    html+=`<div class="c c-blue"><div class="ctitle">🟡 Band Guide</div>
+      ${BAND_GUIDE.map(b=>`<div class="bg-ex"><div class="bg-name">${b.n}</div><div class="bg-step">${b.steps}</div></div>`).join('')}
+    </div>`;
+  }
+
+  // ── FOOD TAB ──
+  else if(CAL_DAY_TAB==='food'){
+    const dayFood=isToday?FOOD_LOG:loadS('dv4-food-'+dateStr,[]);
+    const tk=dayFood.reduce((s,f)=>s+(f.kcal||0),0);
+    const kcalOk=tk<=TARGET_KCAL;
+    html+=`<div class="c" style="text-align:center;background:#0d0b06;border-color:var(--gold)">
+      <div style="font-size:32px;font-weight:700;color:${kcalOk?'var(--gold)':'var(--red)'}">${tk} kcal</div>
+      <div style="font-size:11px;color:var(--muted)">Target: ${TARGET_KCAL} kcal</div>
+      <div class="kb"><div class="kf ${kcalOk?'kf-ok':'kf-ov'}" style="width:${Math.min(100,(tk/TARGET_KCAL)*100)}%"></div></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:5px">${kcalOk?(TARGET_KCAL-tk)+' kcal remaining':(tk-TARGET_KCAL)+' kcal over'}</div>
+    </div>`;
+    if(isToday){
+      // Food entry form
+      html+=`<div class="c"><div class="ctitle">Add Food</div>
+        <div style="margin-bottom:8px">
+          <select id="food-meal" class="inp">
+            <option value="breakfast">Breakfast</option>
+            <option value="midMorn">Mid Morning</option>
+            <option value="lunch" selected>Lunch</option>
+            <option value="evening">Evening</option>
+            <option value="dinner">Dinner</option>
+          </select>
+        </div>
+        <div class="dd-wrap">
+          <input id="food-inp" class="inp" type="text" placeholder="Search food..." oninput="searchFood(this.value)" autocomplete="off"/>
+          <div id="food-dd" class="dd-menu"></div>
+        </div>
+        <div id="food-qty-wrap" style="display:none;margin-bottom:10px">
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="food-qty" class="inp" type="number" step="1" value="100" oninput="updateFoodPreview()" style="flex:1"/>
+            <div id="food-qty-unit" style="color:var(--sub);font-size:12px">g</div>
+            <div id="food-preview" style="font-size:14px;font-weight:700;color:var(--gold);min-width:70px;text-align:right"></div>
+          </div>
+        </div>
+        <button class="btn btn-g" onclick="addFoodItem();renderTab('cal')">Add to Log</button>
+      </div>`;
+    }
+    const byMeal={breakfast:[],midMorn:[],lunch:[],evening:[],dinner:[],other:[]};
+    dayFood.forEach((f,i)=>{(byMeal[f.meal]||byMeal.other).push({...f,idx:i});});
+    const mealNames={breakfast:'Breakfast',midMorn:'Mid Morning',lunch:'Lunch',evening:'Evening',dinner:'Dinner',other:'Other'};
+    let logged='';
+    Object.entries(byMeal).forEach(([key,items])=>{
+      if(!items.length) return;
+      const mKcal=items.reduce((s,f)=>s+f.kcal,0);
+      logged+=`<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">${mealNames[key]} · ${mKcal} kcal</div>
+        ${items.map(f=>`<div class="food-logged">
+          <div><div class="fl-name">${esc(f.name)}</div><div class="fl-meta">${f.qty}${f.unit} · ${f.time}</div></div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="fl-kcal">${f.kcal}</div>
+            ${isToday?`<div class="fl-del" onclick="delFood(${f.idx});renderTab('cal')">✕</div>`:''}
+          </div>
+        </div>`).join('')}
+      </div>`;
+    });
+    if(logged) html+=`<div class="c"><div class="ctitle">Food Log</div>${logged}</div>`;
+  }
+
+  // ── NOTES TAB ──
+  else if(CAL_DAY_TAB==='notes'){
+    const weekKey=getWeekKey();
+    const existing=JOURNAL.entries[weekKey];
+    const isWed=new Date(dateStr).getDay()===3;
+    html+=`<div class="c ${isWed?'c-gold':''}">
+      <div class="ctitle">Weekly Journal</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px">
+        ${isWed?'✦ Wednesday — Mercury day. Write one honest sentence.':'Week of '+getWeekLabel(weekKey)}
+      </div>
+      <textarea id="j-entry" class="inp" rows="4" placeholder="One honest sentence about this week. No sugarcoating." style="resize:none;line-height:1.6">${existing?existing.text:''}</textarea>
+      <button class="btn btn-g" style="margin-top:8px" onclick="saveJournalEntry();renderTab('cal')">${existing?'Update':'Save This Week'}</button>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--b1)">
+        <div style="font-size:11px;color:var(--sub);margin-bottom:6px">Note to Iti this week</div>
+        <textarea id="j-iti-note" class="inp" rows="2" placeholder="Something for Iti..." style="resize:none">${ITI_MSGS.divy||''}</textarea>
+        <button class="btn btn-dim" style="margin-top:6px;font-size:12px" onclick="const v=document.getElementById('j-iti-note').value;ITI_MSGS.divy=v;saveS('dv4-iti-msgs',ITI_MSGS);flash('Sent to Iti 💝')">Send to Iti 💝</button>
+      </div>
+    </div>
+    ${Object.entries(JOURNAL.entries).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,5).map(([key,entry])=>`
+      <div style="padding:10px 0;border-bottom:1px solid #1a1610">
+        <div style="font-size:11px;font-weight:700;color:var(--gold)">${getWeekLabel(key)}</div>
+        <div style="font-size:12px;color:var(--text);font-style:italic;margin-top:4px">"${esc(entry.text)}"</div>
+      </div>`).join('')}`;
+  }
+
+  return html;
+}
+
+// ═══════════ REWARDS (renamed Iti) ═══════════
+function rRewards(){
+  return rIti();
+}
+
+// ═══════════ CHATBOT ═══════════
+let CHAT_HISTORY=[];
+let CHAT_OPEN=false;
+
+function buildContext(){
+  const comp=getDayCompletion(TODAY);
+  const vitals=VITALS[TODAY]||null;
+  const trip=getTripForDate(TODAY);
+  const isPrep=TODAY>=PREP_START&&TODAY<START_DATE;
+  const prepDay=isPrep?PREP_DAYS[TODAY]:null;
+  const daysToStart=Math.ceil((new Date(START_DATE)-new Date(TODAY))/(1000*60*60*24));
+  const dayNum=daysSinceStart();
+  const suppsDone=Object.entries(SUPPS).filter(([,v])=>v).map(([k])=>k);
+  const medsDone=Object.entries(CHECKS).filter(([k,v])=>k.startsWith('m')&&v).length;
+  const water=WATER.ml;
+  const kcal=totalKcal();
+  const ep=exPts();
+
+  return `You are Divy's personal health and life companion — built into his daily app. You know everything about him. Respond like a wise, warm, direct friend — not a coach, not a doctor. Never preachy. Never generic. Always specific to Divy.
+
+ABOUT DIVY:
+- Full name: Divyanshu Shrivastava. Called Divy. Age 37. 184cm. Current weight ${S.wt}kg. Goal 75kg.
+- Post kidney transplant June 27, 2023. Kidney functioning well — creatinine stable at 1.7.
+- Works in Global Product Management at Armstrong Fluid Technology, Bengaluru. Travels frequently.
+- Family: Wife Iti, daughter Chittu. Based in Bengaluru near Jakkur Lake (700m from home).
+- Vegetarian + eggs + chicken (Sat/Sun only) + occasional goat mutton. No fish/seafood preference. No beef, pork, lamb. No milk, no Torai, Tinda, Gilki. No grapefruit, pomelo ever.
+
+MEDICATIONS (never adjust, just acknowledge timing):
+- 7:15 AM: Omnacortil 5mg + MetXL 50mg (after breakfast)
+- 8:00 AM: Mycofit 360mg
+- 9:00 AM: Takfa 4mg (Tacrolimus — immunosuppressant, critical)
+- 6:30 PM: MetXL 25mg
+- 8:00 PM: Mycofit 360mg + Atorva 10mg + Telma 40mg
+- 9:00 PM: Takfa 4mg
+- Supplements at lunch (1–1:30 PM): Ubiquinol 100mg + Omega-3 + D3 alt days + Magnesium
+
+ASTROLOGICAL PROFILE:
+- DOB: 19 September 1987, 12:45 AM, Tundla UP
+- Gemini Ascendant. Lagna lord Mercury in Virgo (own sign, very strong) — wearing Panna emerald in gold.
+- Cancer Moon, 2nd house, Pushya Nakshatra — emotional, water-loving, family-centred.
+- Venus DEBILITATED in Virgo 4th house — governs kidneys, comfort-seeking tendency. Neecha Bhanga applies (Mercury cancels debilitation).
+- Saturn in Scorpio, 6th house — discipline = medicine. Rewards structure, punishes skipping.
+- Venus Mahadasha until 2036. Currently Venus-Jupiter antardasha from June 2026 — major health transformation window.
+- Life Path 8 (Saturn). Day Number 1 (Sun). Name Divy = Number 7 (Ketu).
+- 8-day cycles, Wednesday Mercury reviews, March 28 start date.
+
+PALMISTRY:
+- Head line curves toward Luna — internalises stress physically. Breathwork is non-negotiable.
+- Heart line to Jupiter — absorbs others' stress. Family warmth is medicine.
+- Short Mercury finger — tendency to understate symptoms to doctors.
+- Hypermobile thumb — generous, over-commits, health-sensitive.
+
+CURRENT STATUS TODAY (${TODAY}):
+- ${isPrep?prepDay.label+' — '+prepDay.theme:'Day '+dayNum+' of journey'}
+- ${trip?'Travel day: '+trip.type:'Home day in Bengaluru'}
+- Day completion: ${comp.done}/${comp.total} items (${comp.pct}%) — ${comp.pass?'✅ Green day':'needs '+Math.max(0,Math.ceil(comp.total*0.8)-comp.done)+' more for 80%'}
+- Meds checked: ${medsDone}/6
+- Supplements done: ${suppsDone.length}/6
+- Water: ${water}ml / 3500ml
+- Calories: ${kcal} / 1300 kcal
+- Exercise points: ${ep}
+- Energy today: ${vitals?vitals.energy+'/5':'not logged yet'}
+- Sleep: ${vitals&&vitals.sleep?vitals.sleep+' to '+vitals.wake:'not logged'}
+- Weight: ${S.wt}kg (goal 75kg, ${(S.wt-75).toFixed(1)}kg to go)
+- Cycle day: ${S.cycleDay}/8. Streak: ${S.streak} cycles.
+- ${isPrep?daysToStart+' days until full plan launches March 28':'Journey day '+dayNum}
+
+TONE RULES:
+- Direct and warm. Never lecture. Never say "I understand how you feel."
+- Reference his chart, his numbers, his lake, his family naturally.
+- If he mentions slipping (lying back down, skipping, eating wrong) — acknowledge it, reframe it, redirect forward. No guilt.
+- If he mentions physical symptoms — take them seriously and suggest he notes them for Dr. Krishna Reddy.
+- Keep responses SHORT — 3 to 6 sentences maximum unless he asks for more.
+- Never list medications or give medical advice. You know them but you are not a doctor.
+- End with one specific actionable sentence, not a question.`;
+}
+
+function toggleChat(){
+  CHAT_OPEN=!CHAT_OPEN;
+  const panel=document.getElementById('chat-panel');
+  const btn=document.getElementById('chat-btn');
+  panel.style.display=CHAT_OPEN?'flex':'none';
+  btn.style.transform=CHAT_OPEN?'scale(0.9)':'scale(1)';
+  if(CHAT_OPEN&&CHAT_HISTORY.length===0){
+    // Opening greeting
+    const hour=new Date().getHours();
+    const greeting=hour<7?'Still early, Divy.':hour<12?'Good morning, Divy.':hour<17?'Afternoon, Divy.':'Evening, Divy.';
+    addMsg('assistant',greeting+' I know where you are today. What is on your mind?');
+  }
+  if(CHAT_OPEN) setTimeout(()=>document.getElementById('chat-input').focus(),300);
+}
+
+function addMsg(role,text){
+  const msgs=document.getElementById('chat-msgs');
+  const isUser=role==='user';
+  const div=document.createElement('div');
+  div.style.cssText=`display:flex;justify-content:${isUser?'flex-end':'flex-start'}`;
+  div.innerHTML=`<div style="
+    max-width:82%;padding:10px 13px;border-radius:${isUser?'14px 14px 4px 14px':'14px 14px 14px 4px'};
+    background:${isUser?'linear-gradient(135deg,var(--gold),var(--gold2))':'var(--p2)'};
+    color:${isUser?'#0a0a0f':'var(--text)'};
+    font-size:13px;line-height:1.6;font-family:var(--ff);
+    border:${isUser?'none':'1px solid var(--b2)'};
+  ">${text.replace(/\n/g,'<br>')}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+  CHAT_HISTORY.push({role,content:text});
+}
+
+function addTyping(){
+  const msgs=document.getElementById('chat-msgs');
+  const div=document.createElement('div');
+  div.id='chat-typing';
+  div.style.cssText='display:flex;justify-content:flex-start';
+  div.innerHTML=`<div style="padding:10px 14px;border-radius:14px 14px 14px 4px;background:var(--p2);border:1px solid var(--b2)">
+    <div style="display:flex;gap:4px;align-items:center">
+      ${[0,150,300].map(d=>`<div style="width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 1s ${d}ms infinite"></div>`).join('')}
+    </div>
+  </div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function removeTyping(){
+  const t=document.getElementById('chat-typing');
+  if(t) t.remove();
+}
+
+// Add pulse animation to style
+const chatStyle=document.createElement('style');
+chatStyle.textContent='@keyframes pulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}';
+document.head.appendChild(chatStyle);
+
+async function sendChat(){
+  const inp=document.getElementById('chat-input');
+  const text=inp.value.trim();
+  if(!text) return;
+  inp.value='';
+  inp.style.height='auto';
+  addMsg('user',text);
+  addTyping();
+  document.getElementById('chat-send').disabled=true;
+
+  try{
+    const systemPrompt=buildContext();
+    const messages=CHAT_HISTORY.slice(-12).map(m=>({role:m.role,content:m.content}));
+    // Remove the last user message since we're adding it via messages array
+    const apiMessages=[...messages.slice(0,-1),{role:'user',content:text}];
+
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:systemPrompt,
+        messages:apiMessages.length>0?apiMessages:[{role:'user',content:text}],
+      })
+    });
+    const data=await res.json();
+    removeTyping();
+    const reply=data.content&&data.content[0]?data.content[0].text:'I am here, Divy. Try again in a moment.';
+    addMsg('assistant',reply);
+  }catch(e){
+    removeTyping();
+    addMsg('assistant','Need internet for this, Divy. Connect and try again.');
+  }
+  document.getElementById('chat-send').disabled=false;
+}
+
+// ═══════════ INIT ═══════════
+updateHeader();
+renderTab('home');
+schedNotifs();
+
+// Check day lock after slight delay
+setTimeout(()=>{
+  const lockNeeded=checkDayLock();
+  if(lockNeeded){
+    const modal=document.getElementById('lock-modal');
+    if(modal) modal.style.display='flex';
+  }
+},1200);
+
+// Close dropdowns on outside tap
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.dd-wrap')){
+    document.querySelectorAll('.dd-menu').forEach(m=>m.classList.remove('open'));
+  }
+});
+</script>
+</body>
+</html>
