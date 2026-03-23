@@ -3017,7 +3017,7 @@ function saveApiKey(){
   if(!k.startsWith('AIza')){flash('Invalid key — must start with AIza...');return;}
   GEMINI_KEY=k;
   localStorage.setItem('dv4-gemini-key',k);
-  flash('Gemini key saved ✓');
+  flash('Key saved ✓');
   renderChatContent();
 }
 
@@ -3045,15 +3045,15 @@ function renderChatContent(){
       <div style="padding:4px">
         <div style="background:linear-gradient(135deg,#1a1206,#12100a);border:1px solid var(--gold);border-radius:14px;padding:20px;text-align:center;margin-bottom:16px">
           <div style="font-size:32px;margin-bottom:8px">🔑</div>
-          <div style="font-size:15px;font-weight:700;color:var(--gold);margin-bottom:6px">One-time setup — completely free</div>
-          <div style="font-size:12px;color:var(--sub);line-height:1.7">Your companion uses Google Gemini — free forever for personal use. No payment needed.</div>
+          <div style="font-size:15px;font-weight:700;color:var(--gold);margin-bottom:6px">One-time setup</div>
+          <div style="font-size:12px;color:var(--sub);line-height:1.7">Uses Google Gemini — covered by your Google Cloud credits. Paste your API key from Google Cloud console.</div>
         </div>
 
         <div style="background:var(--p2);border-radius:12px;padding:14px;margin-bottom:12px">
           <div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">3 steps</div>
           ${[
-            ['1','Go to','aistudio.google.com'],
-            ['2','Sign in with Google → Get API key → Create key',''],
+            ['1','Go to','console.cloud.google.com/apis/credentials'],
+            ['2','Select your project → Create Credentials → API Key',''],
             ['3','Paste it below',''],
           ].map(([n,t,sub])=>`<div style="display:flex;gap:10px;margin-bottom:8px;align-items:flex-start">
             <div style="width:22px;height:22px;border-radius:50%;background:var(--gold);color:#0a0a0f;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">${n}</div>
@@ -3228,26 +3228,19 @@ async function sendChat(){
     apiMessages.push({role:'user',content:text});
 
     // Gemini API call
-    const geminiUrl=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
-    
-    // Build Gemini conversation history
-    const geminiContents=[];
-    // Add history (skip last user message — we add it fresh)
+    const geminiUrl='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key='+GEMINI_KEY;
+    const geminiMsgs=[];
     for(let i=0;i<apiMessages.length-1;i++){
-      geminiContents.push({
-        role:apiMessages[i].role==='assistant'?'model':'user',
-        parts:[{text:apiMessages[i].content}]
-      });
+      geminiMsgs.push({role:apiMessages[i].role==='assistant'?'model':'user',parts:[{text:apiMessages[i].content}]});
     }
-    // Add current user message
-    geminiContents.push({role:'user',parts:[{text:text}]});
+    geminiMsgs.push({role:'user',parts:[{text:text}]});
 
     const res=await fetch(geminiUrl,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         system_instruction:{parts:[{text:systemPrompt}]},
-        contents:geminiContents,
+        contents:geminiMsgs,
         generationConfig:{maxOutputTokens:800,temperature:0.8}
       })
     });
@@ -3259,13 +3252,13 @@ async function sendChat(){
 
     const data=await res.json();
     removeTyping();
-    const reply=data.candidates&&data.candidates[0]&&data.candidates[0].content&&data.candidates[0].content.parts&&data.candidates[0].content.parts[0]?data.candidates[0].content.parts[0].text:'I am here, Divy. Try again.';
+    const reply=data.candidates&&data.candidates[0]?.content?.parts?.[0]?.text||'I am here, Divy. Try again.';
     addMsg('assistant',reply);
   }catch(e){
     removeTyping();
     const msg=e.message||'';
     if(msg.includes('401')||msg.includes('auth')||msg.includes('API key')){
-      addMsg('assistant','The API key looks wrong. Go to aistudio.google.com, create a free key starting with AIza, and paste it in the chat setup screen.');
+      addMsg('assistant','Key error. Make sure you are using a Google Cloud API key starting with AIza from console.cloud.google.com/apis/credentials — and that the Generative Language API is enabled in your project.');
     } else if(msg.includes('Failed to fetch')||msg.includes('NetworkError')||msg.includes('CORS')){
       addMsg('assistant','The chat is blocked when opening from local storage. Open this file via Google Drive → three dots → Open with Chrome, or any https:// URL. Everything else in the app works fine offline.');
     } else {
