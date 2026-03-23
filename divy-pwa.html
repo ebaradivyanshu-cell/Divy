@@ -300,7 +300,10 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
         <div style="font-family:var(--fs);font-size:18px;color:var(--gold)">✦ Divy's Companion</div>
         <div style="font-size:10px;color:var(--sub);margin-top:1px">Knows your chart · your meds · your journey</div>
       </div>
-      <button onclick="toggleChat()" style="background:var(--b1);border:none;color:var(--muted);border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;font-family:var(--ff)">✕ Close</button>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div id="chat-key-btn"></div>
+        <button onclick="toggleChat()" style="background:var(--b1);border:none;color:var(--muted);border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;font-family:var(--ff)">✕</button>
+      </div>
     </div>
     <!-- Messages -->
     <div id="chat-msgs" style="flex:1;overflow-y:auto;padding:14px;scrollbar-width:none;display:flex;flex-direction:column;gap:10px"></div>
@@ -616,6 +619,52 @@ let FOOD_LOG=loadS('dv4-food-'+TODAY,[]);
 let EX_LOG=loadS('dv4-ex-'+TODAY,{});
 let WATER=loadS('dv4-water-'+TODAY,{ml:0});
 let ITI_D=loadS('dv4-iti',{pw:'',rewards:{},open:false});
+let ITI_SYNC_BIN=localStorage.getItem('dv4-iti-bin')||''; // JSONBin ID
+let ITI_SYNC_KEY=localStorage.getItem('dv4-iti-bkey')||''; // JSONBin master key
+
+// ── Cloud sync for Iti rewards ──
+async function itiPush(){
+  if(!ITI_SYNC_BIN||!ITI_SYNC_KEY) return;
+  try{
+    // Store only rewards and pw hash — never plain password
+    const payload={rewards:ITI_D.rewards,pwHash:btoa(ITI_D.pw),msgs:ITI_MSGS,updated:new Date().toISOString()};
+    await fetch('https://api.jsonbin.io/v3/b/'+ITI_SYNC_BIN,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json','X-Master-Key':ITI_SYNC_KEY,'X-Bin-Private':'true'},
+      body:JSON.stringify(payload)
+    });
+  }catch(e){console.log('Sync push failed',e);}
+}
+
+async function itiPull(){
+  if(!ITI_SYNC_BIN||!ITI_SYNC_KEY) return false;
+  try{
+    const res=await fetch('https://api.jsonbin.io/v3/b/'+ITI_SYNC_BIN+'/latest',{
+      headers:{'X-Master-Key':ITI_SYNC_KEY}
+    });
+    if(!res.ok) return false;
+    const data=await res.json();
+    const rec=data.record;
+    if(rec&&rec.rewards){
+      ITI_D.rewards=rec.rewards;
+      if(rec.pwHash) ITI_D.pw=atob(rec.pwHash);
+      if(rec.msgs) ITI_MSGS=rec.msgs;
+      saveS('dv4-iti',ITI_D);
+      saveS('dv4-iti-msgs',ITI_MSGS);
+      return true;
+    }
+  }catch(e){console.log('Sync pull failed',e);}
+  return false;
+}
+
+async function itiSetupSync(binId,masterKey){
+  ITI_SYNC_BIN=binId;ITI_SYNC_KEY=masterKey;
+  localStorage.setItem('dv4-iti-bin',binId);
+  localStorage.setItem('dv4-iti-bkey',masterKey);
+  await itiPush();
+  flash('Cloud sync enabled 💝');
+  renderTab('rewards');
+}
 let CUR='home';
 let ITI_OPEN=false;
 let FOOD_SEARCH='';
@@ -866,13 +915,15 @@ function saveItiSetup(){
     const custom=document.getElementById('iti-custom-'+ms);
     if(custom&&custom.value)rewards[ms]='custom:'+custom.value;
   });
-  ITI_D={pw,rewards,open:false};saveS('dv4-iti',ITI_D);
-  flash('Saved secretly 💝');ITI_OPEN=true;renderTab('iti');
+  ITI_D={pw,rewards,open:false};
+  saveS('dv4-iti',ITI_D);
+  itiPush();
+  flash('Saved secretly 💝');ITI_OPEN=true;renderTab('rewards');
 }
 
 function tryItiPw(){
   const v=document.getElementById('iti-pw-try').value;
-  if(v===ITI_D.pw){ITI_OPEN=true;renderTab('iti');}
+  if(v===ITI_D.pw){ITI_OPEN=true;renderTab('rewards');}
   else flash('Wrong password ✗');
 }
 
@@ -893,7 +944,9 @@ function updateIti(){
   const np=document.getElementById('iti-npw')&&document.getElementById('iti-npw').value;
   ITI_D.rewards=rewards;
   if(np)ITI_D.pw=np;
-  saveS('dv4-iti',ITI_D);flash('Updated 💝');
+  saveS('dv4-iti',ITI_D);
+  itiPush();
+  flash('Updated & synced 💝');
 }
 
 // ═══════════ HEADER ═══════════
@@ -1771,6 +1824,30 @@ function rIti(){
     </div>
     <button class="btn btn-pk" onclick="updateIti()">Update Rewards 💝</button>
 
+    <!-- CLOUD SYNC SETUP -->
+    <div class="c" style="margin-top:10px;border-color:#2a4a6a;background:#080d12">
+      <div class="ctitle" style="color:var(--blue)">☁️ Cloud Sync</div>
+      ${ITI_SYNC_BIN?`
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:12px;color:var(--green);font-weight:700">✓ Sync enabled</div>
+            <div style="font-size:11px;color:var(--sub);margin-top:2px">Rewards sync between your phone and Iti's phone</div>
+          </div>
+          <button onclick="localStorage.removeItem('dv4-iti-bin');localStorage.removeItem('dv4-iti-bkey');ITI_SYNC_BIN='';ITI_SYNC_KEY='';flash('Sync removed');renderTab('rewards')" style="background:var(--b1);border:none;color:var(--muted);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:var(--ff)">Remove</button>
+        </div>`:`
+        <div style="font-size:12px;color:var(--sub);line-height:1.7;margin-bottom:10px">
+          Iti can update rewards from her own phone. Both phones stay in sync. Password lock remains.<br><br>
+          <strong style="color:var(--blue)">Setup takes 2 minutes:</strong><br>
+          1. Go to <strong style="color:var(--gold)">jsonbin.io</strong> → Sign up free<br>
+          2. Create a new bin → copy the <strong>Bin ID</strong><br>
+          3. Go to API Keys → copy your <strong>Master Key</strong><br>
+          4. Paste both below
+        </div>
+        <input id="sync-bin" class="inp inp-sm" type="text" placeholder="Bin ID (e.g. 65f3...)" style="margin-bottom:8px"/>
+        <input id="sync-key" class="inp inp-sm" type="password" placeholder="Master Key ($2a$10$...)" style="margin-bottom:8px"/>
+        <button class="btn btn-teal" onclick="const b=document.getElementById('sync-bin').value.trim();const k=document.getElementById('sync-key').value.trim();if(!b||!k){flash('Both fields required');return;}itiSetupSync(b,k)">Enable Cloud Sync ☁️</button>`}
+    </div>
+
     <div class="c" style="margin-top:10px;border-color:#8b3a52;background:#120a0e">
       <div class="ctitle" style="color:#c06070">Weekly Note Exchange</div>
       <div style="margin-bottom:10px">
@@ -1782,7 +1859,7 @@ function rIti(){
       <div>
         <div style="font-size:11px;color:var(--sub);margin-bottom:6px">Iti's reply</div>
         <textarea id="iti-msg" class="inp" rows="3" placeholder="Write something back to Divy..." style="resize:none">${ITI_MSGS.iti||''}</textarea>
-        <button class="btn btn-pk" onclick="const v=document.getElementById('iti-msg').value;ITI_MSGS.iti=v;saveS('dv4-iti-msgs',ITI_MSGS);flash('Saved 💝')">Save Reply 💝</button>
+        <button class="btn btn-pk" onclick="const v=document.getElementById('iti-msg').value;ITI_MSGS.iti=v;saveS('dv4-iti-msgs',ITI_MSGS);itiPush();flash('Saved 💝')">Save Reply 💝</button>
       </div>
     </div>
   `;
@@ -2714,12 +2791,84 @@ function rCalDay(dateStr){
 
 // ═══════════ REWARDS (renamed Iti) ═══════════
 function rRewards(){
+  // Pull latest from cloud silently in background
+  if(ITI_SYNC_BIN&&ITI_SYNC_KEY){
+    itiPull().then(pulled=>{if(pulled) renderTab('rewards');});
+  }
   return rIti();
 }
 
 // ═══════════ CHATBOT ═══════════
 let CHAT_HISTORY=[];
 let CHAT_OPEN=false;
+let ANTHROPIC_KEY=localStorage.getItem('dv4-apikey')||'';
+
+function saveApiKey(){
+  const k=document.getElementById('apikey-inp').value.trim();
+  if(!k.startsWith('sk-ant-')){flash('Invalid key — must start with sk-ant-');return;}
+  ANTHROPIC_KEY=k;
+  localStorage.setItem('dv4-apikey',k);
+  flash('API key saved ✓');
+  renderChatContent();
+}
+
+function clearApiKey(){
+  ANTHROPIC_KEY='';
+  localStorage.removeItem('dv4-apikey');
+  CHAT_HISTORY=[];
+  renderChatContent();
+}
+
+function renderChatContent(){
+  const msgs=document.getElementById('chat-msgs');
+  if(!msgs) return;
+
+  // Update key button in header
+  const keyBtn=document.getElementById('chat-key-btn');
+  if(keyBtn){
+    keyBtn.innerHTML=ANTHROPIC_KEY
+      ?`<button onclick="if(confirm('Remove API key?'))clearApiKey()" style="background:#1a4a2a;border:1px solid var(--green2);color:var(--green);border-radius:6px;padding:4px 10px;font-size:10px;cursor:pointer;font-family:var(--ff);font-weight:700">✓ Key set</button>`
+      :`<button onclick="document.getElementById('chat-msgs').scrollTop=0" style="background:#2a1006;border:1px solid var(--gold);color:var(--gold);border-radius:6px;padding:4px 10px;font-size:10px;cursor:pointer;font-family:var(--ff)">Setup</button>`;
+  }
+
+  if(!ANTHROPIC_KEY){
+    msgs.innerHTML=`
+      <div style="padding:4px">
+        <div style="background:linear-gradient(135deg,#1a1206,#12100a);border:1px solid var(--gold);border-radius:14px;padding:20px;text-align:center;margin-bottom:16px">
+          <div style="font-size:32px;margin-bottom:8px">🔑</div>
+          <div style="font-size:15px;font-weight:700;color:var(--gold);margin-bottom:6px">One-time setup</div>
+          <div style="font-size:12px;color:var(--sub);line-height:1.7">Your companion needs a free API key to respond. Takes 2 minutes to set up. Stored only on this phone.</div>
+        </div>
+
+        <div style="background:var(--p2);border-radius:12px;padding:14px;margin-bottom:12px">
+          <div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">3 steps</div>
+          ${[
+            ['1','Go to','console.anthropic.com'],
+            ['2','Sign up free → API Keys → Create key',''],
+            ['3','Paste it below',''],
+          ].map(([n,t,sub])=>`<div style="display:flex;gap:10px;margin-bottom:8px;align-items:flex-start">
+            <div style="width:22px;height:22px;border-radius:50%;background:var(--gold);color:#0a0a0f;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">${n}</div>
+            <div style="font-size:12px;color:var(--text)">${t}${sub?`<br><span style="color:var(--gold);font-weight:700">${sub}</span>`:''}</div>
+          </div>`).join('')}
+        </div>
+
+        <div style="margin-bottom:10px">
+          <input id="apikey-inp" class="inp" type="password" placeholder="sk-ant-api03-..." style="font-size:13px;letter-spacing:1px"/>
+          <div style="font-size:10px;color:var(--muted);margin-top:5px;text-align:center">Stored locally · Never shared · Delete anytime</div>
+        </div>
+        <button class="btn btn-g" onclick="saveApiKey()" style="font-size:14px;padding:13px">Save Key & Start Chat →</button>
+      </div>`;
+  } else {
+    msgs.innerHTML='';
+    if(CHAT_HISTORY.length===0){
+      const hour=new Date().getHours();
+      const greeting=hour<7?'Still early, Divy.':hour<12?'Good morning, Divy.':hour<17?'Afternoon, Divy.':'Evening, Divy.';
+      addMsg('assistant',greeting+' I know where you are today. What is on your mind?');
+    } else {
+      CHAT_HISTORY.forEach(m=>addMsg(m.role,m.content,true));
+    }
+  }
+}
 
 function buildContext(){
   const comp=getDayCompletion(TODAY);
@@ -2800,17 +2949,13 @@ function toggleChat(){
   const btn=document.getElementById('chat-btn');
   panel.style.display=CHAT_OPEN?'flex':'none';
   btn.style.transform=CHAT_OPEN?'scale(0.9)':'scale(1)';
-  if(CHAT_OPEN&&CHAT_HISTORY.length===0){
-    // Opening greeting
-    const hour=new Date().getHours();
-    const greeting=hour<7?'Still early, Divy.':hour<12?'Good morning, Divy.':hour<17?'Afternoon, Divy.':'Evening, Divy.';
-    addMsg('assistant',greeting+' I know where you are today. What is on your mind?');
-  }
-  if(CHAT_OPEN) setTimeout(()=>document.getElementById('chat-input').focus(),300);
+  if(CHAT_OPEN) renderChatContent();
+  if(CHAT_OPEN&&ANTHROPIC_KEY) setTimeout(()=>document.getElementById('chat-input').focus(),300);
 }
 
-function addMsg(role,text){
+function addMsg(role,text,replay){
   const msgs=document.getElementById('chat-msgs');
+  if(!msgs) return;
   const isUser=role==='user';
   const div=document.createElement('div');
   div.style.cssText=`display:flex;justify-content:${isUser?'flex-end':'flex-start'}`;
@@ -2823,7 +2968,7 @@ function addMsg(role,text){
   ">${text.replace(/\n/g,'<br>')}</div>`;
   msgs.appendChild(div);
   msgs.scrollTop=msgs.scrollHeight;
-  CHAT_HISTORY.push({role,content:text});
+  if(!replay) CHAT_HISTORY.push({role,content:text});
 }
 
 function addTyping(){
@@ -2851,24 +2996,30 @@ chatStyle.textContent='@keyframes pulse{0%,100%{opacity:.3;transform:scale(.8)}5
 document.head.appendChild(chatStyle);
 
 async function sendChat(){
+  if(!ANTHROPIC_KEY){renderChatContent();return;}
   const inp=document.getElementById('chat-input');
   const text=inp.value.trim();
   if(!text) return;
   inp.value='';
-  inp.style.height='auto';
   addMsg('user',text);
   addTyping();
   document.getElementById('chat-send').disabled=true;
 
   try{
     const systemPrompt=buildContext();
-    const messages=CHAT_HISTORY.slice(-12).map(m=>({role:m.role,content:m.content}));
-    // Remove the last user message since we're adding it via messages array
-    const apiMessages=[...messages.slice(0,-1),{role:'user',content:text}];
+    const history=CHAT_HISTORY.slice(-12);
+    const apiMessages=[];
+    for(let i=0;i<history.length-1;i++) apiMessages.push({role:history[i].role,content:history[i].content});
+    apiMessages.push({role:'user',content:text});
 
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':ANTHROPIC_KEY,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true',
+      },
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:1000,
@@ -2876,13 +3027,26 @@ async function sendChat(){
         messages:apiMessages.length>0?apiMessages:[{role:'user',content:text}],
       })
     });
+
+    if(!res.ok){
+      const err=await res.json().catch(()=>({}));
+      throw new Error(err.error?.message||'API error '+res.status);
+    }
+
     const data=await res.json();
     removeTyping();
-    const reply=data.content&&data.content[0]?data.content[0].text:'I am here, Divy. Try again in a moment.';
+    const reply=data.content&&data.content[0]?data.content[0].text:'I am here, Divy. Try again.';
     addMsg('assistant',reply);
   }catch(e){
     removeTyping();
-    addMsg('assistant','Need internet for this, Divy. Connect and try again.');
+    const msg=e.message||'';
+    if(msg.includes('401')||msg.includes('auth')||msg.includes('API key')){
+      addMsg('assistant','The chat needs an Anthropic API key to work. Open the app from a web URL — or ask me to add your API key directly to the file.');
+    } else if(msg.includes('Failed to fetch')||msg.includes('NetworkError')||msg.includes('CORS')){
+      addMsg('assistant','The chat is blocked when opening from local storage. Open this file via Google Drive → three dots → Open with Chrome, or any https:// URL. Everything else in the app works fine offline.');
+    } else {
+      addMsg('assistant','Something went wrong: '+msg+'. Check your connection and try again.');
+    }
   }
   document.getElementById('chat-send').disabled=false;
 }
