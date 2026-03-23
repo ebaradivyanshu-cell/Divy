@@ -3010,20 +3010,20 @@ let _ctxTime=0;
 let _compCache={};
 let _compCacheDate='';
 let CHAT_OPEN=false;
-let GEMINI_KEY=localStorage.getItem('dv4-gemini-key')||'';
+let GROQ_KEY=localStorage.getItem('dv4-groq-key')||'';
 
 function saveApiKey(){
   const k=document.getElementById('apikey-inp').value.trim();
-  if(!k.startsWith('AIza')){flash('Invalid key — must start with AIza...');return;}
-  GEMINI_KEY=k;
-  localStorage.setItem('dv4-gemini-key',k);
-  flash('Key saved ✓');
+  if(!k.startsWith('gsk_')){flash('Invalid key — must start with gsk_');return;}
+  GROQ_KEY=k;
+  localStorage.setItem('dv4-groq-key',k);
+  flash('Groq key saved ✓');
   renderChatContent();
 }
 
 function clearApiKey(){
-  GEMINI_KEY='';
-  localStorage.removeItem('dv4-gemini-key');
+  GROQ_KEY='';
+  localStorage.removeItem('dv4-groq-key');
   CHAT_HISTORY=[];
   renderChatContent();
 }
@@ -3035,25 +3035,25 @@ function renderChatContent(){
   // Update key button in header
   const keyBtn=document.getElementById('chat-key-btn');
   if(keyBtn){
-    keyBtn.innerHTML=GEMINI_KEY
+    keyBtn.innerHTML=GROQ_KEY
       ?`<button onclick="if(confirm('Remove API key?'))clearApiKey()" style="background:#1a4a2a;border:1px solid var(--green2);color:var(--green);border-radius:6px;padding:4px 10px;font-size:10px;cursor:pointer;font-family:var(--ff);font-weight:700">✓ Key set</button>`
       :`<button onclick="document.getElementById('chat-msgs').scrollTop=0" style="background:#2a1006;border:1px solid var(--gold);color:var(--gold);border-radius:6px;padding:4px 10px;font-size:10px;cursor:pointer;font-family:var(--ff)">Setup</button>`;
   }
 
-  if(!GEMINI_KEY){
+  if(!GROQ_KEY){
     msgs.innerHTML=`
       <div style="padding:4px">
         <div style="background:linear-gradient(135deg,#1a1206,#12100a);border:1px solid var(--gold);border-radius:14px;padding:20px;text-align:center;margin-bottom:16px">
           <div style="font-size:32px;margin-bottom:8px">🔑</div>
           <div style="font-size:15px;font-weight:700;color:var(--gold);margin-bottom:6px">One-time setup</div>
-          <div style="font-size:12px;color:var(--sub);line-height:1.7">Uses Google Gemini — covered by your Google Cloud credits. Paste your API key from Google Cloud console.</div>
+          <div style="font-size:12px;color:var(--sub);line-height:1.7">Uses Groq AI — completely free, no billing needed. Get your key from console.groq.com in 1 minute.</div>
         </div>
 
         <div style="background:var(--p2);border-radius:12px;padding:14px;margin-bottom:12px">
           <div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">3 steps</div>
           ${[
-            ['1','Go to','console.cloud.google.com/apis/credentials'],
-            ['2','Select your project → Create Credentials → API Key',''],
+            ['1','Go to','console.groq.com'],
+            ['2','Sign up free with Google → API Keys → Create API key',''],
             ['3','Paste it below',''],
           ].map(([n,t,sub])=>`<div style="display:flex;gap:10px;margin-bottom:8px;align-items:flex-start">
             <div style="width:22px;height:22px;border-radius:50%;background:var(--gold);color:#0a0a0f;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">${n}</div>
@@ -3062,7 +3062,7 @@ function renderChatContent(){
         </div>
 
         <div style="margin-bottom:10px">
-          <input id="apikey-inp" class="inp" type="text" placeholder="AIza..." style="font-size:13px;letter-spacing:1px"/>
+          <input id="apikey-inp" class="inp" type="text" placeholder="gsk_..." style="font-size:13px;letter-spacing:1px"/>
           <div style="font-size:10px;color:var(--muted);margin-top:5px;text-align:center">Stored locally · Never shared · Delete anytime</div>
         </div>
         <button class="btn btn-g" onclick="saveApiKey()" style="font-size:14px;padding:13px">Save Key & Start Chat →</button>
@@ -3165,7 +3165,7 @@ function toggleChat(){
   panel.style.display=CHAT_OPEN?'flex':'none';
   btn.style.transform=CHAT_OPEN?'scale(0.9)':'scale(1)';
   if(CHAT_OPEN) renderChatContent();
-  if(CHAT_OPEN&&GEMINI_KEY) setTimeout(()=>document.getElementById('chat-input').focus(),300);
+  if(CHAT_OPEN&&GROQ_KEY) setTimeout(()=>document.getElementById('chat-input').focus(),300);
 }
 
 function addMsg(role,text,replay){
@@ -3211,7 +3211,7 @@ chatStyle.textContent='@keyframes pulse{0%,100%{opacity:.3;transform:scale(.8)}5
 document.head.appendChild(chatStyle);
 
 async function sendChat(){
-  if(!GEMINI_KEY){renderChatContent();return;}
+  if(!GROQ_KEY){renderChatContent();return;}
   const inp=document.getElementById('chat-input');
   const text=inp.value.trim();
   if(!text) return;
@@ -3227,21 +3227,21 @@ async function sendChat(){
     for(let i=0;i<history.length-1;i++) apiMessages.push({role:history[i].role,content:history[i].content});
     apiMessages.push({role:'user',content:text});
 
-    // Gemini API call
-    const geminiUrl='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key='+GEMINI_KEY;
-    const geminiMsgs=[];
-    for(let i=0;i<apiMessages.length-1;i++){
-      geminiMsgs.push({role:apiMessages[i].role==='assistant'?'model':'user',parts:[{text:apiMessages[i].content}]});
-    }
-    geminiMsgs.push({role:'user',parts:[{text:text}]});
-
-    const res=await fetch(geminiUrl,{
+    // Groq API call
+    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':'Bearer '+GROQ_KEY
+      },
       body:JSON.stringify({
-        system_instruction:{parts:[{text:systemPrompt}]},
-        contents:geminiMsgs,
-        generationConfig:{maxOutputTokens:800,temperature:0.8}
+        model:'llama-3.3-70b-versatile',
+        max_tokens:800,
+        temperature:0.8,
+        messages:[
+          {role:'system',content:systemPrompt},
+          ...apiMessages
+        ]
       })
     });
 
@@ -3252,13 +3252,13 @@ async function sendChat(){
 
     const data=await res.json();
     removeTyping();
-    const reply=data.candidates&&data.candidates[0]?.content?.parts?.[0]?.text||'I am here, Divy. Try again.';
+    const reply=data.choices&&data.choices[0]?.message?.content||'I am here, Divy. Try again.';
     addMsg('assistant',reply);
   }catch(e){
     removeTyping();
     const msg=e.message||'';
     if(msg.includes('401')||msg.includes('auth')||msg.includes('API key')){
-      addMsg('assistant','Key error. Make sure you are using a Google Cloud API key starting with AIza from console.cloud.google.com/apis/credentials — and that the Generative Language API is enabled in your project.');
+      addMsg('assistant','Key looks wrong. Go to console.groq.com, sign up free, create an API key starting with gsk_ and paste it here.');
     } else if(msg.includes('Failed to fetch')||msg.includes('NetworkError')||msg.includes('CORS')){
       addMsg('assistant','The chat is blocked when opening from local storage. Open this file via Google Drive → three dots → Open with Chrome, or any https:// URL. Everything else in the app works fine offline.');
     } else {
