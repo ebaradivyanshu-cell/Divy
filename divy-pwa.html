@@ -908,6 +908,7 @@ function loadS(k,def){
 }
 function saveS(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 function saveMain(){saveS('dv4-main',S);}
+function getViewDate(){return CAL_VIEW_DATE||TODAY;}
 function saveCh(){saveS('dv4-ch-'+TODAY,CHECKS);}
 
 function saveEx(){saveS('dv4-ex-'+TODAY,EX_LOG);}
@@ -1054,7 +1055,20 @@ function closePop(toIti){
   if(toIti)goTab('iti');
 }
 
-function toggleCheck(id){CHECKS[id]=!CHECKS[id];saveCh();if(CUR==='cal')renderTab('cal');else renderTab(CUR);}
+function toggleCheck(id){
+  const vd=getViewDate();
+  if(vd===TODAY){
+    CHECKS[id]=!CHECKS[id];
+    saveS('dv4-ch-'+TODAY,CHECKS);
+  } else {
+    const past=loadS('dv4-ch-'+vd,{});
+    past[id]=!past[id];
+    saveS('dv4-ch-'+vd,past);
+  }
+  _compCache={};
+  if(CUR==='cal') renderTab('cal');
+  else renderTab(CUR);
+}
 function toggleEx(id){
   const ph=EX.find(p=>p.list.find(e=>e.id===id));
   if(!ph)return;
@@ -2880,8 +2894,10 @@ function rSOS(){
 function getDayCompletion(dateStr){
   // Reset cache daily
   if(_compCacheDate!==TODAY){_compCache={};_compCacheDate=TODAY;}
-  // Use cache for past dates only (today changes frequently)
-  if(dateStr!==TODAY&&_compCache[dateStr]) return _compCache[dateStr];
+  // Only cache dates older than 7 days — recent dates change within the session
+  const sevenDaysAgo=new Date(TODAY);sevenDaysAgo.setDate(sevenDaysAgo.getDate()-7);
+  const isOld=dateStr<sevenDaysAgo.toISOString().split('T')[0];
+  if(isOld&&_compCache[dateStr]) return _compCache[dateStr];
   const isToday=dateStr===TODAY;
   const dayChecks=isToday?CHECKS:loadS('dv4-ch-'+dateStr,{});
   const isPrep=dateStr>=PREP_START&&dateStr<START_DATE;
@@ -2931,7 +2947,7 @@ function getDayCompletion(dateStr){
       water:{done:waterPass,total:waterTotal,ml:dayWater}
     }
   };
-  if(dateStr!==TODAY) _compCache[dateStr]=result;
+  if(isOld) _compCache[dateStr]=result;
   return result;
 }
 
@@ -2962,8 +2978,8 @@ function rCalDay(dateStr){
   const prepDay=isPrep?PREP_DAYS[dateStr]:null;
   const trip=getTripForDate(dateStr);
   const comp=getDayCompletion(dateStr);
-  const dayChecks=isToday?CHECKS:loadS('dv4-ch-'+dateStr,{});
-  const liveChecks=isToday?CHECKS:dayChecks;
+  const dayChecks=dateStr===TODAY?CHECKS:loadS('dv4-ch-'+dateStr,{});
+  const liveChecks=dayChecks; // Always fresh — no longer use CHECKS for non-today
   let effectiveMode=S.mode;
   if(trip) effectiveMode=trip.type==='international'?'intl':trip.type==='domestic'?'hotel':'home';
 
@@ -3056,7 +3072,7 @@ function rCalDay(dateStr){
         {k:'m5',t:'8:00 PM',n:'Mycofit + Atorva + Telma',note:'Three together'},
         {k:'m6',t:'9:00 PM',n:'Takfa 4mg',note:'Night'},
       ].map(m=>`
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid #1a0808" ${isToday?`onclick="CHECKS['${m.k}']=!CHECKS['${m.k}'];saveCh();renderTab('cal')"`:''} style="cursor:${isToday?'pointer':'default'}">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid #1a0808" ${isToday?`onclick="toggleCheck('${m.k}')"`:`onclick="toggleCheck('${m.k}')"`} style="cursor:pointer">
           <div>
             <div style="font-size:12px;color:var(--text)">${m.n}</div>
             <div style="font-size:10px;color:var(--muted)">${m.t} · ${m.note}</div>
