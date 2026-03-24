@@ -913,7 +913,30 @@ function saveCh(){saveS('dv4-ch-'+TODAY,CHECKS);}
 function saveEx(){saveS('dv4-ex-'+TODAY,EX_LOG);}
 function saveWater(){saveS('dv4-water-'+TODAY,WATER);}
 
-function getTodayStr(){return new Date().toISOString().split('T')[0];}
+function getTodayStr(){
+  const d=new Date();
+  // Use local date not UTC — toISOString() gives UTC which is wrong for IST (+5:30)
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,'0');
+  const day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+
+function checkDateRollover(){
+  const newToday=getTodayStr();
+  if(newToday===TODAY) return false;
+  // Date has changed — reload all daily variables
+  TODAY=newToday;
+  FOOD_LOG=loadS('dv4-food-'+TODAY,[]);
+  EX_LOG=loadS('dv4-ex-'+TODAY,{});
+  WATER=loadS('dv4-water-'+TODAY,{ml:0});
+  CHECKS=loadS('dv4-ch-'+TODAY,{});
+  SUPPS=loadS('dv4-supps-'+TODAY,{});
+  DAY_LOCK=loadS('dv4-lock',{lastDate:'',reason:''});
+  // Reset cache
+  _compCache={};_compCacheDate='';_ctxCache='';
+  return true;
+}
 
 function pct(){return Math.max(0,Math.min(100,Math.round(((SW-S.wt)/(SW-GW))*100)));}
 
@@ -1223,6 +1246,7 @@ function updateHeader(){
 
 // ═══════════ RENDERS ═══════════
 function renderTab(t){
+  checkDateRollover();
   try{
     let html='';
     if(t==='home') html=rHome();
