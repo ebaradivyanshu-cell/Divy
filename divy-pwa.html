@@ -156,11 +156,11 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 .cal-day.empty{background:transparent;cursor:default}
 .cal-day.future{background:var(--p2);color:var(--dim)}
 .cal-day.today{background:var(--gold);color:#0a0a0f;font-weight:700}
-.cal-day.done{background:#1a4a2a;border-color:var(--green2);color:var(--green)}
-.cal-day.skipped{background:#2a0a0a;border-color:#5a2020;color:var(--red)}
+.cal-day.done{background:#d0f0d8;border-color:var(--green2);color:#2a6a3a;font-weight:700}
+.cal-day.skipped{background:#fde8e8;border-color:#e06060;color:var(--red);font-weight:700}
 .cal-day.start{background:var(--p3);border-color:var(--gold);color:var(--gold)}
 .cal-day.prep{background:#dceeff;border-color:#4a90d0;color:#60b0e0}
-.cal-day.prep-done{background:#0a2a1a;border-color:#3a8a5a;color:#50a070}
+.cal-day.prep-done{background:#c8ecd8;border-color:#3a8a5a;color:#2a6a3a;font-weight:700}
 .cal-dot{position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--gold)}
 
 /* MILESTONES */
@@ -1590,14 +1590,14 @@ function rCal(){
     let cls='cal-day';
     const comp=getDayCompletion(ds);
     const tripDay=getTripForDate(ds);
-    if(isToday&&isPrep)cls+=' today';
-    else if(isToday)cls+=' today';
-    else if(isStart)cls+=' start';
-    else if(isPrep&&comp.pass)cls+=' prep-done';
-    else if(isPrep)cls+=' prep';
-    else if(comp.pass&&isPast)cls+=' done';
-    else if(isPast&&ds>=PREP_START)cls+=' skipped';
-    else if(isFuture)cls+=' future';
+    const hasSomeActivity=comp.total>0;
+
+    if(isToday) cls+=' today';
+    else if(isStart) cls+=' start';
+    else if(isPast&&hasSomeActivity&&comp.pass) cls+=isPrep?' prep-done':' done';
+    else if(isPast&&hasSomeActivity&&!comp.pass&&ds>=PREP_START) cls+=' skipped';
+    else if(isPrep&&!isPast) cls+=' prep';
+    else if(isFuture) cls+=' future';
     else cls+=' future';
 
     const dot=S.weights[ds]?'<div class="cal-dot"></div>':'';
@@ -1654,10 +1654,13 @@ function rCal(){
       </div>
     </div>
 
+    ${rWeeklyDashboard()}
+    ${rMonthlyDashboard(d.getFullYear(),d.getMonth())}
+
     <div class="c">
       <div class="ctitle">Weight History</div>
       ${Object.entries(S.weights).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,10).map(([date,wt])=>`
-        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #1a1610">
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--b1)">
           <div style="font-size:12px;color:var(--sub)">${date}</div>
           <div style="font-size:13px;font-weight:700;color:var(--gold)">${wt} kg</div>
         </div>`).join('')||'<div style="font-size:12px;color:var(--muted)">No weights logged yet. Log on Day 8 of each cycle.</div>'}
@@ -3188,10 +3191,33 @@ function rCalDay(dateStr){
             </div>
           </div>`).join('')}
       </div>`;
+
+      // Extra / SOS medicines
+      const extraMeds=loadExtraMeds(dateStr);
+      html+=`<div class="c" style="margin-top:10px;border-color:var(--orange)">
+        <div class="ctitle" style="color:var(--orange)">+ Extra / SOS Medicines</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Moxovas, antibiotics, or any medicine taken outside regular schedule.</div>
+        ${extraMeds.map(m=>`
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--b1)">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--text)">${esc(m.name)}${m.dose?' · '+esc(m.dose):''}</div>
+              <div style="font-size:10px;color:var(--muted)">${m.time}${m.reason?' · '+esc(m.reason):''}</div>
+            </div>
+            ${isToday?`<div onclick="delExtraMed('${dateStr}',${m.id})" style="color:var(--red);cursor:pointer;font-size:13px;padding:2px 6px">✕</div>`:''}
+          </div>`).join('')}
+        ${isToday?`
+        <div style="margin-top:10px;display:grid;gap:6px">
+          <input id="em-name" class="inp inp-sm" type="text" placeholder="Medicine name (e.g. Moxovas 0.2mg)"/>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <input id="em-dose" class="inp inp-sm" type="text" placeholder="Dose (e.g. 1 tab)"/>
+            <input id="em-time" class="inp inp-sm" type="time"/>
+          </div>
+          <input id="em-reason" class="inp inp-sm" type="text" placeholder="Reason (optional)"/>
+          <button class="btn btn-dim" style="font-size:12px" onclick="addExtraMed('${dateStr}')">Log Extra Medicine</button>
+        </div>`:''}
+      </div>`;
     }
   }
-
-  // ── EXERCISE TAB ──
   else if(CAL_DAY_TAB==='exercise'){
     html+=`<div style="background:linear-gradient(135deg,var(--p3),var(--p2));border:1px solid var(--gold);border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
       <div><div style="font-size:26px;font-weight:700;color:var(--gold)">${exPts()} pts</div>
@@ -3829,6 +3855,161 @@ function importData(){
     reader.readAsText(file);
   };
   input.click();
+}
+
+// ═══════════ WEEKLY DASHBOARD ═══════════
+function rWeeklyDashboard(){
+  // Get last 7 days
+  const days=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
+    days.push(`${y}-${m}-${day}`);
+  }
+  const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const comps=days.map(ds=>({ds,comp:getDayCompletion(ds),day:new Date(ds).getDay()}));
+  const validDays=comps.filter(d=>d.ds>=PREP_START&&d.ds<=TODAY);
+  if(validDays.length===0) return '';
+
+  const avgPct=validDays.length?Math.round(validDays.reduce((s,d)=>s+d.comp.pct,0)/validDays.length):0;
+  const greenDays=validDays.filter(d=>d.comp.pass).length;
+  const avgCal=validDays.length?Math.round(validDays.reduce((s,d)=>s+d.comp.breakdown.cal.kcal,0)/validDays.length):0;
+  const avgWater=validDays.length?Math.round(validDays.reduce((s,d)=>s+d.comp.breakdown.water.ml,0)/validDays.length):0;
+  const medTotal=validDays.reduce((s,d)=>s+d.comp.breakdown.med.done,0);
+  const medMax=validDays.length*6;
+  const medPct=medMax?Math.round((medTotal/medMax)*100):0;
+
+  // Bar chart for each day
+  const bars=comps.map(({ds,comp,day})=>{
+    const isActive=ds>=PREP_START&&ds<=TODAY;
+    const isTdy=ds===TODAY;
+    const barH=isActive?Math.max(4,Math.round(comp.pct*0.6)):0;
+    const col=!isActive?'var(--dim)':comp.pass?'var(--green)':comp.pct>0?'var(--gold)':'var(--b2)';
+    return `<div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1">
+      <div style="font-size:9px;font-weight:700;color:${isTdy?'var(--gold)':'var(--muted)'}">${comp.pct>0&&isActive?comp.pct+'%':''}</div>
+      <div style="width:100%;height:60px;display:flex;align-items:flex-end;justify-content:center">
+        <div style="width:80%;height:${barH}px;background:${col};border-radius:3px 3px 0 0;transition:height .3s;min-height:${isActive?'2px':'0'}"></div>
+      </div>
+      <div style="font-size:9px;color:${isTdy?'var(--gold)':'var(--sub)'};">${dayNames[day]}</div>
+    </div>`;
+  }).join('');
+
+  return `<div class="c">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="ctitle" style="margin-bottom:0">This Week</div>
+      <div style="font-size:11px;color:var(--sub)">${greenDays}/${validDays.length} green days</div>
+    </div>
+    <div style="display:flex;gap:4px;align-items:flex-end;margin-bottom:12px">${bars}</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+      ${[
+        {l:'Avg Score',v:avgPct+'%',c:avgPct>=80?'var(--green)':'var(--gold)'},
+        {l:'Avg Calories',v:avgCal+'kcal',c:avgCal>=1200&&avgCal<=1600?'var(--green)':'var(--orange)'},
+        {l:'Avg Water',v:avgWater>=1000?(avgWater/1000).toFixed(1)+'L':avgWater+'ml',c:avgWater>=2500?'var(--teal)':'var(--muted)'},
+        {l:'Med Adherence',v:medPct+'%',c:medPct>=90?'var(--green)':medPct>=70?'var(--orange)':'var(--red)'},
+      ].map(s=>`<div style="background:var(--p2);border-radius:8px;padding:8px;text-align:center">
+        <div style="font-size:14px;font-weight:700;color:${s.c}">${s.v}</div>
+        <div style="font-size:9px;color:var(--muted);margin-top:2px">${s.l}</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ═══════════ MONTHLY DASHBOARD ═══════════
+function rMonthlyDashboard(year,month){
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const days=[];
+  for(let d=1;d<=daysInMonth;d++){
+    const ds=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    if(ds>TODAY) break;
+    if(ds>=PREP_START) days.push(ds);
+  }
+  if(days.length===0) return '';
+
+  const comps=days.map(ds=>({ds,comp:getDayCompletion(ds)}));
+  const greenDays=comps.filter(d=>d.comp.pass).length;
+  const missedDays=comps.filter(d=>!d.comp.pass&&d.comp.total>0).length;
+  const avgPct=comps.length?Math.round(comps.reduce((s,d)=>s+d.comp.pct,0)/comps.length):0;
+  const avgCal=comps.length?Math.round(comps.reduce((s,d)=>s+d.comp.breakdown.cal.kcal,0)/comps.length):0;
+  const totalMedDone=comps.reduce((s,d)=>s+d.comp.breakdown.med.done,0);
+  const totalMedPossible=comps.length*6;
+  const medPct=totalMedPossible?Math.round((totalMedDone/totalMedPossible)*100):0;
+  const avgWater=comps.length?Math.round(comps.reduce((s,d)=>s+d.comp.breakdown.water.ml,0)/comps.length):0;
+
+  // Day of week breakdown
+  const byDow={0:[],1:[],2:[],3:[],4:[],5:[],6:[]};
+  comps.forEach(({ds,comp})=>{byDow[new Date(ds).getDay()].push(comp.pct);});
+  const dowNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const dowAvgs=Object.entries(byDow).map(([dow,pcts])=>({
+    dow:parseInt(dow),
+    avg:pcts.length?Math.round(pcts.reduce((s,p)=>s+p,0)/pcts.length):null
+  })).filter(d=>d.avg!==null);
+  const bestDow=dowAvgs.length?dowAvgs.reduce((a,b)=>b.avg>a.avg?b:a):null;
+  const worstDow=dowAvgs.length?dowAvgs.reduce((a,b)=>b.avg<a.avg?b:a):null;
+
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  return `<div class="c">
+    <div class="ctitle">${months[month]} ${year} — Monthly Summary</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px">
+      ${[
+        {l:'Green Days',v:greenDays+'/'+comps.length,c:'var(--green)'},
+        {l:'Missed Days',v:missedDays,c:missedDays>0?'var(--red)':'var(--green)'},
+        {l:'Avg Score',v:avgPct+'%',c:avgPct>=80?'var(--green)':'var(--gold)'},
+        {l:'Avg Calories',v:avgCal+'kcal',c:avgCal>=1200&&avgCal<=1600?'var(--green)':'var(--orange)'},
+        {l:'Avg Water',v:avgWater>=1000?(avgWater/1000).toFixed(1)+'L':avgWater+'ml',c:avgWater>=2500?'var(--teal)':'var(--muted)'},
+        {l:'Med Adherence',v:medPct+'%',c:medPct>=90?'var(--green)':medPct>=70?'var(--orange)':'var(--red)'},
+      ].map(s=>`<div style="background:var(--p2);border-radius:8px;padding:8px;text-align:center">
+        <div style="font-size:15px;font-weight:700;color:${s.c}">${s.v}</div>
+        <div style="font-size:9px;color:var(--muted);margin-top:1px">${s.l}</div>
+      </div>`).join('')}
+    </div>
+    ${bestDow&&bestDow.dow!==worstDow.dow?`
+    <div style="display:flex;gap:8px">
+      <div style="flex:1;background:var(--p2);border-radius:8px;padding:8px;text-align:center">
+        <div style="font-size:10px;color:var(--green);font-weight:700">Best Day</div>
+        <div style="font-size:16px;font-weight:700;color:var(--gold)">${dowNames[bestDow.dow]}</div>
+        <div style="font-size:10px;color:var(--muted)">avg ${bestDow.avg}%</div>
+      </div>
+      <div style="flex:1;background:var(--p2);border-radius:8px;padding:8px;text-align:center">
+        <div style="font-size:10px;color:var(--red);font-weight:700">Needs Work</div>
+        <div style="font-size:16px;font-weight:700;color:var(--gold)">${dowNames[worstDow.dow]}</div>
+        <div style="font-size:10px;color:var(--muted)">avg ${worstDow.avg}%</div>
+      </div>
+    </div>`:''}
+  </div>`;
+}
+
+// ═══════════ SOS / EXTRA MEDICINES ═══════════
+let EXTRA_MEDS=loadS('dv4-extra-meds',{});
+
+function saveExtraMeds(dateStr){
+  const key='dv4-extra-meds-'+dateStr;
+  const list=EXTRA_MEDS[dateStr]||[];
+  saveS(key,list);
+}
+
+function loadExtraMeds(dateStr){
+  return loadS('dv4-extra-meds-'+dateStr,[]);
+}
+
+function addExtraMed(dateStr){
+  const name=document.getElementById('em-name').value.trim();
+  const dose=document.getElementById('em-dose').value.trim();
+  const time=document.getElementById('em-time').value||new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  const reason=document.getElementById('em-reason').value.trim();
+  if(!name){flash('Enter medicine name');return;}
+  const list=loadExtraMeds(dateStr);
+  list.push({name,dose,time,reason,id:Date.now()});
+  saveS('dv4-extra-meds-'+dateStr,list);
+  flash('Extra medicine logged ✓');
+  _compCache={};
+  renderTab('cal');
+}
+
+function delExtraMed(dateStr,id){
+  const list=loadExtraMeds(dateStr).filter(m=>m.id!==id);
+  saveS('dv4-extra-meds-'+dateStr,list);
+  renderTab('cal');
 }
 
 // ═══════════ INIT ═══════════
