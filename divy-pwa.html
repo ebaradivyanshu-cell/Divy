@@ -13,12 +13,12 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
 input,textarea{-webkit-user-select:text;user-select:text}
 :root{
-  --bg:#0a0a0f;--p1:#12100a;--p2:#1a1610;--p3:#221e12;
-  --b1:#2a2010;--b2:#3a2e1a;--b3:#4a3e2a;
+  --bg:#f5f0e8;--p1:#ffffff;--p2:#faf6f0;--p3:#f0ebe0;
+  --b1:#e0d8c8;--b2:#ccc0aa;--b3:#b8a890;
   --gold:#d4a843;--gold2:#b8891e;--gold3:#f0c060;
   --green:#5aac7a;--green2:#3a8c5a;
   --red:#e06060;--blue:#60a0e0;--orange:#e08840;--teal:#50b0a0;
-  --text:#e8e0d0;--sub:#8a7a5a;--muted:#6a6050;--dim:#4a4030;
+  --text:#2a1f0a;--sub:#6a5a3a;--muted:#9a8a6a;--dim:#c0b090;
   --ff:'DM Sans',sans-serif;--fs:'Cormorant Garamond',serif;
   --r:12px;--r2:8px;--r3:20px;
 }
@@ -26,7 +26,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 #app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;position:relative}
 
 /* HEADER */
-#hdr{background:linear-gradient(160deg,#1e1a0a 0%,#0f0d08 100%);border-bottom:1px solid var(--b1);padding:12px 16px 10px;flex-shrink:0;z-index:20}
+#hdr{background:linear-gradient(160deg,#3a2a0a 0%,#2a1a04 100%);border-bottom:1px solid var(--b2);padding:12px 16px 10px;flex-shrink:0;z-index:20}
 .hdr-row{display:flex;justify-content:space-between;align-items:center}
 .hdr-title{font-family:var(--fs);font-size:22px;font-weight:700;color:var(--gold);letter-spacing:.3px}
 .hdr-family{font-size:10px;color:var(--sub);margin-top:1px;letter-spacing:1px}
@@ -45,7 +45,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 .prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--green));border-radius:3px;transition:width .8s cubic-bezier(.4,0,.2,1)}
 
 /* TABS */
-#tabs{display:flex;background:#0d0b07;border-bottom:1px solid var(--b1);overflow-x:auto;flex-shrink:0;scrollbar-width:none}
+#tabs{display:flex;background:var(--p2);border-bottom:1px solid var(--b1);overflow-x:auto;flex-shrink:0;scrollbar-width:none}
 #tabs::-webkit-scrollbar{display:none}
 .tb{padding:10px 12px;font-size:11px;font-weight:600;color:var(--muted);border:none;background:none;border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;font-family:var(--ff);transition:all .2s;flex-shrink:0}
 .tb.on{color:var(--gold);border-bottom-color:var(--gold)}
@@ -56,9 +56,9 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 
 /* CARDS */
 .c{background:var(--p1);border:1px solid var(--b1);border-radius:var(--r);padding:14px;margin-bottom:10px}
-.c-gold{border-color:var(--gold);background:#0d0b06}
+.c-gold{border-color:var(--gold);background:var(--p2)}
 .c-green{border-color:var(--green2);background:#0a140e}
-.c-blue{border-color:#2a4a6a;background:#080d12}
+.c-blue{border-color:#2a4a6a;background:#e8f0fa}
 .ctitle{font-size:11px;font-weight:700;color:var(--gold);margin-bottom:10px;text-transform:uppercase;letter-spacing:1.5px}
 
 /* STAT GRID */
@@ -159,7 +159,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 .cal-day.done{background:#1a4a2a;border-color:var(--green2);color:var(--green)}
 .cal-day.skipped{background:#2a0a0a;border-color:#5a2020;color:var(--red)}
 .cal-day.start{background:var(--p3);border-color:var(--gold);color:var(--gold)}
-.cal-day.prep{background:#0a1a2a;border-color:#4a90d0;color:#60b0e0}
+.cal-day.prep{background:#dceeff;border-color:#4a90d0;color:#60b0e0}
 .cal-day.prep-done{background:#0a2a1a;border-color:#3a8a5a;color:#50a070}
 .cal-dot{position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--gold)}
 
@@ -600,6 +600,41 @@ const FOOD_DB=[
   {n:'Tomato Ketchup (1 tbsp)',cal:19,u:'pcs',cat:'Condiment',p:0.3,c:4.8,f:0,k:57,ph:6,na:155},
   {n:'Pickle / Achar (1 tsp)',cal:15,u:'pcs',cat:'Condiment',p:0.2,c:2,f:0.8,k:30,ph:5,na:400},
   {n:'Honey (1 tsp)',cal:21,u:'pcs',cat:'Condiment',p:0,c:5.7,f:0,k:11,ph:1,na:0},
+  // ── INDIAN SWEETS ──
+  {n:'Besan Laddu (1 piece ~30g)',cal:140,u:'pcs',cat:'Sweet',p:3,c:17,f:7,k:80,ph:60,na:5},
+  {n:'Mysore Pak (1 piece ~40g)',cal:220,u:'pcs',cat:'Sweet',p:2.5,c:22,f:14,k:40,ph:40,na:10},
+  {n:'Gulab Jamun (1 piece ~40g)',cal:150,u:'pcs',cat:'Sweet',p:2.5,c:25,f:5,k:50,ph:35,na:50},
+  {n:'Rasgulla (1 piece ~50g)',cal:107,u:'pcs',cat:'Sweet',p:2.8,c:20,f:2,k:45,ph:35,na:40},
+  {n:'Barfi (1 piece ~30g)',cal:130,u:'pcs',cat:'Sweet',p:2,c:18,f:6,k:55,ph:50,na:20},
+  {n:'Jalebi (1 piece ~25g)',cal:100,u:'pcs',cat:'Sweet',p:1,c:22,f:1.5,k:20,ph:10,na:5},
+  {n:'Halwa (sooji, 1 bowl ~100g)',cal:245,u:'pcs',cat:'Sweet',p:3,c:37,f:10,k:85,ph:55,na:100},
+  {n:'Kheer (1 bowl ~150g)',cal:180,u:'pcs',cat:'Sweet',p:5,c:28,f:6,k:200,ph:130,na:60},
+  // ── SOUTH INDIAN SPECIALS ──
+  {n:'Medu Vada (1 piece ~60g)',cal:120,u:'pcs',cat:'South Indian',p:4,c:14,f:5,k:100,ph:80,na:200},
+  {n:'Curd Rice (1 bowl ~200g)',cal:190,u:'pcs',cat:'South Indian',p:5,c:32,f:4,k:200,ph:120,na:300},
+  {n:'Ven Pongal (1 bowl ~200g)',cal:280,u:'pcs',cat:'South Indian',p:7,c:42,f:9,k:150,ph:120,na:400},
+  {n:'Lemon Rice (1 bowl)',cal:230,u:'pcs',cat:'South Indian',p:4,c:42,f:6,k:100,ph:75,na:350},
+  {n:'Tamarind Rice / Puliyogare (1 bowl)',cal:250,u:'pcs',cat:'South Indian',p:4,c:45,f:7,k:180,ph:80,na:500},
+  {n:'Pesarattu (1 piece)',cal:100,u:'pcs',cat:'South Indian',p:5,c:16,f:2,k:120,ph:80,na:150},
+  {n:'Appam (1 piece)',cal:75,u:'pcs',cat:'South Indian',p:2,c:15,f:0.8,k:40,ph:30,na:80},
+  // ── SOFT DRINKS ──
+  {n:'Coca Cola (330ml can)',cal:139,u:'pcs',cat:'Drink',p:0,c:35,f:0,k:11,ph:42,na:33},
+  {n:'Pepsi (330ml can)',cal:133,u:'pcs',cat:'Drink',p:0,c:33,f:0,k:15,ph:35,na:28},
+  {n:'7 Up / Sprite (330ml can)',cal:139,u:'pcs',cat:'Drink',p:0,c:35,f:0,k:7,ph:0,na:35},
+  {n:'Thumbs Up (330ml can)',cal:148,u:'pcs',cat:'Drink',p:0,c:37,f:0,k:8,ph:45,na:34},
+  {n:'Limca (330ml)',cal:128,u:'pcs',cat:'Drink',p:0,c:32,f:0,k:5,ph:0,na:30},
+  {n:'Maaza / Frooti (200ml)',cal:100,u:'pcs',cat:'Drink',p:0,c:25,f:0,k:50,ph:5,na:10},
+  {n:'Tropicana Orange (200ml)',cal:96,u:'pcs',cat:'Drink',p:0.8,c:24,f:0,k:180,ph:10,na:5},
+  {n:'Real Fruit Juice (200ml)',cal:90,u:'pcs',cat:'Drink',p:0.5,c:22,f:0,k:120,ph:10,na:10},
+  {n:'Nimbu Pani / Lemonade (250ml)',cal:60,u:'pcs',cat:'Drink',p:0.2,c:16,f:0,k:80,ph:10,na:100},
+  {n:'Jaljeera (250ml)',cal:50,u:'pcs',cat:'Drink',p:0.5,c:12,f:0.2,k:90,ph:15,na:400},
+  {n:'Aam Panna (250ml)',cal:80,u:'pcs',cat:'Drink',p:0.3,c:20,f:0,k:100,ph:10,na:200},
+  {n:'Sugarcane Juice (250ml)',cal:120,u:'pcs',cat:'Drink',p:0,c:30,f:0,k:160,ph:10,na:10},
+  {n:'Soda Water / Club Soda (300ml)',cal:0,u:'pcs',cat:'Drink',p:0,c:0,f:0,k:10,ph:0,na:75},
+  {n:'Lassi Sweet (200ml)',cal:160,u:'pcs',cat:'Drink',p:5,c:22,f:5,k:280,ph:180,na:80},
+  {n:'Lassi Salt (200ml)',cal:100,u:'pcs',cat:'Drink',p:5,c:8,f:4,k:270,ph:170,na:280},
+  {n:'Chaas / Buttermilk (200ml)',cal:40,u:'pcs',cat:'Drink',p:2.5,c:4,f:0.8,k:200,ph:130,na:200},
+
   // ── SWEETENERS ──
   {n:'TruActive Monkfruit Sweetener (1 tsp)',cal:0,u:'pcs',cat:'Condiment',p:0,c:0,f:0,k:0,ph:0,na:0},
   {n:'Monkfruit Sweetener (1 tsp)',cal:0,u:'pcs',cat:'Condiment',p:0,c:0,f:0,k:0,ph:0,na:0},
@@ -1075,7 +1110,9 @@ function toggleEx(id){
   if(ph.unlockKg!==999&&S.wt>ph.unlockKg){flash('Unlocks at '+ph.unlockKg+' kg');return;}
   EX_LOG[id]=!EX_LOG[id];saveEx();
   if(EX_LOG[id]){const ex=ph.list.find(e=>e.id===id);flash('+'+ex.pts+' pts — '+ex.n);}
-  renderTab('ex');
+  _compCache={};
+  if(CUR==='cal') renderTab('cal');
+  else renderTab(CUR);
 }
 
 function addWater(){
@@ -1317,7 +1354,7 @@ function rHome(){
       </div>
       <button class="btn btn-dim btn-sm" onclick="setMode('home')">Switch to Home</button>
     </div>`:S.mode==='intl'?`
-    <div class="htl-bar" style="border-color:var(--blue);background:#080d12">
+    <div class="htl-bar" style="border-color:var(--blue);background:#e8f0fa">
       <div>
         <div style="font-size:12px;font-weight:700;color:var(--blue)">✈️ International Mode Active</div>
         <div style="font-size:10px;color:var(--sub)">Chicken + tofu + salad protocol. Local time · meds follow local clock abroad.</div>
@@ -1336,7 +1373,7 @@ function rHome(){
       <div class="sb"><div class="sv" style="font-size:13px;color:#60b0e0">of 5</div><div class="sl">Building</div></div>
       <div class="sb"><div class="sv" style="font-size:16px;color:var(--green)">${ep}pts</div><div class="sl">Movement</div></div>
     </div>
-    <div class="c" style="background:#0a1a2a;border-color:#4a90d0">
+    <div class="c" style="background:#dceeff;border-color:#4a90d0">
       <div class="ctitle" style="color:#60b0e0">Prep Day ${['2026-03-23','2026-03-24','2026-03-25','2026-03-26','2026-03-27'].indexOf(TODAY)+1} of 5</div>
       <div style="font-size:12px;color:var(--sub);margin-bottom:10px">${PREP_DAYS[TODAY]?PREP_DAYS[TODAY].theme:'Building the foundation.'}</div>
       <div style="display:flex;gap:5px;margin-bottom:10px">
@@ -1559,7 +1596,7 @@ function rCal(){
     else if(isPrep&&comp.pass)cls+=' prep-done';
     else if(isPrep)cls+=' prep';
     else if(comp.pass&&isPast)cls+=' done';
-    else if(isPast&&dt>=startD&&ds>=START_DATE)cls+=' skipped';
+    else if(isPast&&ds>=PREP_START)cls+=' skipped';
     else if(isFuture)cls+=' future';
     else cls+=' future';
 
@@ -1663,7 +1700,7 @@ function rDay(){
     const dayChecks=isToday?CHECKS:loadS('dv4-ch-'+viewDate,{});
     const done=Object.values(dayChecks).filter(Boolean).length;
     return viewHeader+`
-      <div style="background:#0a1a2a;border:1px solid #4a90d0;border-radius:12px;padding:14px;margin-bottom:12px">
+      <div style="background:#dceeff;border:1px solid #4a90d0;border-radius:12px;padding:14px;margin-bottom:12px">
         <div style="font-size:12px;font-weight:700;color:#60b0e0;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px">${prepDay.label}</div>
         <div style="font-size:11px;color:var(--sub);font-style:italic">${prepDay.theme}</div>
       </div>
@@ -1680,7 +1717,7 @@ function rDay(){
           </div>
           <div class="chk">${dayChecks['d'+i]?'✓':''}</div>
         </div>`).join('')}
-      <div style="background:#0a1a2a;border:1px solid #2a4a6a;border-radius:10px;padding:12px;margin-top:10px">
+      <div style="background:#dceeff;border:1px solid #2a4a6a;border-radius:10px;padding:12px;margin-top:10px">
         <div style="font-size:11px;color:#60b0e0;font-weight:700;margin-bottom:4px">Medications — unchanged during prep</div>
         <div style="font-size:11px;color:var(--sub);line-height:1.7">
           Omnacortil + MetXL 50 after breakfast · Mycofit 8 AM · Takfa 9 AM<br>
@@ -1730,7 +1767,7 @@ function rEx(mode){
   const lockedPhases=EX.filter(p=>p.unlockKg!==999&&S.wt>p.unlockKg);
 
   let html=`
-    <div style="background:linear-gradient(135deg,#1a1206,#12100a);border:1px solid var(--gold);border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+    <div style="background:linear-gradient(135deg,var(--p3),var(--p2));border:1px solid var(--gold);border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
       <div>
         <div style="font-size:26px;font-weight:700;color:var(--gold)">${ep} pts</div>
         <div style="font-size:11px;color:var(--sub)">Today's movement points</div>
@@ -1738,7 +1775,7 @@ function rEx(mode){
       <div style="text-align:right;font-size:11px;color:var(--sub)">6 of 8 days<br>earns your reward</div>
     </div>
 
-    ${mode==='home'?`<div style="background:linear-gradient(135deg,#0a1a18,#081210);border:1px solid #2a5a52;border-radius:10px;padding:12px;margin-bottom:10px">
+    ${mode==='home'?`<div style="background:linear-gradient(135deg,#e0f5f0,#eaf8f4);border:1px solid #2a5a52;border-radius:10px;padding:12px;margin-bottom:10px">
       <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">🌊 Jakkur Lake · Yelahanka, Bengaluru</div>
       <div style="font-size:12px;color:var(--sub);line-height:1.9">
         Home to lake: <strong style="color:var(--teal)">700m</strong> · Full circle: <strong style="color:var(--teal)">7km</strong><br>
@@ -1747,7 +1784,7 @@ function rEx(mode){
         <span style="color:var(--orange)">89kg:</span> Half circle (4.9km round trip)<br>
         <span style="color:var(--blue)">82kg:</span> Full circle with Iti waiting at the end
       </div>
-    </div>`:`<div style="background:linear-gradient(135deg,#0a1a18,#081210);border:1px solid #2a5a52;border-radius:10px;padding:12px;margin-bottom:10px">
+    </div>`:`<div style="background:linear-gradient(135deg,#e0f5f0,#eaf8f4);border:1px solid #2a5a52;border-radius:10px;padding:12px;margin-bottom:10px">
       <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">🚶 Movement — Local Area Walk</div>
       <div style="font-size:12px;color:var(--sub);line-height:1.9">
         Hotel corridor · Airport terminal · Nearby park or road<br>
@@ -2171,7 +2208,7 @@ function rIti(){
     <button class="btn btn-pk" onclick="updateIti()">Update Rewards 💝</button>
 
     <!-- CLOUD SYNC SETUP -->
-    <div class="c" style="margin-top:10px;border-color:#2a4a6a;background:#080d12">
+    <div class="c" style="margin-top:10px;border-color:#2a4a6a;background:#e8f0fa">
       <div class="ctitle" style="color:var(--blue)">☁️ Cloud Sync</div>
       ${ITI_SYNC_BIN?`
         <div style="display:flex;justify-content:space-between;align-items:center">
@@ -2194,7 +2231,7 @@ function rIti(){
         <button class="btn btn-teal" onclick="const b=document.getElementById('sync-bin').value.trim();const k=document.getElementById('sync-key').value.trim();if(!b||!k){flash('Both fields required');return;}itiSetupSync(b,k)">Enable Cloud Sync ☁️</button>`}
     </div>
 
-    <div class="c" style="margin-top:10px;border-color:#8b3a52;background:#120a0e">
+    <div class="c" style="margin-top:10px;border-color:#8b3a52;background:#fde8f4">
       <div class="ctitle" style="color:#c06070">Weekly Note Exchange</div>
       <div style="margin-bottom:10px">
         <div style="font-size:11px;color:var(--sub);margin-bottom:6px">Divy's note this week</div>
@@ -2340,7 +2377,7 @@ function rBody(){
 
   return `
     <!-- BMI CARD -->
-    <div class="c" style="text-align:center;background:#0d0b06;border-color:var(--gold)">
+    <div class="c" style="text-align:center;background:var(--p2);border-color:var(--gold)">
       <div class="ctitle">Body Stats · ${latest?latest.date:'No data yet'}</div>
       ${bmi?`
         <div style="font-size:36px;font-weight:700;color:${bmiCol};font-family:var(--ff)">${bmi}</div>
@@ -2449,7 +2486,7 @@ function rBody(){
     </div>`:''}
 
     <!-- HOLISTIC GUIDANCE -->
-    <div class="c" style="background:#0d0b06;border-color:var(--gold)">
+    <div class="c" style="background:var(--p2);border-color:var(--gold)">
       <div class="ctitle">🧠 Holistic Body Guidance</div>
       <div style="font-size:12px;color:var(--sub)">${generateHolisticSuggestions(hm)}</div>
     </div>
@@ -2645,16 +2682,14 @@ function rPack(){
 
 // ═══════════ DAY LOCK ═══════════
 function checkDayLock(){
-  const yesterday=new Date(TODAY);
-  yesterday.setDate(yesterday.getDate()-1);
-  const yd=yesterday.toISOString().split('T')[0];
-  if(yd<START_DATE&&yd<PREP_START) return false; // before journey
+  const d=new Date();d.setDate(d.getDate()-1);
+  const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
+  const yd=`${y}-${m}-${day}`;
+  if(yd<PREP_START) return false; // before journey
   if(DAY_LOCK.lastDate===TODAY) return false; // already handled today
-  const ydChecks=loadS('dv4-ch-'+yd,{});
-  const ydSched=PREP_DAYS[yd]?PREP_DAYS[yd].movement:SCH_HOME;
-  const done=Object.values(ydChecks).filter(Boolean).length;
-  const total=ydSched.length;
-  if(done>=Math.floor(total*0.8)) return false; // 80% = pass
+  // Use full holistic getDayCompletion
+  const comp=getDayCompletion(yd);
+  if(comp.pass) return false; // 80%+ = pass
   return yd; // return yesterday date if lock needed
 }
 
@@ -2832,7 +2867,7 @@ function rSOS(){
       <div style="font-size:11px;color:var(--sub)">Divyanshu Shrivastava · DOB: 19 Sep 1987 · 184cm</div>
     </div>
 
-    <div class="c" style="border-color:var(--red);background:#120808">
+    <div class="c" style="border-color:var(--red);background:#fde8e8">
       <div class="ctitle" style="color:var(--red)">⚕️ Medical Summary</div>
       <div style="font-size:13px;color:var(--text);line-height:1.9">
         <strong style="color:var(--gold)">Condition:</strong> Post kidney transplant (June 27, 2023)<br>
@@ -2843,7 +2878,7 @@ function rSOS(){
       </div>
     </div>
 
-    <div class="c" style="border-color:var(--red);background:#120808">
+    <div class="c" style="border-color:var(--red);background:#fde8e8">
       <div class="ctitle" style="color:var(--red)">💊 Current Medications</div>
       ${[
         ['Tacrolimus (Takfa)','4mg · 9 AM and 9 PM','CRITICAL — immunosuppressant'],
@@ -2860,7 +2895,7 @@ function rSOS(){
         </div>`).join('')}
     </div>
 
-    <div class="c" style="border-color:var(--red);background:#120808">
+    <div class="c" style="border-color:var(--red);background:#fde8e8">
       <div class="ctitle" style="color:var(--red)">📞 Emergency Contacts</div>
       ${[
         {name:'Dr. Krishna Reddy',role:'Nephrologist · Manipal Hospital Bengaluru',num:'+918008094845'},
@@ -3029,7 +3064,7 @@ function rCalDay(dateStr){
     {id:'food',label:'Food'},
     {id:'notes',label:'Notes'},
   ];
-  html+=`<div style="display:flex;background:#0d0b07;border:1px solid var(--b1);border-radius:10px;padding:3px;gap:3px;margin-bottom:12px">
+  html+=`<div style="display:flex;background:var(--p2);border:1px solid var(--b1);border-radius:10px;padding:3px;gap:3px;margin-bottom:12px">
     ${tabs.map(t=>`<button onclick="CAL_DAY_TAB='${t.id}';renderTab('cal')"
       style="flex:1;padding:8px 4px;font-size:11px;font-weight:700;border:none;border-radius:7px;font-family:var(--ff);cursor:pointer;transition:all .2s;
       background:${CAL_DAY_TAB===t.id?'linear-gradient(135deg,var(--gold),var(--gold2))':'transparent'};
@@ -3041,7 +3076,7 @@ function rCalDay(dateStr){
     const sch=prepDay?prepDay.movement:effectiveMode==='hotel'?SCH_HOTEL:effectiveMode==='intl'?SCH_INTL:SCH_HOME;
 
     if(isPrep){
-      html+=`<div style="background:#0a1a2a;border:1px solid #4a90d0;border-radius:10px;padding:12px;margin-bottom:10px">
+      html+=`<div style="background:#dceeff;border:1px solid #4a90d0;border-radius:10px;padding:12px;margin-bottom:10px">
         <div style="font-size:11px;color:#60b0e0;font-weight:700">${prepDay.theme}</div>
       </div>`;
     }
@@ -3062,7 +3097,7 @@ function rCalDay(dateStr){
       </div>`).join('');
 
     // Always show medications — they never change regardless of prep/travel
-    html+=`<div style="margin-top:12px;background:#120808;border:1px solid #3a1010;border-radius:10px;padding:12px">
+    html+=`<div style="margin-top:12px;background:#fde8e8;border:1px solid #3a1010;border-radius:10px;padding:12px">
       <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">💊 Medications</div>
       ${[
         {k:'m1',t:'7:15 AM',n:'Omnacortil 5mg + MetXL 50mg',note:'After breakfast'},
@@ -3100,7 +3135,7 @@ function rCalDay(dateStr){
 
     // Morning check-in and supplements — only show for today
     if(isToday){
-      html+=`<div class="c" style="margin-top:10px;background:#0d0b06;border-color:var(--gold)">
+      html+=`<div class="c" style="margin-top:10px;background:var(--p2);border-color:var(--gold)">
         <div class="ctitle">Morning Check-In</div>
         ${VITALS[TODAY]?`
           <div style="display:flex;justify-content:space-between;align-items:center">
@@ -3158,7 +3193,7 @@ function rCalDay(dateStr){
 
   // ── EXERCISE TAB ──
   else if(CAL_DAY_TAB==='exercise'){
-    html+=`<div style="background:linear-gradient(135deg,#1a1206,#12100a);border:1px solid var(--gold);border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+    html+=`<div style="background:linear-gradient(135deg,var(--p3),var(--p2));border:1px solid var(--gold);border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
       <div><div style="font-size:26px;font-weight:700;color:var(--gold)">${exPts()} pts</div>
       <div style="font-size:11px;color:var(--sub)">Movement points</div></div>
       <div style="text-align:right;font-size:11px;color:var(--sub)">80% of day<br>= green ✅</div>
@@ -3166,7 +3201,7 @@ function rCalDay(dateStr){
 
     if(isPrep){
       // Prep days — show only that day's movement, no full exercise plan
-      html+=`<div style="background:#0a1a2a;border:1px solid #4a90d0;border-radius:10px;padding:12px;margin-bottom:10px">
+      html+=`<div style="background:#dceeff;border:1px solid #4a90d0;border-radius:10px;padding:12px;margin-bottom:10px">
         <div style="font-size:11px;font-weight:700;color:#60b0e0;margin-bottom:4px">${prepDay.label}</div>
         <div style="font-size:12px;color:var(--sub)">${prepDay.theme}</div>
       </div>`;
@@ -3179,14 +3214,14 @@ function rCalDay(dateStr){
           </div>
           <div class="chk">${liveChecks['d'+i]?'✓':''}</div>
         </div>`).join('');
-      html+=`<div style="margin-top:12px;background:#0a1a0a;border:1px solid #2a5a2a;border-radius:10px;padding:12px">
+      html+=`<div style="margin-top:12px;background:#e0f5e8;border:1px solid #2a5a2a;border-radius:10px;padding:12px">
         <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px">Full exercise plan starts March 28</div>
         <div style="font-size:11px;color:var(--sub)">These 5 prep days build the habit foundation. Movement is intentionally light. Trust the process.</div>
       </div>`;
     } else {
       // March 28+ — full exercise plan
       if(effectiveMode==='home'){
-        html+=`<div style="background:linear-gradient(135deg,#0a1a18,#081210);border:1px solid #2a5a52;border-radius:10px;padding:12px;margin-bottom:10px">
+        html+=`<div style="background:linear-gradient(135deg,#e0f5f0,#eaf8f4);border:1px solid #2a5a52;border-radius:10px;padding:12px;margin-bottom:10px">
           <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">🌊 Jakkur Lake · Yelahanka, Bengaluru</div>
           <div style="font-size:12px;color:var(--sub);line-height:1.9">
             Home to lake: <strong style="color:var(--teal)">700m</strong> · Full circle: <strong style="color:var(--teal)">7km</strong><br>
@@ -3197,7 +3232,7 @@ function rCalDay(dateStr){
           </div>
         </div>`;
       } else {
-        html+=`<div style="background:linear-gradient(135deg,#0a1a18,#081210);border:1px solid #2a5a52;border-radius:10px;padding:12px;margin-bottom:10px">
+        html+=`<div style="background:linear-gradient(135deg,#e0f5f0,#eaf8f4);border:1px solid #2a5a52;border-radius:10px;padding:12px;margin-bottom:10px">
           <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">🚶 Movement — Local Area</div>
           <div style="font-size:12px;color:var(--sub);line-height:1.9">Hotel corridor · Airport terminal · Nearby street<br>
             <span style="color:var(--green)">Minimum:</span> 15 min walk — always possible<br>
@@ -3249,15 +3284,18 @@ function rCalDay(dateStr){
     const tka=allFood.reduce((s,f)=>s+(f.k||0),0);
     const tph=allFood.reduce((s,f)=>s+(f.ph||0),0);
     const tna=allFood.reduce((s,f)=>s+(f.na||0),0);
-    const kcalOk=tk<=TARGET_KCAL;
+    const kcalOk=tk>=1200&&tk<=TARGET_KCAL;
+    const kcalLow=tk<1200&&tk>0;
+    const kcalOver=tk>TARGET_KCAL;
+    const kcalColor=kcalLow?'var(--orange)':kcalOk?'var(--green)':kcalOver?'var(--red)':'var(--gold)';
 
     // Targets
     const TGT={p:90,k:2500,ph:1200,na:1700};
 
-    html+=`<div class="c" style="background:#0d0b06;border-color:var(--gold)">
+    html+=`<div class="c" style="background:var(--p2);border-color:var(--gold)">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
         <div>
-          <div style="font-size:30px;font-weight:700;color:${kcalOk?'var(--gold)':'var(--red)'}">${tk} kcal</div>
+          <div style="font-size:30px;font-weight:700;color:${kcalColor}">${tk} kcal</div>
           <div style="font-size:11px;color:var(--muted)">Target ${TARGET_KCAL} kcal · ${kcalOk?(TARGET_KCAL-tk)+' remaining':(tk-TARGET_KCAL)+' over'}</div>
         </div>
         <div style="text-align:right;font-size:11px;color:var(--sub)">
@@ -3479,7 +3517,7 @@ function renderChatContent(){
   if(!GROQ_KEY){
     msgs.innerHTML=`
       <div style="padding:4px">
-        <div style="background:linear-gradient(135deg,#1a1206,#12100a);border:1px solid var(--gold);border-radius:14px;padding:20px;text-align:center;margin-bottom:16px">
+        <div style="background:linear-gradient(135deg,var(--p3),var(--p2));border:1px solid var(--gold);border-radius:14px;padding:20px;text-align:center;margin-bottom:16px">
           <div style="font-size:32px;margin-bottom:8px">🔑</div>
           <div style="font-size:15px;font-weight:700;color:var(--gold);margin-bottom:6px">One-time setup</div>
           <div style="font-size:12px;color:var(--sub);line-height:1.7">Uses Groq AI — completely free, no billing needed. Get your key from console.groq.com in 1 minute.</div>
