@@ -1605,7 +1605,7 @@ function rHome(){
             <div style="display:flex;gap:4px;flex-wrap:wrap">
               ${[
                 {l:'Habits',d:c.breakdown.sch.done,t:c.breakdown.sch.total,c:'var(--gold)'},
-                {l:'Exercise',d:c.breakdown.ex.done,t:c.breakdown.ex.total,c:'var(--green)'},
+                {l:'Exercise',d:c.breakdown.ex.done,t:c.breakdown.ex.total,c:c.breakdown.ex.pass?'var(--green)':'var(--orange)'},
                 {l:'Meds',d:c.breakdown.med.done,t:c.breakdown.med.total,c:'var(--red)'},
                 {l:'Supps',d:c.breakdown.supp.done,t:c.breakdown.supp.total,c:'var(--teal)'},
                 {l:'Cal',d:c.breakdown.cal.done,t:1,c:'var(--orange)'},
@@ -3092,14 +3092,18 @@ function getDayCompletion(dateStr){
 
   // ── PILLAR 2: EXERCISE (mandatory minimum: breathwork + morning walk) ──
   // For prep days — exercise is part of schedule items, no separate exercise check
-  let exDone=0,exTotal=0;
+  let exDone=0,exTotal=0,exPass=false;
   if(!isPrep){
     const dayExLog=isToday?EX_LOG:loadS('dv4-ex-'+dateStr,{});
-    // Mandatory minimum: breathwork AND morning walk both done
-    const breathDone=dayExLog['breathwork']&&dayExLog['breathwork'].done?1:0;
-    const walkDone=dayExLog['walk_lake']&&dayExLog['walk_lake'].done?1:0;
-    exDone=breathDone+walkDone;
-    exTotal=2; // 2 mandatory items
+    // Get all available exercises in unlocked phases
+    const availPhases=EX.filter(p=>p.unlockKg===999||S.wt<=p.unlockKg);
+    const allExItems=availPhases.flatMap(p=>p.list);
+    exTotal=allExItems.length;
+    exDone=allExItems.filter(ex=>dayExLog[ex.id]&&dayExLog[ex.id].done).length;
+    // Pass logic — breathwork AND morning walk both done (mandatory minimum)
+    const breathDone=dayExLog['breathwork']&&dayExLog['breathwork'].done;
+    const walkDone=dayExLog['walk_lake']&&dayExLog['walk_lake'].done;
+    exPass=breathDone&&walkDone;
   }
 
   // ── PILLAR 3: MEDICATIONS (6 items) ──
@@ -3129,15 +3133,19 @@ function getDayCompletion(dateStr){
   const waterPass=dayWater>=2500?1:0;
   const waterTotal=1;
 
-  const done=schDone+exDone+medDone+suppDone+calPass+waterPass;
-  const total=schTotal+exTotal+medTotal+suppTotal+calTotal+waterTotal;
+  // Exercise contributes 1 point to day score if mandatory minimum met (breathwork + walk)
+  const exPillarDone=isPrep?0:(exPass?1:0);
+  const exPillarTotal=isPrep?0:1;
+
+  const done=schDone+exPillarDone+medDone+suppDone+calPass+waterPass;
+  const total=schTotal+exPillarTotal+medTotal+suppTotal+calTotal+waterTotal;
   const pct=total>0?Math.round((done/total)*100):0;
 
   const result={
     done,total,pct,pass:pct>=80,
     breakdown:{
       sch:{done:schDone,total:schTotal},
-      ex:{done:exDone,total:exTotal,isPrep},
+      ex:{done:exDone,total:exTotal,pass:exPass,isPrep},
       med:{done:medDone,total:medTotal},
       supp:{done:suppDone,total:suppTotal,isD3Day},
       cal:{done:calPass,total:calTotal,kcal},
@@ -3284,7 +3292,7 @@ function rCalDay(dateStr){
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:8px">
       ${[
         {l:'Habits',d:comp.breakdown.sch.done,t:comp.breakdown.sch.total,c:'var(--gold)'},
-        {l:'Exercise',d:comp.breakdown.ex.done,t:comp.breakdown.ex.total,c:'var(--green)',note:comp.breakdown.ex.isPrep?'(prep)':'B+W'},
+        {l:'Exercise',d:comp.breakdown.ex.done,t:comp.breakdown.ex.total,c:comp.breakdown.ex.pass?'var(--green)':'var(--orange)',note:comp.breakdown.ex.isPrep?'(prep)':comp.breakdown.ex.pass?'✓ B+W done':'B+W needed'},
         {l:'Meds',d:comp.breakdown.med.done,t:comp.breakdown.med.total,c:'var(--red)'},
         {l:'Supps',d:comp.breakdown.supp.done,t:comp.breakdown.supp.total,c:'var(--teal)',note:comp.breakdown.supp.isD3Day?'D3 day':'no D3'},
         {l:'Calories',d:comp.breakdown.cal.done,t:1,c:'var(--orange)',note:comp.breakdown.cal.kcal+'kcal'},
