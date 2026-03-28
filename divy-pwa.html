@@ -401,7 +401,7 @@ const PREP_DAYS={
       {t:'5:20 AM',a:'Walk to Jakkur Lake and back — 1.4km. Do 2 rounds (2.8km, ~30 min). This is the full rehearsal. Strong but conversational pace.',ic:'🚶'},
       {t:'6:00 AM',a:'Jumping rope — 2 sets of 2 min. Rest 1 min between.',ic:'🪢'},
       {t:'6:15 AM',a:'Band circuit — 2 rounds of: (1) Chest Pull-Apart 12 reps. (2) Seated Row 12 reps. (3) Standing Bicep Curl — stand on band, curl to shoulders, 12 reps. Rest 45 sec between rounds.',ic:'🟡'},
-      {t:'6:30 AM',a:'Surya Arghya — water to the Sun. First time. Mark this moment.',ic:'☀️'},
+      {t:'6:30–7:00 AM',a:'Snan karo, phir Surya Arghya — taambey ke lote mein paani, suraj ki taraf munh karke arpit karo. Om Ghrinih Suryaya Namah (3 baar). Pehli baar. Is pal ko yaad rakhna.',ic:'☀️'},
       {t:'9:30 PM',a:'Lights out. Tomorrow March 28 — the real journey begins. Sleep well, Divy.',ic:'😴'},
     ]
   },
@@ -754,64 +754,25 @@ const WATER_TARGET=3500;
 
 // SCHEDULES
 const SCH_HOME=[
-  {t:'5:00 AM',a:'Rise — warm ginger or ajwain water',ic:'🌅',c:'r'},
-  {t:'5:10 AM',a:'Breathwork — 4 count in, 6 count out, 5 min',ic:'🧘',c:'e'},
-  {t:'5:20 AM',a:'Morning movement — Exercise tab',ic:'🚶',c:'e'},
-  {t:'6:30 AM',a:'Surya Arghya — water offering to the Sun',ic:'☀️',c:'s'},
-  {t:'7:00 AM',a:'Breakfast — see Food tab',ic:'🍳',c:'m'},
-  {t:'7:15 AM',a:'Omnacortil 5mg + MetXL 50mg — after breakfast',ic:'💊',c:'med'},
-  {t:'8:00 AM',a:'Mycofit 360mg',ic:'💊',c:'med'},
-  {t:'9:00 AM',a:'Takfa 4mg',ic:'💊',c:'med'},
-  {t:'10:30 AM',a:'Mid-morning — makhana or 1 fruit',ic:'🥜',c:'m'},
-  {t:'1:00 PM',a:'Lunch — TruNativ mixed in + all supplements (Ubiquinol · Omega-3 · D3 alt days · Magnesium)',ic:'🍱',c:'m'},
-  {t:'4:30 PM',a:'Evening snack — makhana or 1 banana',ic:'🍌',c:'m'},
-  {t:'6:30 PM',a:'MetXL 25mg',ic:'💊',c:'med'},
-  {t:'7:00 PM',a:'Dinner — lightest meal, done by 7:30 PM',ic:'🥗',c:'m'},
-  {t:'8:00 PM',a:'Mycofit 360mg + Atorva 10mg + Telma 40mg',ic:'💊',c:'med'},
-  {t:'8:30 PM',a:'Wind down — no screens',ic:'📵',c:'r'},
-  {t:'8:30 PM',a:'Lie down with Iti — rest',ic:'🛏️',c:'r'},
-  {t:'9:00 PM',a:'Takfa 4mg',ic:'💊',c:'med'},
-  {t:'9:30 PM',a:'Sleep',ic:'😴',c:'r'},
+  // Pure habits only — no meds (tracked separately), no meals (Food tab), no exercise (Exercise tab)
+  {t:'5:00 AM',a:'Rise — warm ginger or ajwain water. Phone down last night at 9:30.',ic:'🌅',c:'r'},
+  {t:'6:30–7:30 AM',a:'Snan ke baad Surya Arghya — taambey ke lote mein paani, suraj ki taraf. Om Ghrinih Suryaya Namah (3 baar). Panna Surya ki roshni mein hona chahiye.',ic:'☀️',c:'s'},
+  {t:'8:30 PM',a:'Wind down — screens band karo. Iti aur Chittu ke saath time.',ic:'📵',c:'r'},
+  {t:'9:30 PM',a:'Sleep — kal ke liye body ready karni hai.',ic:'😴',c:'r'},
 ];
 
 const SCH_HOTEL=[
-  {t:'5:00 AM',a:'Rise — room kettle hot water',ic:'🌅',c:'r'},
-  {t:'5:10 AM',a:'Breathwork in room — 4 in, 6 out, 5 min',ic:'🧘',c:'e'},
-  {t:'5:20 AM',a:'Hotel corridor / treadmill 3.5kmph / outdoor 30 min',ic:'🚶',c:'e'},
-  {t:'6:30 AM',a:'Surya Arghya — face east window, water in cupped hands',ic:'☀️',c:'s'},
-  {t:'7:00 AM',a:'Buffet: 2 boiled eggs + plain yogurt + fruit only',ic:'🍳',c:'m'},
-  {t:'7:15 AM',a:'Omnacortil 5mg + MetXL 50mg — after breakfast',ic:'💊',c:'med'},
-  {t:'8:00 AM',a:'Mycofit 360mg — from pill organiser',ic:'💊',c:'med'},
-  {t:'9:00 AM',a:'Takfa 4mg',ic:'💊',c:'med'},
-  {t:'10:30 AM',a:'Packed makhana or hotel fruit only',ic:'🥜',c:'m'},
-  {t:'1:00 PM',a:'Dal + rice/roti at restaurant — no extra salt + all supplements with meal',ic:'🍱',c:'m'},
-  {t:'4:30 PM',a:'Plain oats with room kettle hot water',ic:'🌾',c:'m'},
-  {t:'6:30 PM',a:'MetXL 25mg',ic:'💊',c:'med'},
-  {t:'7:00 PM',a:'Dinner: steamed or grilled only — done by 7:30 PM',ic:'🥗',c:'m'},
-  {t:'8:00 PM',a:'Mycofit 360mg + Atorva 10mg + Telma 40mg',ic:'💊',c:'med'},
-  {t:'8:30 PM',a:'Wind down — room dark and cool',ic:'📵',c:'r'},
-  {t:'9:00 PM',a:'Takfa 4mg',ic:'💊',c:'med'},
-  {t:'9:30 PM',a:'Sleep — same time as home',ic:'😴',c:'r'},
+  {t:'5:00 AM',a:'Rise — room kettle hot water. Travel ne schedule nahi badla.',ic:'🌅',c:'r'},
+  {t:'6:30–7:30 AM',a:'Snan ke baad Surya Arghya — east window ki taraf munh karke. Om Ghrinih Suryaya Namah (3 baar).',ic:'☀️',c:'s'},
+  {t:'8:30 PM',a:'Wind down — room dark aur cool. Ghar wali neend.',ic:'📵',c:'r'},
+  {t:'9:30 PM',a:'Sleep — same time as home. Body ko pata hai.',ic:'😴',c:'r'},
 ];
 
 const SCH_INTL=[
-  {t:'5:00 AM',a:'Rise — hotel room water. Adjust for time zone — keep schedule.',ic:'🌅',c:'r'},
-  {t:'5:10 AM',a:'Breathwork — 4 in, 6 out, 5 min. Grounds you in any timezone.',ic:'🧘',c:'e'},
-  {t:'5:20 AM',a:'Hotel gym or corridor walk 30 min. Treadmill 3.5kmph.',ic:'🚶',c:'e'},
-  {t:'6:30 AM',a:'Surya Arghya — face east window wherever you are.',ic:'☀️',c:'s'},
-  {t:'7:00 AM',a:'Breakfast: 2–3 boiled or scrambled eggs + plain yogurt + fruit',ic:'🍳',c:'m'},
-  {t:'7:15 AM',a:'Omnacortil 5mg + MetXL 50mg — after breakfast',ic:'💊',c:'med'},
-  {t:'8:00 AM',a:'Mycofit 360mg — local time',ic:'💊',c:'med'},
-  {t:'9:00 AM',a:'Takfa 4mg — local time',ic:'💊',c:'med'},
-  {t:'10:30 AM',a:'Mid-morning: packed makhana or local fruit',ic:'🥜',c:'m'},
-  {t:'1:00 PM',a:'Lunch: grilled chicken or goat mutton + salad + tofu if available + all supplements with meal',ic:'🍱',c:'m'},
-  {t:'4:30 PM',a:'Snack: plain oats from sachet or fruit',ic:'🌾',c:'m'},
-  {t:'6:30 PM',a:'MetXL 25mg — local time',ic:'💊',c:'med'},
-  {t:'7:00 PM',a:'Dinner: clear soup + grilled protein + steamed veg. Done by 7:30.',ic:'🥗',c:'m'},
-  {t:'8:00 PM',a:'Mycofit 360mg + Atorva 10mg + Telma 40mg — local time',ic:'💊',c:'med'},
-  {t:'8:30 PM',a:'Wind down. Call Iti and Chittu.',ic:'📵',c:'r'},
-  {t:'9:00 PM',a:'Takfa 4mg — local time',ic:'💊',c:'med'},
-  {t:'9:30 PM',a:'Sleep. Adjust to local time but protect 7.5 hrs always.',ic:'😴',c:'r'},
+  {t:'5:00 AM',a:'Rise — local time. Timezone badla, discipline nahi.',ic:'🌅',c:'r'},
+  {t:'6:30–7:30 AM',a:'Snan ke baad Surya Arghya — jahan bhi ho, east direction. Om Ghrinih Suryaya Namah (3 baar). Yeh nahi badlega.',ic:'☀️',c:'s'},
+  {t:'8:30 PM',a:'Wind down. Call Iti aur Chittu — woh wait karte hain.',ic:'📵',c:'r'},
+  {t:'9:30 PM',a:'Sleep. 7.5 hours protect karo hamesha.',ic:'😴',c:'r'},
 ];
 
 const INTL_MEALS=[
@@ -828,7 +789,7 @@ const EX=[
    list:[
     {id:'breathwork',n:'Breathwork',ic:'🧘',d:'Sit comfortably. 4 count inhale through nose. 6 count exhale through mouth. 5 min. Every morning without fail.',dur:'5 min',pts:5},
     {id:'walk_lake',n:'Morning Walk — To Lake & Back',ic:'🚶',d:'Walk from home to Jakkur Lake (700m) and return. 1.4km total. Brisk but conversational pace. No rushing.',dur:'20 min',pts:15},
-    {id:'rope',n:'Jumping Rope',ic:'🪢',d:'Light continuous pace. 3 sets of 2 min. Rest 1 full min between sets. Stop immediately if breathless.',dur:'10 min',pts:10},
+    {id:'rope',n:'Jumping Rope',ic:'🪢',d:'Max reps per set, rest fully between sets. 40+ reps = Good · 20-39 = Improving · Under 20 = Building. Log your best set reps when you tick.',dur:'3 sets',pts:10},
     {id:'band_stretch',n:'Resistance Band Stretch Circuit',ic:'🟡',d:'See Band Guide below. Full body sequence, 3 rounds. Morning or evening.',dur:'15 min',pts:10},
     {id:'eve_walk',n:'Evening Walk',ic:'🌇',d:'15 min neighborhood walk after dinner prep. Easy pace. Just move.',dur:'15 min',pts:10},
    ]},
@@ -1116,14 +1077,30 @@ function openDay(dateStr,innerTab){
 }
 
 function tickDay(){
+  // Check if already marked today
+  if(S.calData[TODAY]==='done') return;
+  const comp=getDayCompletion(TODAY);
+  if(!comp.pass) return; // Not 80% yet
   const done=S.cycleDay===8;
   const prev=S.cycleDay;
   S.cycleDay=done?1:S.cycleDay+1;
   if(done){S.totalCycles++;S.streak++;}
   S.calData[TODAY]='done';
   saveMain();
-  flash(done?'Cycle '+S.totalCycles+' complete! Reward unlocked.':'Day '+prev+' done ✓');
-  renderTab(CUR);
+  if(done){
+    flash('🎉 Cycle '+S.totalCycles+' complete! Reward unlocked.');
+    setTimeout(()=>{document.getElementById('pop-kg')&&openPop(null);},800);
+  } else {
+    flash('Day '+prev+' complete ✓ — '+comp.pct+'% discipline score');
+  }
+}
+
+// Auto-check day completion on every render
+function autoTickIfComplete(){
+  if(S.calData[TODAY]==='done') return; // Already done today
+  if(TODAY<START_DATE&&TODAY<PREP_START) return; // Before journey
+  const comp=getDayCompletion(TODAY);
+  if(comp.pass) tickDay();
 }
 
 function logWt(){
@@ -1162,11 +1139,38 @@ function toggleEx(id){
   const ph=EX.find(p=>p.list.find(e=>e.id===id));
   if(!ph)return;
   if(ph.unlockKg!==999&&S.wt>ph.unlockKg){flash('Unlocks at '+ph.unlockKg+' kg');return;}
-  EX_LOG[id]=!EX_LOG[id];saveEx();
-  if(EX_LOG[id]){const ex=ph.list.find(e=>e.id===id);flash('+'+ex.pts+' pts — '+ex.n);}
+
+  if(EX_LOG[id]){
+    // Unticking — remove
+    delete EX_LOG[id];
+    saveEx();
+    flash('Unmarked');
+  } else {
+    // Ticking rope — ask for reps first
+    if(id==='rope'){
+      const reps=prompt('Rope skipping — best set mein kitne reps? (0 to skip)');
+      const r=parseInt(reps)||0;
+      const level=r>=40?'good':r>=20?'improve':'build';
+      EX_LOG[id]={done:true,time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),reps:r,level};
+      flash(r>=40?'🟢 Good — '+r+' reps!':r>=20?'🟡 Improving — '+r+' reps':'🔴 Building — '+r+' reps · keep going');
+    } else {
+      // Auto-timestamp for all other exercises
+      EX_LOG[id]={done:true,time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})};
+      const ex=ph.list.find(e=>e.id===id);
+      flash('+'+ex.pts+' pts — '+ex.n);
+    }
+    saveEx();
+  }
   _compCache={};
   if(CUR==='cal') renderTab('cal');
   else renderTab(CUR);
+}
+
+function exPts(){
+  return Object.entries(EX_LOG).filter(([,v])=>v&&v.done).reduce((s,[k])=>{
+    for(const ph of EX) for(const ex of ph.list) if(ex.id===k) return s+ex.pts;
+    return s;
+  },0);
 }
 
 function addWater(){
@@ -1352,6 +1356,7 @@ function updateHeader(){
 // ═══════════ RENDERS ═══════════
 function renderTab(t){
   checkDateRollover();
+  autoTickIfComplete();
   try{
     let html='';
     if(t==='home') html=rHome();
@@ -1451,7 +1456,22 @@ function rHome(){
         ${S.cycleDay===8?'Cycle complete! Reward: '+rType:'Next reward: '+rType+' · '+dLeft+' days'}
       </div>
       ${weighBox}
-      <button class="btn btn-g" onclick="tickDay()">${S.cycleDay===8?'Complete Cycle & Claim Reward':'Mark Day '+S.cycleDay+' Done →'}</button>
+      ${S.calData[TODAY]==='done'
+        ?`<div style="background:#d0f5e0;border:1px solid var(--green2);border-radius:10px;padding:12px;text-align:center">
+            <div style="font-size:14px;font-weight:700;color:#2a6a3a">✅ Day ${S.cycleDay>1?S.cycleDay-1:8} Complete</div>
+            <div style="font-size:11px;color:var(--sub);margin-top:4px">Auto-marked when 80% reached</div>
+          </div>`
+        :(()=>{
+            const comp=getDayCompletion(TODAY);
+            const need=Math.ceil(comp.total*0.8)-comp.done;
+            return `<div style="background:var(--p2);border:1px solid var(--b1);border-radius:10px;padding:12px;text-align:center">
+              <div style="font-size:13px;font-weight:700;color:var(--gold)">Day ${S.cycleDay}/8 — ${comp.pct}% complete</div>
+              <div style="font-size:11px;color:var(--sub);margin-top:4px">${need>0?'Need '+need+' more · auto-marks at 80%':'Calculating...'}</div>
+              <div style="height:6px;background:var(--b1);border-radius:3px;overflow:hidden;margin-top:8px">
+                <div style="height:100%;width:${comp.pct}%;background:linear-gradient(90deg,var(--gold),var(--green));border-radius:3px;transition:width .5s"></div>
+              </div>
+            </div>`;
+          })()}
     </div>`}
 
     <div class="c">
@@ -1532,12 +1552,13 @@ function rHome(){
             </div>
             <div style="display:flex;gap:4px;flex-wrap:wrap">
               ${[
-                {l:'Sched',d:c.breakdown.sch.done,t:c.breakdown.sch.total,c:'var(--gold)'},
+                {l:'Habits',d:c.breakdown.sch.done,t:c.breakdown.sch.total,c:'var(--gold)'},
+                {l:'Exercise',d:c.breakdown.ex.done,t:c.breakdown.ex.total,c:'var(--green)'},
                 {l:'Meds',d:c.breakdown.med.done,t:c.breakdown.med.total,c:'var(--red)'},
-                {l:'Supps',d:c.breakdown.supp.done,t:c.breakdown.supp.total,c:'var(--green)'},
+                {l:'Supps',d:c.breakdown.supp.done,t:c.breakdown.supp.total,c:'var(--teal)'},
                 {l:'Cal',d:c.breakdown.cal.done,t:1,c:'var(--orange)'},
-                {l:'Water',d:c.breakdown.water.done,t:1,c:'var(--teal)'},
-              ].map(s=>`<span style="font-size:10px;color:${s.d>=s.t?s.c:'var(--muted)'};background:var(--p2);padding:2px 6px;border-radius:6px">${s.l} ${s.d}/${s.t}</span>`).join('')}
+                {l:'Water',d:c.breakdown.water.done,t:1,c:'var(--blue)'},
+              ].map(s=>`<span style="font-size:10px;color:${s.d>=s.t&&s.t>0?s.c:'var(--muted)'};background:var(--p2);padding:2px 6px;border-radius:6px">${s.l} ${s.d}/${s.t}</span>`).join('')}
             </div>
           </div>
         </div>
@@ -1857,7 +1878,7 @@ function rEx(mode){
       <span class="pbadge">Phase ${ph.ph}: ${ph.name}</span>
       <div style="font-size:12px;color:var(--sub);margin-bottom:10px">${ph.desc}</div>`;
     ph.list.forEach(ex=>{
-      const done=EX_LOG[ex.id];
+      const done=EX_LOG[ex.id]&&EX_LOG[ex.id].done;
       html+=`
         <div class="ei ${done?'dn':''}" onclick="toggleEx('${ex.id}')">
           <div class="ei-ic">${ex.ic}</div>
@@ -2984,12 +3005,13 @@ function rSOS(){
 
 // ═══════════ CALENDAR DAY VIEW ═══════════
 function getDayCompletion(dateStr){
-  // Reset cache daily
+  // Cache management
   if(_compCacheDate!==TODAY){_compCache={};_compCacheDate=TODAY;}
-  // Only cache dates older than 7 days — recent dates change within the session
-  const sevenDaysAgo=new Date(TODAY);sevenDaysAgo.setDate(sevenDaysAgo.getDate()-7);
-  const isOld=dateStr<sevenDaysAgo.toISOString().split('T')[0];
+  const d=new Date(TODAY);d.setDate(d.getDate()-7);
+  const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
+  const isOld=dateStr<`${y}-${m}-${day}`;
   if(isOld&&_compCache[dateStr]) return _compCache[dateStr];
+
   const isToday=dateStr===TODAY;
   const dayChecks=isToday?CHECKS:loadS('dv4-ch-'+dateStr,{});
   const isPrep=dateStr>=PREP_START&&dateStr<START_DATE;
@@ -2998,43 +3020,61 @@ function getDayCompletion(dateStr){
   let effectiveMode=S.mode;
   if(trip) effectiveMode=trip.type==='international'?'intl':trip.type==='domestic'?'hotel':'home';
 
-  // Schedule items
+  // ── PILLAR 1: HABITS (pure schedule items only — no duplicates) ──
   const sch=prepDay?prepDay.movement:effectiveMode==='hotel'?SCH_HOTEL:effectiveMode==='intl'?SCH_INTL:SCH_HOME;
   const schDone=Object.entries(dayChecks).filter(([k,v])=>k.startsWith('d')&&v).length;
   const schTotal=sch.length;
 
-  // Medications (6)
+  // ── PILLAR 2: EXERCISE (mandatory minimum: breathwork + morning walk) ──
+  // For prep days — exercise is part of schedule items, no separate exercise check
+  let exDone=0,exTotal=0;
+  if(!isPrep){
+    const dayExLog=isToday?EX_LOG:loadS('dv4-ex-'+dateStr,{});
+    // Mandatory minimum: breathwork AND morning walk both done
+    const breathDone=dayExLog['breathwork']&&dayExLog['breathwork'].done?1:0;
+    const walkDone=dayExLog['walk_lake']&&dayExLog['walk_lake'].done?1:0;
+    exDone=breathDone+walkDone;
+    exTotal=2; // 2 mandatory items
+  }
+
+  // ── PILLAR 3: MEDICATIONS (6 items) ──
   const medKeys=['m1','m2','m3','m4','m5','m6'];
   const medDone=medKeys.filter(k=>dayChecks[k]).length;
   const medTotal=6;
 
-  // Supplements (6) — only count for today from live SUPPS
-  const suppKeys=['ubq','fish','vitd','fiber','trunativ','mag'];
+  // ── PILLAR 4: SUPPLEMENTS (smart — D3 alternate day aware) ──
   const daySuppsData=isToday?SUPPS:loadS('dv4-supps-'+dateStr,{});
+  // D3 alternate day check — count days from PREP_START
+  const daysSincePrep=Math.floor((new Date(dateStr)-new Date(PREP_START))/(1000*60*60*24));
+  const isD3Day=daysSincePrep%2===0; // even days = D3 day
+  const suppKeys=isD3Day
+    ?['ubq','fish','vitd','fiber','trunativ','mag']  // D3 day — all 6
+    :['ubq','fish','fiber','trunativ','mag'];          // Non D3 day — only 5
   const suppDone=suppKeys.filter(k=>daySuppsData[k]).length;
-  const suppTotal=6;
+  const suppTotal=suppKeys.length;
 
-  // Calories — within 1300-1500 = pass
+  // ── PILLAR 5: NUTRITION (calories in range) ──
   const dayFood=isToday?FOOD_LOG:loadS('dv4-food-'+dateStr,[]);
-  const kcal=dayFood.reduce((s,f)=>s+(f.kcal||0),0);
+  const kcal=Array.isArray(dayFood)?dayFood.reduce((s,f)=>s+(f.kcal||0),0):0;
   const calPass=kcal>=1200&&kcal<=1700?1:0;
   const calTotal=1;
 
-  // Water — >= 2500ml minimum threshold
+  // ── PILLAR 6: WATER ──
   const dayWater=isToday?WATER.ml:(loadS('dv4-water-'+dateStr,{ml:0}).ml||0);
   const waterPass=dayWater>=2500?1:0;
   const waterTotal=1;
 
-  const done=schDone+medDone+suppDone+calPass+waterPass;
-  const total=schTotal+medTotal+suppTotal+calTotal+waterTotal;
+  const done=schDone+exDone+medDone+suppDone+calPass+waterPass;
+  const total=schTotal+exTotal+medTotal+suppTotal+calTotal+waterTotal;
   const pct=total>0?Math.round((done/total)*100):0;
 
   const result={
     done,total,pct,pass:pct>=80,
     breakdown:{
       sch:{done:schDone,total:schTotal},
+      ex:{done:exDone,total:exTotal,isPrep},
       med:{done:medDone,total:medTotal},
-      supp:{done:suppDone,total:suppTotal},
+      supp:{done:suppDone,total:suppTotal,isD3Day},
       cal:{done:calPass,total:calTotal,kcal},
       water:{done:waterPass,total:waterTotal,ml:dayWater}
     }
@@ -3176,17 +3216,18 @@ function rCalDay(dateStr){
     </div>`;
 
     html+=`<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px">${comp.pct}% complete · ${comp.pass?'✅ Day complete!':'Need '+(Math.ceil(comp.total*0.8)-comp.done)+' more for 80%'}</div>
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:8px">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:8px">
       ${[
-        {l:'Schedule',d:comp.breakdown.sch.done,t:comp.breakdown.sch.total,c:'var(--gold)'},
+        {l:'Habits',d:comp.breakdown.sch.done,t:comp.breakdown.sch.total,c:'var(--gold)'},
+        {l:'Exercise',d:comp.breakdown.ex.done,t:comp.breakdown.ex.total,c:'var(--green)',note:comp.breakdown.ex.isPrep?'(prep)':'B+W'},
         {l:'Meds',d:comp.breakdown.med.done,t:comp.breakdown.med.total,c:'var(--red)'},
-        {l:'Supps',d:comp.breakdown.supp.done,t:comp.breakdown.supp.total,c:'var(--green)'},
+        {l:'Supps',d:comp.breakdown.supp.done,t:comp.breakdown.supp.total,c:'var(--teal)',note:comp.breakdown.supp.isD3Day?'D3 day':'no D3'},
         {l:'Calories',d:comp.breakdown.cal.done,t:1,c:'var(--orange)',note:comp.breakdown.cal.kcal+'kcal'},
-        {l:'Water',d:comp.breakdown.water.done,t:1,c:'var(--teal)',note:Math.round(comp.breakdown.water.ml/100)/10+'L'},
-      ].map(s=>`<div style="background:var(--p2);border-radius:8px;padding:6px 4px;text-align:center;border:1px solid ${s.d>=s.t?s.c:'var(--b1)'}">
-        <div style="font-size:10px;font-weight:700;color:${s.d>=s.t?s.c:'var(--muted)'}">${s.d}/${s.t}</div>
+        {l:'Water',d:comp.breakdown.water.done,t:1,c:'var(--blue)',note:Math.round(comp.breakdown.water.ml/100)/10+'L'},
+      ].map(s=>`<div style="background:var(--p2);border-radius:8px;padding:6px 4px;text-align:center;border:1px solid ${s.d>=s.t&&s.t>0?s.c:'var(--b1)'}">
+        <div style="font-size:11px;font-weight:700;color:${s.d>=s.t&&s.t>0?s.c:'var(--muted)'}">${s.d}/${s.t}</div>
         <div style="font-size:9px;color:var(--muted);margin-top:1px">${s.l}</div>
-        ${s.note?`<div style="font-size:8px;color:${s.d>=s.t?s.c:'var(--muted)'}">${s.note}</div>`:''}
+        ${s.note?`<div style="font-size:8px;color:${s.d>=s.t&&s.t>0?s.c:'var(--muted)'}">${s.note}</div>`:''}
       </div>`).join('')}
     </div>`;
 
@@ -3325,12 +3366,18 @@ function rCalDay(dateStr){
         html+=`<div class="c" style="margin-bottom:10px"><span class="pbadge">Phase ${ph.ph}: ${ph.name}</span>
           <div style="font-size:12px;color:var(--sub);margin-bottom:10px">${ph.desc}</div>`;
         ph.list.forEach(ex=>{
-          const done=EX_LOG[ex.id];
-          html+=`<div class="ei ${done?'dn':''}" ${isToday?`onclick="toggleEx('${ex.id}');renderTab('cal')"`:''} style="${!isToday?'cursor:default':''}">
+          const exEntry=EX_LOG[ex.id];
+          const done=exEntry&&exEntry.done;
+          const isRope=ex.id==='rope';
+          const ropeLevel=isRope&&exEntry?exEntry.level:'';
+          const ropeReps=isRope&&exEntry?exEntry.reps:0;
+          const ropeColor=ropeLevel==='good'?'var(--green)':ropeLevel==='improve'?'var(--orange)':'var(--red)';
+          const timeStamp=done&&exEntry.time?exEntry.time:'';
+          html+=`<div class="ei ${done?'dn':''}" ${isToday?`onclick="toggleEx('${ex.id}')"`:''} style="${!isToday?'cursor:default':''}">
             <div class="ei-ic">${ex.ic}</div>
             <div class="ei-inf">
-              <div class="ei-n">${esc(ex.n)}</div>
-              <div class="ei-d">${esc(ex.d)}</div>
+              <div class="ei-n">${esc(ex.n)}${timeStamp?`<span style="font-size:9px;color:var(--muted);margin-left:6px">@ ${timeStamp}</span>`:''}</div>
+              ${isRope&&done?`<div style="font-size:11px;color:${ropeColor};font-weight:700">${ropeReps} reps — ${ropeLevel==='good'?'🟢 Good':ropeLevel==='improve'?'🟡 Improving':'🔴 Building'}</div>`:`<div class="ei-d">${esc(ex.d)}</div>`}
               <div class="ei-dur">${ex.dur}</div>
             </div>
             <div class="ei-pts">+${ex.pts}</div>
@@ -3948,13 +3995,49 @@ function rWeeklyDashboard(){
     </div>`;
   }).join('');
 
+  // Wake time consistency
+  const wakeTimes=validDays.map(d=>{
+    const v=VITALS[d.ds];
+    if(!v||!v.wake) return null;
+    const [h,m]=v.wake.split(':').map(Number);
+    return h*60+m;
+  }).filter(v=>v!==null);
+  const avgWakeMin=wakeTimes.length?Math.round(wakeTimes.reduce((s,v)=>s+v,0)/wakeTimes.length):null;
+  const avgWakeStr=avgWakeMin!==null?`${String(Math.floor(avgWakeMin/60)).padStart(2,'0')}:${String(avgWakeMin%60).padStart(2,'0')}`:null;
+
+  // Exercise detail per day
+  const exDetails=validDays.map(({ds,day})=>{
+    if(ds>TODAY) return null;
+    const dayEx=ds===TODAY?EX_LOG:loadS('dv4-ex-'+ds,{});
+    const EX_IDS=['breathwork','walk_lake','rope','band_stretch','eve_walk'];
+    const EX_LABELS={breathwork:'Breathwork',walk_lake:'Walk',rope:'Rope',band_stretch:'Band',eve_walk:'Eve Walk'};
+    const items=EX_IDS.map(id=>{
+      const e=dayEx[id];
+      const done=e&&e.done;
+      let label='';
+      if(id==='rope'&&done&&e.reps){
+        const col=e.level==='good'?'#2a8a2a':e.level==='improve'?'#c87020':'#c03030';
+        label=`<span style="color:${col};font-weight:700">${e.reps}r</span>`;
+      } else if(done){
+        label=`<span style="color:var(--green)">✓</span>`;
+      } else {
+        label=`<span style="color:var(--b2)">✗</span>`;
+      }
+      return `<div style="text-align:center;flex:1">
+        <div style="font-size:9px;color:var(--muted)">${EX_LABELS[id].substring(0,4)}</div>
+        <div style="font-size:11px">${label}</div>
+      </div>`;
+    }).join('');
+    return {ds,day,items};
+  }).filter(Boolean);
+
   return `<div class="c">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <div class="ctitle" style="margin-bottom:0">This Week</div>
       <div style="font-size:11px;color:var(--sub)">${greenDays}/${validDays.length} green days</div>
     </div>
     <div style="display:flex;gap:4px;align-items:flex-end;margin-bottom:12px">${bars}</div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px">
       ${[
         {l:'Avg Score',v:avgPct+'%',c:avgPct>=80?'var(--green)':'var(--gold)'},
         {l:'Avg Calories',v:avgCal+'kcal',c:avgCal>=1200&&avgCal<=1600?'var(--green)':'var(--orange)'},
@@ -3965,6 +4048,39 @@ function rWeeklyDashboard(){
         <div style="font-size:9px;color:var(--muted);margin-top:2px">${s.l}</div>
       </div>`).join('')}
     </div>
+    ${avgWakeStr?`<div style="background:var(--p2);border-radius:8px;padding:8px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:11px;color:var(--sub)">Avg wake time this week</div>
+      <div style="font-size:14px;font-weight:700;color:${avgWakeMin<=330?'var(--green)':avgWakeMin<=360?'var(--gold)':'var(--red)'}">${avgWakeStr} AM</div>
+    </div>`:''}
+
+    <!-- Exercise detail — collapsed by default -->
+    <details style="cursor:pointer">
+      <summary style="font-size:12px;font-weight:700;color:var(--gold);padding:8px 0;list-style:none;display:flex;justify-content:space-between;align-items:center">
+        <span>Exercise This Week</span>
+        <span style="font-size:10px;color:var(--muted)">tap to expand ▾</span>
+      </summary>
+      <div style="margin-top:8px;border-top:1px solid var(--b1);padding-top:8px">
+        <div style="display:flex;gap:4px;margin-bottom:6px;padding:0 4px">
+          <div style="font-size:9px;color:var(--muted);width:28px">Day</div>
+          ${['Brth','Walk','Rope','Band','Eve'].map(l=>`<div style="flex:1;font-size:9px;color:var(--muted);text-align:center">${l}</div>`).join('')}
+          <div style="font-size:9px;color:var(--muted);text-align:right;width:30px">Pts</div>
+        </div>
+        ${exDetails.map(({ds,day,items})=>{
+          const dayEx=ds===TODAY?EX_LOG:loadS('dv4-ex-'+ds,{});
+          const pts=Object.entries(dayEx).filter(([,v])=>v&&v.done).reduce((s,[k])=>{
+            for(const ph of EX) for(const ex of ph.list) if(ex.id===k) return s+ex.pts;
+            return s;
+          },0);
+          const isTdy=ds===TODAY;
+          return `<div style="display:flex;gap:4px;align-items:center;padding:5px 4px;border-radius:6px;background:${isTdy?'var(--p3)':'transparent'};margin-bottom:2px">
+            <div style="font-size:10px;font-weight:700;color:${isTdy?'var(--gold)':'var(--sub)'};width:28px">${['Su','Mo','Tu','We','Th','Fr','Sa'][day]}</div>
+            ${items}
+            <div style="font-size:10px;font-weight:700;color:var(--gold);text-align:right;width:30px">${pts>0?pts+'p':'-'}</div>
+          </div>`;
+        }).join('')}
+        <div style="font-size:9px;color:var(--muted);margin-top:6px">Rope: green=40+ reps · yellow=20-39 · red=under 20</div>
+      </div>
+    </details>
   </div>`;
 }
 
