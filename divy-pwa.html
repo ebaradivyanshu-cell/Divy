@@ -755,27 +755,27 @@ const WATER_TARGET=2500;
 // SCHEDULES
 const SCH_HOME=[
   // Pure habits only — no meds, no meals, no exercise (tracked in their own tabs)
-  {t:'5:00 AM',a:'Rise — warm ginger or ajwain water.',ic:'🌅',c:'r',target:'05:00'},
+  {t:'5:00 AM',a:'Rise — warm ginger or ajwain water.',ic:'🌅',c:'r',target:'05:00',auto:true},
   {t:'6:00 AM',a:'Snan — bathe before Surya Arghya.',ic:'🚿',c:'s',target:'06:00'},
   {t:'6:30–7:30 AM',a:'Surya Arghya — copper vessel, face east. Om Ghrinih Suryaya Namah (3 times). Panna in sunlight.',ic:'☀️',c:'s',target:'06:30'},
   {t:'8:30 PM',a:'Wind down — screens off.',ic:'📵',c:'r',target:'20:30'},
-  {t:'9:30 PM',a:'Sleep.',ic:'😴',c:'r',target:'21:30'},
+  {t:'9:30 PM',a:'Sleep.',ic:'😴',c:'r',target:'21:30',auto:true},
 ];
 
 const SCH_HOTEL=[
-  {t:'5:00 AM',a:'Rise — room kettle hot water.',ic:'🌅',c:'r',target:'05:00'},
+  {t:'5:00 AM',a:'Rise — room kettle hot water.',ic:'🌅',c:'r',target:'05:00',auto:true},
   {t:'6:00 AM',a:'Snan — hotel shower before Surya Arghya.',ic:'🚿',c:'s',target:'06:00'},
   {t:'6:30–7:30 AM',a:'Surya Arghya — east window, hands cupped or copper vessel. Om Ghrinih Suryaya Namah (3 times).',ic:'☀️',c:'s',target:'06:30'},
   {t:'8:30 PM',a:'Wind down — room dark and cool.',ic:'📵',c:'r',target:'20:30'},
-  {t:'9:30 PM',a:'Sleep — same time as home.',ic:'😴',c:'r',target:'21:30'},
+  {t:'9:30 PM',a:'Sleep — same time as home.',ic:'😴',c:'r',target:'21:30',auto:true},
 ];
 
 const SCH_INTL=[
-  {t:'5:00 AM',a:'Rise — local time. Timezone changes, discipline does not.',ic:'🌅',c:'r',target:'05:00'},
+  {t:'5:00 AM',a:'Rise — local time. Timezone changes, discipline does not.',ic:'🌅',c:'r',target:'05:00',auto:true},
   {t:'6:00 AM',a:'Snan — hotel shower before Surya Arghya.',ic:'🚿',c:'s',target:'06:00'},
   {t:'6:30–7:30 AM',a:'Surya Arghya — wherever you are, face east. Om Ghrinih Suryaya Namah (3 times). This does not change.',ic:'☀️',c:'s',target:'06:30'},
   {t:'8:30 PM',a:'Wind down.',ic:'📵',c:'r',target:'20:30'},
-  {t:'9:30 PM',a:'Sleep. Protect 7.5 hours.',ic:'😴',c:'r',target:'21:30'},
+  {t:'9:30 PM',a:'Sleep. Protect 7.5 hours.',ic:'😴',c:'r',target:'21:30',auto:true},
 ];
 
 const INTL_MEALS=[
@@ -3257,11 +3257,13 @@ function rCalDay(dateStr){
       </div>`;
     }
     html+=sch.map((item,i)=>`
-      <div class="si ${isDone(liveChecks['d'+i])?'dn':''}" ${isToday?`onclick="toggleCheck('d${i}');renderTab('cal')"`:''} style="${!isToday?'cursor:default':''}">
+      <div class="si ${isDone(liveChecks['d'+i])?'dn':''}" ${isToday&&!item.auto?`onclick="toggleCheck('d${i}');renderTab('cal')"`:''} style="cursor:${isToday&&!item.auto?'pointer':'default'}">
         <div class="si-ic">${item.ic}</div>
         <div class="si-inf">
           <div class="si-t" style="color:${isPrep?'#60b0e0':CAT_COL[item.c]||'var(--gold)'}">${item.t}</div>
           <div class="si-a">${esc(item.a)}</div>
+          ${item.auto?`<div style="font-size:9px;color:var(--muted);margin-top:2px">${isDone(liveChecks['d'+i])?'✓ Auto-filled from check-in at '+getCheckTime(liveChecks['d'+i]):'Auto-fills from morning check-in / sleep log'}</div>`:''}
+          ${!item.auto&&isDone(liveChecks['d'+i])&&getCheckTime(liveChecks['d'+i])?`<div style="font-size:9px;color:var(--green);margin-top:2px">✓ Done at ${getCheckTime(liveChecks['d'+i])}</div>`:''}
         </div>
         <div class="chk">${isDone(liveChecks['d'+i])?'✓':''}</div>
       </div>`).join('');
@@ -3411,7 +3413,7 @@ function rCalDay(dateStr){
         <div style="font-size:12px;color:var(--sub)">${prepDay.theme}</div>
       </div>`;
       html+=prepDay.movement.map((item,i)=>`
-        <div class="si ${isDone(liveChecks['d'+i])?'dn':''}" ${isToday?`onclick="toggleCheck('d${i}');renderTab('cal')"`:''} style="${!isToday?'cursor:default':''}">
+        <div class="si ${isDone(liveChecks['d'+i])?'dn':''}" ${isToday&&!item.auto?`onclick="toggleCheck('d${i}');renderTab('cal')"`:''} style="cursor:${isToday&&!item.auto?'pointer':'default'}">
           <div class="si-ic">${item.ic}</div>
           <div class="si-inf">
             <div class="si-t" style="color:#60b0e0">${item.t}</div>
@@ -3485,18 +3487,18 @@ function rCalDay(dateStr){
           } else {
             const isBand=ex.id.startsWith('band_');
             const rounds=done&&exEntry.rounds!=null?exEntry.rounds:0;
-            html+=`<div class="ei ${done?'dn':''}" ${isToday&&!isBand?`onclick="toggleEx('${ex.id}')"`:''}  style="${!isToday&&!isBand?'cursor:default':''}">
-              <div class="ei-ic" ${isToday&&isBand?`onclick="toggleEx('${ex.id}')" style="cursor:pointer"`:''}>
-                ${ex.ic}
-              </div>
+            html+=`<div class="ei ${done?'dn':''}" style="cursor:${isToday?'pointer':'default'}" ${isToday?`onclick="toggleEx('${ex.id}')"`:''}>
+              <div class="ei-ic">${ex.ic}</div>
               <div class="ei-inf" style="flex:1">
-                <div class="ei-n" ${isToday&&isBand?`onclick="toggleEx('${ex.id}')" style="cursor:pointer"`:''}>
+                <div class="ei-n">
                   ${esc(ex.n)}${timeStamp?`<span style="font-size:9px;color:var(--muted);margin-left:6px">@ ${timeStamp}</span>`:''}
                 </div>
                 ${isBand&&done&&isToday?`
                 <div style="display:flex;gap:6px;margin-top:6px" onclick="event.stopPropagation()">
                   ${[1,2,3].map(r=>`<div onclick="setRounds('${ex.id}',${r})" style="padding:3px 10px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid ${rounds===r?'var(--green)':'var(--b2)'};background:${rounds===r?'#d0f5e0':'var(--p1)'};color:${rounds===r?'#2a6a3a':'var(--muted)'}">${r} round${r>1?'s':''}</div>`).join('')}
-                </div>`:isBand&&done?`<div style="font-size:10px;color:var(--green);margin-top:3px">${rounds>0?rounds+' round'+(rounds>1?'s':''):'completed'}</div>`:`<div class="ei-d">${esc(ex.d)}</div>`}
+                </div>`
+                :isBand&&done?`<div style="font-size:10px;color:var(--green);margin-top:3px">${rounds>0?rounds+' round'+(rounds>1?'s':''):'completed'}</div>`
+                :`<div class="ei-d">${esc(ex.d)}</div>`}
                 <div class="ei-dur">${ex.dur}</div>
               </div>
               <div class="ei-pts">+${ex.pts}</div>
