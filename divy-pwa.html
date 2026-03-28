@@ -401,7 +401,7 @@ const PREP_DAYS={
       {t:'5:20 AM',a:'Walk to Jakkur Lake and back — 1.4km. Do 2 rounds (2.8km, ~30 min). This is the full rehearsal. Strong but conversational pace.',ic:'🚶'},
       {t:'6:00 AM',a:'Jumping rope — 2 sets of 2 min. Rest 1 min between.',ic:'🪢'},
       {t:'6:15 AM',a:'Band circuit — 2 rounds of: (1) Chest Pull-Apart 12 reps. (2) Seated Row 12 reps. (3) Standing Bicep Curl — stand on band, curl to shoulders, 12 reps. Rest 45 sec between rounds.',ic:'🟡'},
-      {t:'6:30–7:00 AM',a:'Snan karo, phir Surya Arghya — taambey ke lote mein paani, suraj ki taraf munh karke arpit karo. Om Ghrinih Suryaya Namah (3 baar). Pehli baar. Is pal ko yaad rakhna.',ic:'☀️'},
+      {t:'6:30–7:00 AM',a:'Snan then Surya Arghya — copper vessel, face east. Om Ghrinih Suryaya Namah (3 times). First time. Remember this moment.',ic:'☀️'},
       {t:'9:30 PM',a:'Lights out. Tomorrow March 28 — the real journey begins. Sleep well, Divy.',ic:'😴'},
     ]
   },
@@ -750,29 +750,32 @@ const FOOD_DB=[
 ];
 
 const TARGET_KCAL=1600;
-const WATER_TARGET=3500;
+const WATER_TARGET=2500;
 
 // SCHEDULES
 const SCH_HOME=[
-  // Pure habits only — no meds (tracked separately), no meals (Food tab), no exercise (Exercise tab)
-  {t:'5:00 AM',a:'Rise — warm ginger or ajwain water. Phone down last night at 9:30.',ic:'🌅',c:'r'},
-  {t:'6:30–7:30 AM',a:'Snan ke baad Surya Arghya — taambey ke lote mein paani, suraj ki taraf. Om Ghrinih Suryaya Namah (3 baar). Panna Surya ki roshni mein hona chahiye.',ic:'☀️',c:'s'},
-  {t:'8:30 PM',a:'Wind down — screens band karo. Iti aur Chittu ke saath time.',ic:'📵',c:'r'},
-  {t:'9:30 PM',a:'Sleep — kal ke liye body ready karni hai.',ic:'😴',c:'r'},
+  // Pure habits only — no meds, no meals, no exercise (tracked in their own tabs)
+  {t:'5:00 AM',a:'Rise — warm ginger or ajwain water.',ic:'🌅',c:'r',target:'05:00'},
+  {t:'6:00 AM',a:'Snan — bathe before Surya Arghya.',ic:'🚿',c:'s',target:'06:00'},
+  {t:'6:30–7:30 AM',a:'Surya Arghya — copper vessel, face east. Om Ghrinih Suryaya Namah (3 times). Panna in sunlight.',ic:'☀️',c:'s',target:'06:30'},
+  {t:'8:30 PM',a:'Wind down — screens off.',ic:'📵',c:'r',target:'20:30'},
+  {t:'9:30 PM',a:'Sleep.',ic:'😴',c:'r',target:'21:30'},
 ];
 
 const SCH_HOTEL=[
-  {t:'5:00 AM',a:'Rise — room kettle hot water. Travel ne schedule nahi badla.',ic:'🌅',c:'r'},
-  {t:'6:30–7:30 AM',a:'Snan ke baad Surya Arghya — east window ki taraf munh karke. Om Ghrinih Suryaya Namah (3 baar).',ic:'☀️',c:'s'},
-  {t:'8:30 PM',a:'Wind down — room dark aur cool. Ghar wali neend.',ic:'📵',c:'r'},
-  {t:'9:30 PM',a:'Sleep — same time as home. Body ko pata hai.',ic:'😴',c:'r'},
+  {t:'5:00 AM',a:'Rise — room kettle hot water.',ic:'🌅',c:'r',target:'05:00'},
+  {t:'6:00 AM',a:'Snan — hotel shower before Surya Arghya.',ic:'🚿',c:'s',target:'06:00'},
+  {t:'6:30–7:30 AM',a:'Surya Arghya — east window, hands cupped or copper vessel. Om Ghrinih Suryaya Namah (3 times).',ic:'☀️',c:'s',target:'06:30'},
+  {t:'8:30 PM',a:'Wind down — room dark and cool.',ic:'📵',c:'r',target:'20:30'},
+  {t:'9:30 PM',a:'Sleep — same time as home.',ic:'😴',c:'r',target:'21:30'},
 ];
 
 const SCH_INTL=[
-  {t:'5:00 AM',a:'Rise — local time. Timezone badla, discipline nahi.',ic:'🌅',c:'r'},
-  {t:'6:30–7:30 AM',a:'Snan ke baad Surya Arghya — jahan bhi ho, east direction. Om Ghrinih Suryaya Namah (3 baar). Yeh nahi badlega.',ic:'☀️',c:'s'},
-  {t:'8:30 PM',a:'Wind down. Call Iti aur Chittu — woh wait karte hain.',ic:'📵',c:'r'},
-  {t:'9:30 PM',a:'Sleep. 7.5 hours protect karo hamesha.',ic:'😴',c:'r'},
+  {t:'5:00 AM',a:'Rise — local time. Timezone changes, discipline does not.',ic:'🌅',c:'r',target:'05:00'},
+  {t:'6:00 AM',a:'Snan — hotel shower before Surya Arghya.',ic:'🚿',c:'s',target:'06:00'},
+  {t:'6:30–7:30 AM',a:'Surya Arghya — wherever you are, face east. Om Ghrinih Suryaya Namah (3 times). This does not change.',ic:'☀️',c:'s',target:'06:30'},
+  {t:'8:30 PM',a:'Wind down.',ic:'📵',c:'r',target:'20:30'},
+  {t:'9:30 PM',a:'Sleep. Protect 7.5 hours.',ic:'😴',c:'r',target:'21:30'},
 ];
 
 const INTL_MEALS=[
@@ -790,7 +793,12 @@ const EX=[
     {id:'breathwork',n:'Breathwork',ic:'🧘',d:'Sit comfortably. 4 count inhale through nose. 6 count exhale through mouth. 5 min. Every morning without fail.',dur:'5 min',pts:5},
     {id:'walk_lake',n:'Morning Walk — To Lake & Back',ic:'🚶',d:'Walk from home to Jakkur Lake (700m) and return. 1.4km total. Brisk but conversational pace. No rushing.',dur:'20 min',pts:15},
     {id:'rope',n:'Jumping Rope',ic:'🪢',d:'Max reps per set, rest fully between sets. 40+ reps = Good · 20-39 = Improving · Under 20 = Building. Log your best set reps when you tick.',dur:'3 sets',pts:10},
-    {id:'band_stretch',n:'Resistance Band Stretch Circuit',ic:'🟡',d:'See Band Guide below. Full body sequence, 3 rounds. Morning or evening.',dur:'15 min',pts:10},
+    {id:'band_chest',n:'Band — Chest Pull-Apart',ic:'🟡',d:'Hold band at shoulder width in front of chest. Pull apart horizontally until arms fully extended sideways. Slow return. 12 reps × 3 rounds.',dur:'3 rounds',pts:4},
+    {id:'band_row',n:'Band — Seated Row',ic:'🟡',d:'Sit on floor, legs extended. Loop band around feet. Pull elbows back squeezing shoulder blades. Slow return. 12 reps × 3 rounds.',dur:'3 rounds',pts:4},
+    {id:'band_clam',n:'Band — Clamshell',ic:'🟡',d:'Lie on side, band above knees. Rotate top knee upward, hold 2 sec. 12 reps each side × 3 rounds.',dur:'3 rounds',pts:3},
+    {id:'band_curl',n:'Band — Bicep Curl',ic:'🟡',d:'Stand on band. Curl toward shoulders without swinging. Slow lower. 12 reps × 3 rounds.',dur:'3 rounds',pts:3},
+    {id:'band_walk',n:'Band — Lateral Walk',ic:'🟡',d:'Band above ankles. Slight squat. Step sideways 10 steps left, 10 right. 3 rounds.',dur:'3 rounds',pts:3},
+    {id:'band_press',n:'Band — Overhead Press',ic:'🟡',d:'Stand on band. Press straight up from shoulder height. Slow return. 10 reps × 3 rounds. Light resistance only.',dur:'3 rounds',pts:3},
     {id:'eve_walk',n:'Evening Walk',ic:'🌇',d:'15 min neighborhood walk after dinner prep. Easy pace. Just move.',dur:'15 min',pts:10},
    ]},
   {ph:2,name:'Lake Circuit',unlockKg:92,desc:'Quarter lake added. Cycling begins.',
@@ -991,10 +999,7 @@ function checkDateRollover(){
 
 function pct(){return Math.max(0,Math.min(100,Math.round(((SW-S.wt)/(SW-GW))*100)));}
 
-function exPts(){return Object.entries(EX_LOG).filter(([,v])=>v).reduce((s,[k])=>{
-  for(const ph of EX) for(const ex of ph.list) if(ex.id===k) return s+ex.pts;
-  return s;
-},0);}
+
 
 function flash(msg){
   const t=document.getElementById('toast');
@@ -1121,14 +1126,28 @@ function closePop(toIti){
   if(toIti)goTab('iti');
 }
 
+function isDone(val){return val===true||(val&&val.done===true);}
+function getCheckTime(val){return val&&val.time?val.time:null;}
+
 function toggleCheck(id){
   const vd=getViewDate();
+  const now=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
   if(vd===TODAY){
-    CHECKS[id]=!CHECKS[id];
+    const cur=CHECKS[id];
+    if(isDone(cur)){
+      delete CHECKS[id];
+    } else {
+      CHECKS[id]={done:true,time:now};
+    }
     saveS('dv4-ch-'+TODAY,CHECKS);
   } else {
     const past=loadS('dv4-ch-'+vd,{});
-    past[id]=!past[id];
+    const cur=past[id];
+    if(isDone(cur)){
+      delete past[id];
+    } else {
+      past[id]={done:true,time:now};
+    }
     saveS('dv4-ch-'+vd,past);
   }
   _compCache={};
@@ -1146,16 +1165,12 @@ function toggleEx(id){
     saveEx();
     flash('Unmarked');
   } else {
-    // Ticking rope — ask for reps first
     if(id==='rope'){
-      const reps=prompt('Rope skipping — best set mein kitne reps? (0 to skip)');
-      const r=parseInt(reps)||0;
-      const level=r>=40?'good':r>=20?'improve':'build';
-      EX_LOG[id]={done:true,time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),reps:r,level};
-      flash(r>=40?'🟢 Good — '+r+' reps!':r>=20?'🟡 Improving — '+r+' reps':'🔴 Building — '+r+' reps · keep going');
+      // Rope — save with placeholder, UI will update reps
+      EX_LOG[id]={done:true,time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),sets:[],level:'building'};
+      flash('Rope logged — enter sets below');
     } else {
-      // Auto-timestamp for all other exercises
-      EX_LOG[id]={done:true,time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})};
+      EX_LOG[id]={done:true,time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),rounds:id.startsWith('band_')?0:undefined};
       const ex=ph.list.find(e=>e.id===id);
       flash('+'+ex.pts+' pts — '+ex.n);
     }
@@ -1173,11 +1188,48 @@ function exPts(){
   },0);
 }
 
+function setRounds(id,r){
+  if(!EX_LOG[id]) return;
+  EX_LOG[id].rounds=r;
+  saveEx();_compCache={};renderTab('cal');
+}
+
+function addRopeSet(){
+  const reps=parseInt(document.getElementById('rope-reps').value)||0;
+  if(reps<=0){flash('Enter reps for this set');return;}
+  if(!EX_LOG['rope']||!EX_LOG['rope'].done){
+    EX_LOG['rope']={done:true,time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),sets:[],level:'building'};
+  }
+  EX_LOG['rope'].sets=EX_LOG['rope'].sets||[];
+  EX_LOG['rope'].sets.push(reps);
+  const best=Math.max(...EX_LOG['rope'].sets);
+  EX_LOG['rope'].reps=best;
+  EX_LOG['rope'].level=best>=40?'good':best>=20?'improve':'building';
+  saveEx();
+  document.getElementById('rope-reps').value='';
+  _compCache={};
+  flash('Set logged — '+reps+' reps. Best: '+best);
+  renderTab('cal');
+}
+
+function removeRopeSet(idx){
+  if(!EX_LOG['rope']||!EX_LOG['rope'].sets) return;
+  EX_LOG['rope'].sets.splice(idx,1);
+  if(EX_LOG['rope'].sets.length===0){
+    delete EX_LOG['rope'];
+  } else {
+    const best=Math.max(...EX_LOG['rope'].sets);
+    EX_LOG['rope'].reps=best;
+    EX_LOG['rope'].level=best>=40?'good':best>=20?'improve':'building';
+  }
+  saveEx();_compCache={};renderTab('cal');
+}
+
 function addWater(){
   WATER.ml=Math.min(4000,WATER.ml+250);
-  saveWater();renderTab('water');
+  saveWater();renderTab('home');
 }
-function resetWater(){WATER.ml=0;saveWater();renderTab('water');}
+function resetWater(){WATER.ml=0;saveWater();renderTab('home');}
 
 // FOOD
 function searchFood(q){
@@ -1495,7 +1547,7 @@ function rHome(){
         </div>
         <div style="flex:1">
           <div style="font-size:22px;font-weight:700;color:var(--teal)">${WATER.ml>=1000?(WATER.ml/1000).toFixed(2)+'L':WATER.ml+'ml'}</div>
-          <div style="font-size:11px;color:var(--sub);margin-bottom:8px">${Math.floor(WATER.ml/250)} of 14 glasses · Target 3.5L</div>
+          <div style="font-size:11px;color:var(--sub);margin-bottom:8px">${Math.floor(WATER.ml/250)} of 10 glasses · Target 2.5L</div>
           <div style="height:6px;background:var(--b1);border-radius:3px;overflow:hidden">
             <div style="height:100%;width:${Math.min(100,(WATER.ml/WATER_TARGET)*100)}%;background:linear-gradient(90deg,var(--teal),#80e0d0);border-radius:3px"></div>
           </div>
@@ -1521,14 +1573,14 @@ function rHome(){
         {k:'m5',t:'8:00 PM',n:'Mycofit 360mg + Atorva 10mg + Telma 40mg',note:'Three together'},
         {k:'m6',t:'9:00 PM',n:'Takfa 4mg',note:'Night Takfa'},
       ].map(m=>`
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1a1610">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--b1)">
           <div>
             <div style="font-size:12px;color:var(--text)">${m.n}</div>
             <div style="font-size:10px;color:var(--muted)">${m.t} · ${m.note}</div>
           </div>
-          <div onclick="CHECKS['${m.k}']=!CHECKS['${m.k}'];saveCh();renderTab('home')"
-            style="width:28px;height:28px;border-radius:50%;border:2px solid ${CHECKS[m.k]?'var(--green)':'var(--b2)'};background:${CHECKS[m.k]?'#1a4a2a':'transparent'};display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--green)">
-            ${CHECKS[m.k]?'✓':''}
+          <div onclick="toggleCheck('${m.k}')"
+            style="width:28px;height:28px;border-radius:50%;border:2px solid ${isDone(CHECKS[m.k])?'var(--green)':'var(--b2)'};background:${isDone(CHECKS[m.k])?'#d0f5e0':'transparent'};display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--green)">
+            ${isDone(CHECKS[m.k])?'✓':''}
           </div>
         </div>`).join('')}
     </div>
@@ -1787,7 +1839,7 @@ function rDay(){
         <div style="font-size:12px;font-weight:700;color:#60b0e0">${done}/${prepDay.movement.length}</div>
       </div>
       ${prepDay.movement.map((item,i)=>`
-        <div class="si ${dayChecks['d'+i]?'dn':''}" ${isToday?`onclick="toggleCheck('d${i}')"`:'style="cursor:default"'}>
+        <div class="si ${isDone(dayChecks['d'+i])?'dn':''}" ${isToday?`onclick="toggleCheck('d${i}')"`:''} style="${!isToday?'cursor:default':''}">
           <div class="si-ic">${item.ic}</div>
           <div class="si-inf">
             <div class="si-t" style="color:#60b0e0">${item.t}</div>
@@ -1826,7 +1878,7 @@ function rDay(){
       <div style="font-size:12px;font-weight:700;color:var(--green)">${done}/${sch.length}</div>
     </div>
     ${sch.map((item,i)=>`
-      <div class="si ${dayChecks['d'+i]?'dn':''}" ${isToday?`onclick="toggleCheck('d${i}')"`:'style="cursor:default"'}>
+      <div class="si ${isDone(dayChecks['d'+i])?'dn':''}" ${isToday?`onclick="toggleCheck('d${i}')"`:''} style="${!isToday?'cursor:default':''}">
         <div class="si-ic">${item.ic}</div>
         <div class="si-inf">
           <div class="si-t" style="color:${CAT_COL[item.c]||'var(--gold)'}">${item.t}</div>
@@ -2057,7 +2109,7 @@ function rWater(){
   }
 
   const labels=[
-    {pct:25,ml:'875ml'},{pct:50,ml:'1.75L'},{pct:75,ml:'2.625L'},{pct:100,ml:'3.5L'}
+    {pct:25,ml:'625ml'},{pct:50,ml:'1.25L'},{pct:75,ml:'1.875L'},{pct:100,ml:'2.5L'}
   ];
 
   return `
@@ -2075,7 +2127,7 @@ function rWater(){
         </div>
         <div class="water-info">
           <div class="water-ml">${ml>=1000?(ml/1000).toFixed(2)+'L':ml+'ml'}</div>
-          <div class="water-target">${glasses} of ${totalGlasses} glasses · Target 3.5L</div>
+          <div class="water-target">${glasses} of ${totalGlasses} glasses · Target 2.5L</div>
         </div>
         <div class="water-btns">
           <button class="water-add" onclick="addWater()">+ 250ml</button>
@@ -2139,7 +2191,7 @@ function rGoals(){
     <div class="c">
       <div class="ctitle">Activity Unlocks</div>
       ${[[92,'Cycling begins — 20 min flat route'],[89,'Kettlebell + cycling 30 min'],[85,'Full strength circuit 3x/week'],[82,'Full lake circle · Cycling tour with Iti'],[75,'Everything open — you made it, Divy']].map(([kg,d])=>`
-        <div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid #1a1610;align-items:flex-start">
+        <div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--b1);align-items:flex-start">
           <span>${S.wt<=kg?'✅':'🔒'}</span>
           <div style="font-size:12px"><span style="color:var(--gold);font-weight:700">${kg} kg: </span><span style="color:var(--sub)">${d}</span></div>
         </div>`).join('')}
@@ -2371,7 +2423,7 @@ function generateHolisticSuggestions(m){
   if(hh) acts.push({ic:'🌿',t:'Venus Balance',a:'Clamshells and lateral band walks. Lower body control before adding load.'});
   acts.push({ic:'⏰',t:'Timing',a:'Best movement: 6:30–7:45 AM. Wednesday = review day. Saturday = light only.'});
   acts.push({ic:'🍽️',t:'Food Timing',a:'Dinner done by 7:30 PM. Late eating + Omnacortil = waist fat accumulation.'});
-  html+=acts.map(a=>'<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #1a1610;align-items:flex-start"><span style="font-size:18px;flex-shrink:0">'+a.ic+'</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">'+a.t+'</div><div style="font-size:11px;color:var(--sub);margin-top:2px;line-height:1.5">'+a.a+'</div></div></div>').join('');
+  html+=acts.map(a=>'<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--b1);align-items:flex-start"><span style="font-size:18px;flex-shrink:0">'+a.ic+'</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">'+a.t+'</div><div style="font-size:11px;color:var(--sub);margin-top:2px;line-height:1.5">'+a.a+'</div></div></div>').join('');
   html+='</div>';
   return html;
 }
@@ -2445,7 +2497,7 @@ function rBody(){
 
   const historyRows=ms.length===0
     ?'<div style="font-size:12px;color:var(--muted)">No measurements yet. Log on Day 8 of each cycle.</div>'
-    :ms.map(m=>'<div style="padding:10px 0;border-bottom:1px solid #1a1610"><div style="font-size:11px;color:var(--sub);margin-bottom:5px">'+m.date+(m.bmi?' · <span style="color:'+(m.bmi>30?'var(--red)':m.bmi>25?'var(--orange)':'var(--green)')+'">BMI '+m.bmi+'</span>':'')+'</div><div style="display:flex;gap:10px;flex-wrap:wrap">'
+    :ms.map(m=>'<div style="padding:10px 0;border-bottom:1px solid var(--b1)"><div style="font-size:11px;color:var(--sub);margin-bottom:5px">'+m.date+(m.bmi?' · <span style="color:'+(m.bmi>30?'var(--red)':m.bmi>25?'var(--orange)':'var(--green)')+'">BMI '+m.bmi+'</span>':'')+'</div><div style="display:flex;gap:10px;flex-wrap:wrap">'
       +(m.wt?'<span style="font-size:11px"><span style="color:var(--muted)">Wt </span><b style="color:var(--gold)">'+m.wt+'kg</b></span>':'')
       +(m.wa?'<span style="font-size:11px"><span style="color:var(--muted)">Waist </span><b style="color:var(--blue)">'+m.wa+'cm</b></span>':'')
       +(m.ch?'<span style="font-size:11px"><span style="color:var(--muted)">Chest </span><b style="color:var(--sub)">'+m.ch+'cm</b></span>':'')
@@ -2641,7 +2693,7 @@ function rJournal(){
       <div class="ctitle">Past Entries</div>
       ${entries.length===0?'<div style="font-size:12px;color:var(--muted)">No entries yet. Start this Wednesday.</div>':
         entries.map(([key,entry])=>`
-          <div style="padding:12px 0;border-bottom:1px solid #1a1610">
+          <div style="padding:12px 0;border-bottom:1px solid var(--b1)">
             <div style="display:flex;justify-content:space-between;margin-bottom:6px">
               <div style="font-size:11px;font-weight:700;color:var(--gold)">${getWeekLabel(key)}</div>
               <div style="font-size:10px;color:var(--muted)">${entry.date}</div>
@@ -2678,7 +2730,7 @@ const HOTEL_ITEMS=[
   {id:'oats',cat:'Food',name:'Plain oats sachets — 4 minimum',critical:false},
   {id:'ajwain',cat:'Food',name:'Small ajwain packet for morning water',critical:false},
   {id:'comp_socks',cat:'Travel Health',name:'Compression socks 15–20 mmHg for flights',critical:true},
-  {id:'water_bottle',name:'Refillable water bottle — track 3.5L daily',cat:'Travel Health',critical:false},
+  {id:'water_bottle',name:'Refillable water bottle — track 2.5L daily',cat:'Travel Health',critical:false},
   {id:'panna',cat:'Essentials',name:'Panna ring — gold, Mercury finger',critical:false},
   {id:'nazar',cat:'Essentials',name:'Nazarbattu and protective bracelet',critical:false},
   {id:'emer_card',cat:'Essentials',name:'Medical summary card in wallet',critical:true},
@@ -2741,7 +2793,7 @@ function rPack(){
         ${catItems.map(item=>{
           const done=PACK[mode]&&PACK[mode][item.id];
           return `<div onclick="togglePack('${mode}','${item.id}')"
-            style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #1a1610;cursor:pointer">
+            style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--b1);cursor:pointer">
             <div style="width:26px;height:26px;border-radius:6px;border:2px solid ${done?'var(--green)':item.critical?'var(--red)':'var(--b2)'};background:${done?'#1a4a2a':'transparent'};display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--green);flex-shrink:0">
               ${done?'✓':''}
             </div>
@@ -2796,40 +2848,53 @@ function resolvelock(reason){
 // ═══════════ SLEEP & ENERGY LOG ═══════════
 function saveVitals(){saveS('dv4-vitals',VITALS);}
 function logVitals(){
-  const sleep=document.getElementById('v-sleep').value;
+  // Morning check-in — wake time + energy only
   const wake=document.getElementById('v-wake').value;
   const energy=document.getElementById('v-energy').value;
   if(!energy){flash('Tap an energy level');return;}
-  VITALS[TODAY]={sleep,wake,energy:parseInt(energy),date:TODAY};
+  const existing=VITALS[TODAY]||{};
+  VITALS[TODAY]={...existing,wake,energy:parseInt(energy),date:TODAY};
   saveVitals();
 
-  // Auto-check tasks based on logged times
-  const isPrep=TODAY>=PREP_START&&TODAY<START_DATE;
-  const sch=isPrep&&PREP_DAYS[TODAY]?PREP_DAYS[TODAY].movement:SCH_HOME;
-
+  // Auto-check Rise if woke by 6:30 AM (generous window — post-transplant morning)
   if(wake){
     const [wh,wm]=wake.split(':').map(Number);
     const wakeMinutes=wh*60+wm;
-    // Auto-check 5 AM rise if woke by 5:30 AM
-    if(wakeMinutes<=330){
+    const trip=getTripForDate(TODAY);
+    let mode=S.mode;
+    if(trip) mode=trip.type==='international'?'intl':trip.type==='domestic'?'hotel':'home';
+    const sch=mode==='hotel'?SCH_HOTEL:mode==='intl'?SCH_INTL:SCH_HOME;
+    if(wakeMinutes<=390){ // Up to 6:30 AM = auto-check Rise
       sch.forEach((item,i)=>{
-        if(item.t==='5:00 AM') CHECKS['d'+i]=true;
+        if(item.t==='5:00 AM') CHECKS['d'+i]={done:true,time:wake};
       });
+      saveCh();
     }
   }
-  if(sleep){
-    const [sh,sm]=sleep.split(':').map(Number);
-    const sleepMin=sh*60+sm;
-    // Auto-check 9:30 PM sleep if slept by 10:00 PM (or before midnight)
-    const sleepOk=sleepMin>=0&&sleepMin<=120||sleepMin>=1290; // before midnight or after 9:30pm
-    if(sleepOk){
-      sch.forEach((item,i)=>{
-        if(item.t==='9:30 PM'||item.t==='9:30 PM') CHECKS['d'+i]=true;
-      });
-    }
-  }
-  saveCh();
+  _compCache={};
   flash('Morning check-in saved ✓');
+  renderTab(CUR);
+}
+
+function logSleep(){
+  // Evening — sleep time only
+  const sleep=document.getElementById('v-sleep-time').value;
+  if(!sleep){flash('Enter sleep time');return;}
+  const existing=VITALS[TODAY]||{};
+  VITALS[TODAY]={...existing,sleep,date:TODAY};
+  saveVitals();
+
+  // Auto-check Sleep item
+  const trip=getTripForDate(TODAY);
+  let mode=S.mode;
+  if(trip) mode=trip.type==='international'?'intl':trip.type==='domestic'?'hotel':'home';
+  const sch=mode==='hotel'?SCH_HOTEL:mode==='intl'?SCH_INTL:SCH_HOME;
+  sch.forEach((item,i)=>{
+    if(item.t==='9:30 PM') CHECKS['d'+i]={done:true,time:sleep};
+  });
+  saveCh();
+  _compCache={};
+  flash('Sleep time logged ✓');
   renderTab(CUR);
 }
 
@@ -2902,7 +2967,7 @@ function rTravel(){
     <div class="c">
       <div class="ctitle">Upcoming Travel</div>
       ${upcoming.map(t=>`
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #1a1610">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--b1)">
           <div>
             <div style="font-size:13px;font-weight:600;color:var(--text)">${t.date} · ${t.type==='domestic'?'🏨 Domestic':t.type==='international'?'✈️ International':'🏠 Return'}</div>
             ${t.dep?`<div style="font-size:11px;color:var(--sub)">Dep ${t.dep}${t.arr?' · Arr '+t.arr:''}</div>`:''}
@@ -2919,7 +2984,7 @@ function rTravel(){
     <div class="c">
       <div class="ctitle">Recent Travel</div>
       ${past.map(t=>`
-        <div style="padding:8px 0;border-bottom:1px solid #1a1610">
+        <div style="padding:8px 0;border-bottom:1px solid var(--b1)">
           <div style="font-size:12px;color:var(--sub)">${t.date} · ${t.type==='international'?'✈️ International':'🏨 Domestic'}${t.note?' · '+t.note:''}</div>
         </div>`).join('')}
     </div>`:''}
@@ -3022,7 +3087,7 @@ function getDayCompletion(dateStr){
 
   // ── PILLAR 1: HABITS (pure schedule items only — no duplicates) ──
   const sch=prepDay?prepDay.movement:effectiveMode==='hotel'?SCH_HOTEL:effectiveMode==='intl'?SCH_INTL:SCH_HOME;
-  const schDone=Object.entries(dayChecks).filter(([k,v])=>k.startsWith('d')&&v).length;
+  const schDone=Object.entries(dayChecks).filter(([k,v])=>k.startsWith('d')&&isDone(v)).length;
   const schTotal=sch.length;
 
   // ── PILLAR 2: EXERCISE (mandatory minimum: breathwork + morning walk) ──
@@ -3039,7 +3104,7 @@ function getDayCompletion(dateStr){
 
   // ── PILLAR 3: MEDICATIONS (6 items) ──
   const medKeys=['m1','m2','m3','m4','m5','m6'];
-  const medDone=medKeys.filter(k=>dayChecks[k]).length;
+  const medDone=medKeys.filter(k=>isDone(dayChecks[k])).length;
   const medTotal=6;
 
   // ── PILLAR 4: SUPPLEMENTS (smart — D3 alternate day aware) ──
@@ -3184,13 +3249,13 @@ function rCalDay(dateStr){
       </div>`;
     }
     html+=sch.map((item,i)=>`
-      <div class="si ${liveChecks['d'+i]?'dn':''}" ${isToday?`onclick="toggleCheck('d${i}');renderTab('cal')"`:''} style="${!isToday?'cursor:default':''}">
+      <div class="si ${isDone(liveChecks['d'+i])?'dn':''}" ${isToday?`onclick="toggleCheck('d${i}');renderTab('cal')"`:''} style="${!isToday?'cursor:default':''}">
         <div class="si-ic">${item.ic}</div>
         <div class="si-inf">
           <div class="si-t" style="color:${isPrep?'#60b0e0':CAT_COL[item.c]||'var(--gold)'}">${item.t}</div>
           <div class="si-a">${esc(item.a)}</div>
         </div>
-        <div class="chk">${liveChecks['d'+i]?'✓':''}</div>
+        <div class="chk">${isDone(liveChecks['d'+i])?'✓':''}</div>
       </div>`).join('');
 
     // Always show medications — they never change regardless of prep/travel
@@ -3204,13 +3269,13 @@ function rCalDay(dateStr){
         {k:'m5',t:'8:00 PM',n:'Mycofit + Atorva + Telma',note:'Three together'},
         {k:'m6',t:'9:00 PM',n:'Takfa 4mg',note:'Night'},
       ].map(m=>`
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid #1a0808" ${isToday?`onclick="toggleCheck('${m.k}')"`:`onclick="toggleCheck('${m.k}')"`} style="cursor:pointer">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--b1);cursor:pointer" onclick="toggleCheck('${m.k}')">
           <div>
             <div style="font-size:12px;color:var(--text)">${m.n}</div>
             <div style="font-size:10px;color:var(--muted)">${m.t} · ${m.note}</div>
           </div>
-          <div style="width:24px;height:24px;border-radius:50%;border:2px solid ${liveChecks[m.k]?'var(--green)':'#3a1010'};background:${liveChecks[m.k]?'#1a4a2a':'transparent'};display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--green)">
-            ${liveChecks[m.k]?'✓':''}
+          <div style="width:24px;height:24px;border-radius:50%;border:2px solid ${isDone(liveChecks[m.k])?'var(--green)':'var(--b2)'};background:${isDone(liveChecks[m.k])?'#d0f5e0':'transparent'};display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--green)">
+            ${isDone(liveChecks[m.k])?'✓':''}
           </div>
         </div>`).join('')}
     </div>`;
@@ -3239,20 +3304,14 @@ function rCalDay(dateStr){
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
               <div style="font-size:14px;font-weight:700;color:var(--gold)">${{1:'Low 😴',2:'Meh 😐',3:'Ok 🙂',4:'Good 😊',5:'High! ⚡'}[VITALS[TODAY].energy]||'—'}</div>
-              <div style="font-size:11px;color:var(--sub);margin-top:2px">${VITALS[TODAY].sleep?'Slept '+VITALS[TODAY].sleep+' · Woke '+VITALS[TODAY].wake:''}</div>
+              <div style="font-size:11px;color:var(--sub);margin-top:2px">Woke ${VITALS[TODAY].wake||'—'}${VITALS[TODAY].sleep?' · Slept '+VITALS[TODAY].sleep:''}</div>
             </div>
             <button onclick="delete VITALS['${TODAY}'];saveVitals();renderTab('cal')" style="background:var(--b1);border:none;color:var(--muted);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:var(--ff)">Edit</button>
           </div>`:`
-          <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Takes 10 seconds. Wake/sleep auto-checks your rise and sleep tasks.</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-            <div>
-              <label style="font-size:10px;color:var(--sub);display:block;margin-bottom:3px">Bedtime last night</label>
-              <input id="v-sleep" class="inp inp-sm" type="time" value="21:00"/>
-            </div>
-            <div>
-              <label style="font-size:10px;color:var(--sub);display:block;margin-bottom:3px">Wake time</label>
-              <input id="v-wake" class="inp inp-sm" type="time" value="05:00"/>
-            </div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Wake time auto-checks your Rise task.</div>
+          <div style="margin-bottom:10px">
+            <label style="font-size:10px;color:var(--sub);display:block;margin-bottom:3px">Wake time this morning</label>
+            <input id="v-wake" class="inp inp-sm" type="time" value="05:00" style="width:100%"/>
           </div>
           <div style="margin-bottom:10px">
             <div style="font-size:10px;color:var(--sub);margin-bottom:6px">Energy level today</div>
@@ -3276,15 +3335,32 @@ function rCalDay(dateStr){
           {id:'trunativ',name:'TruNativ Protein',dose:'Mixed in lunch'},
           {id:'mag',name:'Magnesium 1 cap',dose:'With lunch · 1:00–1:30 PM'},
         ].map(s=>`
-          <div onclick="toggleSupp('${s.id}');renderTab('cal')" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1a1610;cursor:pointer">
+          <div onclick="toggleSupp('${s.id}');renderTab('cal')" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--b1);cursor:pointer">
             <div>
               <div style="font-size:13px;color:var(--text)">${s.name}</div>
               <div style="font-size:10px;color:var(--muted)">${s.dose}</div>
             </div>
-            <div style="width:26px;height:26px;border-radius:50%;border:2px solid ${SUPPS[s.id]?'var(--green)':'var(--b2)'};background:${SUPPS[s.id]?'#1a4a2a':'transparent'};display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--green)">
+            <div style="width:26px;height:26px;border-radius:50%;border:2px solid ${SUPPS[s.id]?'var(--green)':'var(--b2)'};background:${SUPPS[s.id]?'#d0f5e0':'transparent'};display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--green)">
               ${SUPPS[s.id]?'✓':''}
             </div>
           </div>`).join('')}
+      </div>`;
+
+      // Sleep log — separate from morning check-in
+      html+=`<div class="c" style="margin-top:10px">
+        <div class="ctitle">🌙 Log Sleep Time</div>
+        ${VITALS[TODAY]&&VITALS[TODAY].sleep
+          ?`<div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-size:13px;color:var(--green)">✓ Slept at ${VITALS[TODAY].sleep}</div>
+              <button onclick="const v=VITALS['${TODAY}'];delete v.sleep;saveVitals();renderTab('cal')" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;font-family:var(--ff)">Edit</button>
+            </div>`
+          :`<div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Log at night when you go to sleep. Auto-checks your Sleep task.</div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <input id="v-sleep-time" class="inp inp-sm" type="time" value="21:30" style="flex:1"/>
+                <button class="btn btn-dim" style="font-size:12px" onclick="logSleep()">Log Sleep</button>
+              </div>
+            </div>`}
       </div>`;
 
       // Extra / SOS medicines
@@ -3327,13 +3403,13 @@ function rCalDay(dateStr){
         <div style="font-size:12px;color:var(--sub)">${prepDay.theme}</div>
       </div>`;
       html+=prepDay.movement.map((item,i)=>`
-        <div class="si ${liveChecks['d'+i]?'dn':''}" ${isToday?`onclick="toggleCheck('d${i}');renderTab('cal')"`:''} style="${!isToday?'cursor:default':''}">
+        <div class="si ${isDone(liveChecks['d'+i])?'dn':''}" ${isToday?`onclick="toggleCheck('d${i}');renderTab('cal')"`:''} style="${!isToday?'cursor:default':''}">
           <div class="si-ic">${item.ic}</div>
           <div class="si-inf">
             <div class="si-t" style="color:#60b0e0">${item.t}</div>
             <div class="si-a">${esc(item.a)}</div>
           </div>
-          <div class="chk">${liveChecks['d'+i]?'✓':''}</div>
+          <div class="chk">${isDone(liveChecks['d'+i])?'✓':''}</div>
         </div>`).join('');
       html+=`<div style="margin-top:12px;background:#e0f5e8;border:1px solid #2a5a2a;border-radius:10px;padding:12px">
         <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px">Full exercise plan starts March 28</div>
@@ -3369,20 +3445,56 @@ function rCalDay(dateStr){
           const exEntry=EX_LOG[ex.id];
           const done=exEntry&&exEntry.done;
           const isRope=ex.id==='rope';
-          const ropeLevel=isRope&&exEntry?exEntry.level:'';
-          const ropeReps=isRope&&exEntry?exEntry.reps:0;
-          const ropeColor=ropeLevel==='good'?'var(--green)':ropeLevel==='improve'?'var(--orange)':'var(--red)';
           const timeStamp=done&&exEntry.time?exEntry.time:'';
-          html+=`<div class="ei ${done?'dn':''}" ${isToday?`onclick="toggleEx('${ex.id}')"`:''} style="${!isToday?'cursor:default':''}">
-            <div class="ei-ic">${ex.ic}</div>
-            <div class="ei-inf">
-              <div class="ei-n">${esc(ex.n)}${timeStamp?`<span style="font-size:9px;color:var(--muted);margin-left:6px">@ ${timeStamp}</span>`:''}</div>
-              ${isRope&&done?`<div style="font-size:11px;color:${ropeColor};font-weight:700">${ropeReps} reps — ${ropeLevel==='good'?'🟢 Good':ropeLevel==='improve'?'🟡 Improving':'🔴 Building'}</div>`:`<div class="ei-d">${esc(ex.d)}</div>`}
-              <div class="ei-dur">${ex.dur}</div>
-            </div>
-            <div class="ei-pts">+${ex.pts}</div>
-            <div class="chk">${done?'✓':''}</div>
-          </div>`;
+
+          if(isRope){
+            const sets=(done&&exEntry.sets)||[];
+            const best=sets.length?Math.max(...sets):0;
+            const level=exEntry?exEntry.level:'building';
+            const lCol=level==='good'?'var(--green)':level==='improve'?'var(--orange)':'var(--red)';
+            html+=`<div class="c" style="margin-bottom:8px">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:${(isToday||sets.length>0)?'10px':'0'}">
+                <div style="font-size:20px">🪢</div>
+                <div style="flex:1">
+                  <div style="font-size:13px;font-weight:700;color:var(--text)">Jumping Rope${timeStamp?`<span style="font-size:9px;color:var(--muted);margin-left:6px">@ ${timeStamp}</span>`:''}</div>
+                  <div style="font-size:11px;color:var(--sub)">Max reps per set · rest fully between sets</div>
+                </div>
+                <div style="font-size:12px;font-weight:700;color:var(--gold)">+${ex.pts}</div>
+                <div onclick="${isToday?`toggleEx('rope')`:'void 0'}" style="cursor:${isToday?'pointer':'default'};width:28px;height:28px;border-radius:50%;border:2px solid ${done?'var(--green)':'var(--b2)'};background:${done?'#d0f5e0':'transparent'};display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">${done?'✓':''}</div>
+              </div>
+              ${sets.length>0?`<div style="background:var(--p2);border-radius:8px;padding:8px;margin-bottom:8px">
+                <div style="font-size:10px;color:var(--muted);margin-bottom:6px">Best: <span style="color:${lCol};font-weight:700">${best} reps — ${level==='good'?'🟢 Good':level==='improve'?'🟡 Improving':'🔴 Building'}</span></div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px">
+                  ${sets.map((r,i)=>`<div style="background:var(--p1);border:1px solid ${r>=40?'var(--green)':r>=20?'var(--orange)':'var(--red)'};border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;color:${r>=40?'var(--green)':r>=20?'var(--orange)':'var(--red)'}">S${i+1}: ${r}r${isToday?` <span onclick="removeRopeSet(${i})" style="cursor:pointer;color:var(--muted)">✕</span>`:''}</div>`).join('')}
+                </div>
+              </div>`:''}
+              ${isToday?`<div style="display:flex;gap:8px;align-items:center">
+                <input id="rope-reps" class="inp inp-sm" type="number" placeholder="Reps this set" style="flex:1"/>
+                <button onclick="addRopeSet()" class="btn btn-g" style="padding:8px 14px;font-size:12px">+ Set</button>
+              </div>
+              <div style="font-size:10px;color:var(--muted);margin-top:6px">🟢 40+ reps · 🟡 20-39 · 🔴 under 20</div>`:''}
+            </div>`;
+          } else {
+            const isBand=ex.id.startsWith('band_');
+            const rounds=done&&exEntry.rounds!=null?exEntry.rounds:0;
+            html+=`<div class="ei ${done?'dn':''}" ${isToday&&!isBand?`onclick="toggleEx('${ex.id}')"`:''}  style="${!isToday&&!isBand?'cursor:default':''}">
+              <div class="ei-ic" ${isToday&&isBand?`onclick="toggleEx('${ex.id}')" style="cursor:pointer"`:''}>
+                ${ex.ic}
+              </div>
+              <div class="ei-inf" style="flex:1">
+                <div class="ei-n" ${isToday&&isBand?`onclick="toggleEx('${ex.id}')" style="cursor:pointer"`:''}>
+                  ${esc(ex.n)}${timeStamp?`<span style="font-size:9px;color:var(--muted);margin-left:6px">@ ${timeStamp}</span>`:''}
+                </div>
+                ${isBand&&done&&isToday?`
+                <div style="display:flex;gap:6px;margin-top:6px" onclick="event.stopPropagation()">
+                  ${[1,2,3].map(r=>`<div onclick="setRounds('${ex.id}',${r})" style="padding:3px 10px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid ${rounds===r?'var(--green)':'var(--b2)'};background:${rounds===r?'#d0f5e0':'var(--p1)'};color:${rounds===r?'#2a6a3a':'var(--muted)'}">${r} round${r>1?'s':''}</div>`).join('')}
+                </div>`:isBand&&done?`<div style="font-size:10px;color:var(--green);margin-top:3px">${rounds>0?rounds+' round'+(rounds>1?'s':''):'completed'}</div>`:`<div class="ei-d">${esc(ex.d)}</div>`}
+                <div class="ei-dur">${ex.dur}</div>
+              </div>
+              <div class="ei-pts">+${ex.pts}</div>
+              <div class="chk">${done?'✓':''}</div>
+            </div>`;
+          }
         });
         html+='</div>';
       });
@@ -3586,7 +3698,7 @@ function rCalDay(dateStr){
       <button class="btn btn-g" style="margin-top:8px" onclick="saveJournalEntry();renderTab('cal')">${existing?'Update':'Save This Week'}</button>
     </div>
     ${Object.entries(JOURNAL.entries).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,5).map(([key,entry])=>`
-      <div style="padding:10px 0;border-bottom:1px solid #1a1610">
+      <div style="padding:10px 0;border-bottom:1px solid var(--b1)">
         <div style="font-size:11px;font-weight:700;color:var(--gold)">${getWeekLabel(key)}</div>
         <div style="font-size:12px;color:var(--text);font-style:italic;margin-top:4px">"${esc(entry.text)}"</div>
       </div>`).join('')}`;
@@ -3995,22 +4107,101 @@ function rWeeklyDashboard(){
     </div>`;
   }).join('');
 
-  // Wake time consistency
-  const wakeTimes=validDays.map(d=>{
+  // ── Meal timing from food log ──
+  function getMealTime(ds,meal){
+    const food=ds===TODAY?FOOD_LOG:loadS('dv4-food-'+ds,[]);
+    if(!Array.isArray(food)) return null;
+    const entry=food.find(f=>f.meal===meal);
+    return entry?entry.time:null;
+  }
+
+  // Target times in minutes from midnight
+  const MEAL_TARGETS={breakfast:7*60,lunch:13*60,dinner:19*60}; // 7AM, 1PM, 7PM
+
+  function timeToMin(t){
+    if(!t) return null;
+    const parts=t.replace(/\s*(AM|PM)/i,'').split(':');
+    let h=parseInt(parts[0]),m=parseInt(parts[1]||0);
+    if(t.toUpperCase().includes('PM')&&h!==12) h+=12;
+    if(t.toUpperCase().includes('AM')&&h===12) h=0;
+    return h*60+m;
+  }
+
+  // Consistency score — how similar are your times day to day (low std dev = high score)
+  function consistencyScore(times){
+    const valid=times.filter(t=>t!==null);
+    if(valid.length<2) return null;
+    const mean=valid.reduce((s,v)=>s+v,0)/valid.length;
+    const stdDev=Math.sqrt(valid.reduce((s,v)=>s+(v-mean)**2,0)/valid.length);
+    // 0 min stddev = 100%, 60 min stddev = 0%
+    return Math.max(0,Math.round(100-stdDev*(100/60)));
+  }
+
+  // Discipline score — how close to target time (0 gap = 100%, 60+ min gap = 0%)
+  function disciplineScore(times,targetMin){
+    const valid=times.filter(t=>t!==null);
+    if(!valid.length) return null;
+    const avgGap=valid.reduce((s,v)=>s+Math.abs(v-targetMin),0)/valid.length;
+    return Math.max(0,Math.round(100-avgGap*(100/60)));
+  }
+
+  // Collect timings for the week
+  const wakeTimesMin=validDays.map(d=>{
     const v=VITALS[d.ds];
     if(!v||!v.wake) return null;
-    const [h,m]=v.wake.split(':').map(Number);
-    return h*60+m;
-  }).filter(v=>v!==null);
-  const avgWakeMin=wakeTimes.length?Math.round(wakeTimes.reduce((s,v)=>s+v,0)/wakeTimes.length):null;
-  const avgWakeStr=avgWakeMin!==null?`${String(Math.floor(avgWakeMin/60)).padStart(2,'0')}:${String(avgWakeMin%60).padStart(2,'0')}`:null;
+    return timeToMin(v.wake);
+  });
+
+  const sleepTimesMin=validDays.map(d=>{
+    const v=VITALS[d.ds];
+    if(!v||!v.sleep) return null;
+    return timeToMin(v.sleep);
+  });
+
+  const breakfastTimesMin=validDays.map(d=>getMealTime(d.ds,'breakfast')).map(timeToMin);
+  const lunchTimesMin=validDays.map(d=>getMealTime(d.ds,'lunch')).map(timeToMin);
+  const dinnerTimesMin=validDays.map(d=>getMealTime(d.ds,'dinner')).map(timeToMin);
+
+  // Schedule item times
+  const arghyaTimes=validDays.map(d=>{
+    const ch=d.ds===TODAY?CHECKS:loadS('dv4-ch-'+d.ds,{});
+    const v=Object.entries(ch).find(([k,v])=>k.startsWith('d')&&isDone(v)&&getCheckTime(v));
+    return v?getCheckTime(v[1]):null;
+  });
+
+  // Consistency — variance within each timing category
+  const wakeConsistency=consistencyScore(wakeTimesMin);
+  const breakfastConsistency=consistencyScore(breakfastTimesMin);
+  const lunchConsistency=consistencyScore(lunchTimesMin);
+  const dinnerConsistency=consistencyScore(dinnerTimesMin);
+
+  const validCons=[wakeConsistency,breakfastConsistency,lunchConsistency,dinnerConsistency].filter(v=>v!==null);
+  const overallConsistency=validCons.length?Math.round(validCons.reduce((s,v)=>s+v,0)/validCons.length):null;
+
+  // Discipline — closeness to target
+  const wakeTarget=5*60; // 5:00 AM
+  const wakeDisc=disciplineScore(wakeTimesMin,wakeTarget);
+  const bfDisc=disciplineScore(breakfastTimesMin,MEAL_TARGETS.breakfast);
+  const lunchDisc=disciplineScore(lunchTimesMin,MEAL_TARGETS.lunch);
+  const dinnerDisc=disciplineScore(dinnerTimesMin,MEAL_TARGETS.dinner);
+
+  const validDisc=[wakeDisc,bfDisc,lunchDisc,dinnerDisc].filter(v=>v!==null);
+  const overallDiscipline=validDisc.length?Math.round(validDisc.reduce((s,v)=>s+v,0)/validDisc.length):null;
+
+  const gap=overallConsistency!==null&&overallDiscipline!==null?Math.abs(overallConsistency-overallDiscipline):null;
+  const gapMsg=gap===null?'Log more days to see pattern':gap<=10?'Excellent — consistent and on time':gap<=20?'Good — slight timing drift':gap<=35?'Regular but timing needs attention':'Consistency and discipline diverging — check patterns';
+  const gapColor=gap===null?'var(--muted)':gap<=10?'var(--green)':gap<=20?'var(--teal)':gap<=35?'var(--orange)':'var(--red)';
+
+  // Average wake display
+  const avgWakeMin2=wakeTimesMin.filter(v=>v!==null);
+  const avgWakeDisplay=avgWakeMin2.length?`${String(Math.floor(avgWakeMin2.reduce((s,v)=>s+v,0)/avgWakeMin2.length/60)).padStart(2,'0')}:${String(Math.round(avgWakeMin2.reduce((s,v)=>s+v,0)/avgWakeMin2.length%60)).padStart(2,'0')} AM`:null;
 
   // Exercise detail per day
   const exDetails=validDays.map(({ds,day})=>{
     if(ds>TODAY) return null;
     const dayEx=ds===TODAY?EX_LOG:loadS('dv4-ex-'+ds,{});
-    const EX_IDS=['breathwork','walk_lake','rope','band_stretch','eve_walk'];
-    const EX_LABELS={breathwork:'Breathwork',walk_lake:'Walk',rope:'Rope',band_stretch:'Band',eve_walk:'Eve Walk'};
+    const EX_IDS=['breathwork','walk_lake','rope','band_chest','band_row','band_clam','band_curl','band_walk','band_press','eve_walk'];
+    const EX_LABELS={breathwork:'Brth',walk_lake:'Walk',rope:'Rope',band_chest:'Chest',band_row:'Row',band_clam:'Clam',band_curl:'Curl',band_walk:'BandW',band_press:'Press',eve_walk:'Eve'};
     const items=EX_IDS.map(id=>{
       const e=dayEx[id];
       const done=e&&e.done;
@@ -4048,10 +4239,58 @@ function rWeeklyDashboard(){
         <div style="font-size:9px;color:var(--muted);margin-top:2px">${s.l}</div>
       </div>`).join('')}
     </div>
-    ${avgWakeStr?`<div style="background:var(--p2);border-radius:8px;padding:8px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
-      <div style="font-size:11px;color:var(--sub)">Avg wake time this week</div>
-      <div style="font-size:14px;font-weight:700;color:${avgWakeMin<=330?'var(--green)':avgWakeMin<=360?'var(--gold)':'var(--red)'}">${avgWakeStr} AM</div>
+    ${avgWakeDisplay?`<div style="background:var(--p2);border-radius:8px;padding:8px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:11px;color:var(--sub)">Avg wake time</div>
+      <div style="font-size:13px;font-weight:700;color:var(--gold)">${avgWakeDisplay}</div>
     </div>`:''}
+
+    <!-- Consistency + Discipline scores -->
+    ${overallConsistency!==null||overallDiscipline!==null?`
+    <div style="background:var(--p2);border-radius:10px;padding:12px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:10px">Timing Scores</div>
+      <div style="display:flex;gap:10px;margin-bottom:10px">
+        <div style="flex:1;text-align:center;background:var(--p1);border-radius:8px;padding:10px">
+          <div style="font-size:22px;font-weight:700;color:var(--teal)">${overallConsistency!==null?overallConsistency+'%':'—'}</div>
+          <div style="font-size:10px;color:var(--sub);margin-top:2px">Consistency</div>
+          <div style="font-size:9px;color:var(--muted);margin-top:2px">same time daily</div>
+        </div>
+        <div style="flex:1;text-align:center;background:var(--p1);border-radius:8px;padding:10px">
+          <div style="font-size:22px;font-weight:700;color:var(--orange)">${overallDiscipline!==null?overallDiscipline+'%':'—'}</div>
+          <div style="font-size:10px;color:var(--sub);margin-top:2px">Discipline</div>
+          <div style="font-size:9px;color:var(--muted);margin-top:2px">close to target time</div>
+        </div>
+      </div>
+      ${gap!==null?`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <div style="flex:1;height:6px;background:var(--b1);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${overallConsistency}%;background:var(--teal);border-radius:3px"></div>
+        </div>
+        <div style="font-size:9px;color:var(--muted);width:20px;text-align:center">${gap}°</div>
+        <div style="flex:1;height:6px;background:var(--b1);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${overallDiscipline}%;background:var(--orange);border-radius:3px"></div>
+        </div>
+      </div>`:''}
+      <div style="font-size:11px;color:${gapColor};font-weight:600">${gapMsg}</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:4px">Gap of ${gap!==null?gap+'°':'—'} · nearer the scores, better the progress</div>
+    </div>
+    <details style="cursor:pointer;margin-bottom:10px">
+      <summary style="font-size:11px;font-weight:700;color:var(--sub);padding:6px 0;list-style:none;display:flex;justify-content:space-between">
+        <span>Meal Timing Detail</span><span style="font-size:10px;color:var(--muted)">▾</span>
+      </summary>
+      <div style="margin-top:8px;display:grid;gap:4px">
+        ${[
+          {l:'Breakfast',times:breakfastTimesMin,target:MEAL_TARGETS.breakfast,cons:breakfastConsistency,disc:bfDisc},
+          {l:'Lunch',times:lunchTimesMin,target:MEAL_TARGETS.lunch,cons:lunchConsistency,disc:lunchDisc},
+          {l:'Dinner',times:dinnerTimesMin,target:MEAL_TARGETS.dinner,cons:dinnerConsistency,disc:dinnerDisc},
+          {l:'Wake',times:wakeTimesMin,target:wakeTarget,cons:wakeConsistency,disc:wakeDisc},
+        ].filter(r=>r.times.filter(v=>v!==null).length>0).map(r=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:var(--p2);border-radius:8px">
+            <div style="font-size:11px;color:var(--text);width:60px">${r.l}</div>
+            <div style="font-size:10px;color:var(--teal)">${r.cons!==null?r.cons+'% C':'—'}</div>
+            <div style="font-size:10px;color:var(--orange)">${r.disc!==null?r.disc+'% D':'—'}</div>
+            <div style="font-size:9px;color:var(--muted)">${r.times.filter(v=>v!==null).length}/${validDays.length} days logged</div>
+          </div>`).join('')}
+      </div>
+    </details>`:''}
 
     <!-- Exercise detail — collapsed by default -->
     <details style="cursor:pointer">
