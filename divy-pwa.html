@@ -1189,6 +1189,7 @@ function exPts(){
 }
 
 function setRounds(id,r){
+  if(getViewDate()!==TODAY){flash('Cannot edit past or future entries');return;}
   if(!EX_LOG[id]) return;
   EX_LOG[id].rounds=r;
   saveEx();_compCache={};renderTab('cal');
@@ -3447,12 +3448,13 @@ function rCalDay(dateStr){
           </div>
         </div>`;
       }
+      const dayExLog=isToday?EX_LOG:loadS('dv4-ex-'+dateStr,{});
       const activePhases=EX.filter(p=>p.unlockKg===999||S.wt<=p.unlockKg);
       activePhases.forEach(ph=>{
         html+=`<div class="c" style="margin-bottom:10px"><span class="pbadge">Phase ${ph.ph}: ${ph.name}</span>
           <div style="font-size:12px;color:var(--sub);margin-bottom:10px">${ph.desc}</div>`;
         ph.list.forEach(ex=>{
-          const exEntry=EX_LOG[ex.id];
+          const exEntry=dayExLog[ex.id];
           const done=exEntry&&exEntry.done;
           const isRope=ex.id==='rope';
           const timeStamp=done&&exEntry.time?exEntry.time:'';
