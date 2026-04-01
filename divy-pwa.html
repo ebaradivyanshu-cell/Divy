@@ -796,24 +796,24 @@ const WATER_TARGET=2500;
 const SCH_HOME=[
   // Pure habits only — no meds, no meals, no exercise (tracked in their own tabs)
   {t:'5:00 AM',a:'Rise — warm ginger or ajwain water.',ic:'🌅',c:'r',target:'05:00',auto:true},
-  {t:'6:00 AM',a:'Snan — bathe before Surya Arghya.',ic:'🚿',c:'s',target:'06:00'},
-  {t:'6:30–7:30 AM',a:'Surya Arghya — copper vessel, face east. Om Ghrinih Suryaya Namah (3 times). Panna in sunlight.',ic:'☀️',c:'s',target:'06:30'},
+  {t:'6:30–7:30 AM',a:'Snan — after walk and exercise. Cool down briefly before bathing.',ic:'🚿',c:'s',target:'07:00'},
+  {t:'7:00–7:30 AM',a:'Surya Arghya — copper vessel, face east. Om Ghrinih Suryaya Namah (3 times). Panna in sunlight.',ic:'☀️',c:'s',target:'07:00'},
   {t:'8:30 PM',a:'Wind down — screens off.',ic:'📵',c:'r',target:'20:30'},
   {t:'9:30 PM',a:'Sleep.',ic:'😴',c:'r',target:'21:30',auto:true},
 ];
 
 const SCH_HOTEL=[
   {t:'5:00 AM',a:'Rise — room kettle hot water.',ic:'🌅',c:'r',target:'05:00',auto:true},
-  {t:'6:00 AM',a:'Snan — hotel shower before Surya Arghya.',ic:'🚿',c:'s',target:'06:00'},
-  {t:'6:30–7:30 AM',a:'Surya Arghya — east window, hands cupped or copper vessel. Om Ghrinih Suryaya Namah (3 times).',ic:'☀️',c:'s',target:'06:30'},
+  {t:'6:30–7:30 AM',a:'Snan — hotel shower after morning movement.',ic:'🚿',c:'s',target:'07:00'},
+  {t:'7:00–7:30 AM',a:'Surya Arghya — east window, hands cupped or copper vessel. Om Ghrinih Suryaya Namah (3 times).',ic:'☀️',c:'s',target:'07:00'},
   {t:'8:30 PM',a:'Wind down — room dark and cool.',ic:'📵',c:'r',target:'20:30'},
   {t:'9:30 PM',a:'Sleep — same time as home.',ic:'😴',c:'r',target:'21:30',auto:true},
 ];
 
 const SCH_INTL=[
   {t:'5:00 AM',a:'Rise — local time. Timezone changes, discipline does not.',ic:'🌅',c:'r',target:'05:00',auto:true},
-  {t:'6:00 AM',a:'Snan — hotel shower before Surya Arghya.',ic:'🚿',c:'s',target:'06:00'},
-  {t:'6:30–7:30 AM',a:'Surya Arghya — wherever you are, face east. Om Ghrinih Suryaya Namah (3 times). This does not change.',ic:'☀️',c:'s',target:'06:30'},
+  {t:'6:30–7:30 AM',a:'Snan — hotel shower after morning movement.',ic:'🚿',c:'s',target:'07:00'},
+  {t:'7:00–7:30 AM',a:'Surya Arghya — wherever you are, face east. Om Ghrinih Suryaya Namah (3 times). This does not change.',ic:'☀️',c:'s',target:'07:00'},
   {t:'8:30 PM',a:'Wind down.',ic:'📵',c:'r',target:'20:30'},
   {t:'9:30 PM',a:'Sleep. Protect 7.5 hours.',ic:'😴',c:'r',target:'21:30',auto:true},
 ];
@@ -992,7 +992,7 @@ let CUR='home';
 let ITI_OPEN=false;
 let FOOD_SEARCH='';
 let FOOD_QTY='100';
-let CAL_MONTH=new Date(START_DATE);
+let CAL_MONTH=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 
 // Body measurements storage
 let BODY_LOG=loadS('dv4-body',{measurements:[]});
@@ -1052,6 +1052,11 @@ function checkDateRollover(){
   if(newToday===TODAY) return false;
   // Date has changed — reload all daily variables
   TODAY=newToday;
+  // If month changed, update calendar view
+  const newD=new Date();
+  if(newD.getMonth()!==CAL_MONTH.getMonth()||newD.getFullYear()!==CAL_MONTH.getFullYear()){
+    CAL_MONTH=new Date(newD.getFullYear(),newD.getMonth(),1);
+  }
   FOOD_LOG=loadS('dv4-food-'+TODAY,[]);
   EX_LOG=loadS('dv4-ex-'+TODAY,{});
   WATER=loadS('dv4-water-'+TODAY,{ml:0});
@@ -3157,12 +3162,12 @@ function getDayCompletion(dateStr){
   let exDone=0,exTotal=0,exPass=false;
   if(!isPrep){
     const dayExLog=isToday?EX_LOG:loadS('dv4-ex-'+dateStr,{});
-    // Get all available exercises in unlocked phases
+    // Count every individual exercise — no more pass/fail single point
     const availPhases=EX.filter(p=>p.unlockKg===999||S.wt<=p.unlockKg);
     const allExItems=availPhases.flatMap(p=>p.list);
     exTotal=allExItems.length;
     exDone=allExItems.filter(ex=>dayExLog[ex.id]&&dayExLog[ex.id].done).length;
-    // Pass logic — breathwork AND morning walk both done (mandatory minimum)
+    // Mandatory minimum still tracked for display (not scoring)
     const breathDone=dayExLog['breathwork']&&dayExLog['breathwork'].done;
     const walkDone=dayExLog['walk_lake']&&dayExLog['walk_lake'].done;
     exPass=breathDone&&walkDone;
@@ -3196,13 +3201,10 @@ function getDayCompletion(dateStr){
   const waterPass=dayWater>=2500?1:0;
   const waterTotal=1;
 
-  // Exercise contributes 1 point to day score if mandatory minimum met (breathwork + walk)
-  const exPillarDone=isPrep?0:(exPass?1:0);
-  const exPillarTotal=isPrep?0:1;
-
+  // Exercise — each item counts individually (no pass/fail single point)
   // Supplements tracked but NOT scored — informational only
-  const done=schDone+exPillarDone+medDone+calPass+waterPass;
-  const total=schTotal+exPillarTotal+medTotal+calTotal+waterTotal;
+  const done=schDone+exDone+medDone+calPass+waterPass;
+  const total=schTotal+exTotal+medTotal+calTotal+waterTotal;
   const pct=total>0?Math.round((done/total)*100):0;
 
   const result={
@@ -4216,6 +4218,11 @@ function rWeeklyDashboard(){
     </div>`;
   }).join('');
 
+  // ── Timing scores — exclude today if before 9PM (partial day skews scores) ──
+  const nowH=new Date().getHours();
+  const includeTodayInScores=nowH>=21; // Only include today after 9 PM
+  const scoringDays=validDays.filter(d=>d.ds!==TODAY||(d.ds===TODAY&&includeTodayInScores));
+
   // ── Meal timing from food log ──
   function getMealTime(ds,meal){
     const food=ds===TODAY?FOOD_LOG:loadS('dv4-food-'+ds,[]);
@@ -4255,21 +4262,21 @@ function rWeeklyDashboard(){
   }
 
   // Collect timings for the week
-  const wakeTimesMin=validDays.map(d=>{
+  const wakeTimesMin=scoringDays.map(d=>{
     const v=VITALS[d.ds];
     if(!v||!v.wake) return null;
     return timeToMin(v.wake);
   });
 
-  const sleepTimesMin=validDays.map(d=>{
+  const sleepTimesMin=scoringDays.map(d=>{
     const v=VITALS[d.ds];
     if(!v||!v.sleep) return null;
     return timeToMin(v.sleep);
   });
 
-  const breakfastTimesMin=validDays.map(d=>getMealTime(d.ds,'breakfast')).map(timeToMin);
-  const lunchTimesMin=validDays.map(d=>getMealTime(d.ds,'lunch')).map(timeToMin);
-  const dinnerTimesMin=validDays.map(d=>getMealTime(d.ds,'dinner')).map(timeToMin);
+  const breakfastTimesMin=scoringDays.map(d=>getMealTime(d.ds,'breakfast')).map(timeToMin);
+  const lunchTimesMin=scoringDays.map(d=>getMealTime(d.ds,'lunch')).map(timeToMin);
+  const dinnerTimesMin=scoringDays.map(d=>getMealTime(d.ds,'dinner')).map(timeToMin);
 
   // Schedule item times
   const arghyaTimes=validDays.map(d=>{
@@ -4298,8 +4305,8 @@ function rWeeklyDashboard(){
   const overallDiscipline=validDisc.length?Math.round(validDisc.reduce((s,v)=>s+v,0)/validDisc.length):null;
 
   const gap=overallConsistency!==null&&overallDiscipline!==null?Math.abs(overallConsistency-overallDiscipline):null;
-  const gapMsg=gap===null?'Log more days to see pattern':gap<=10?'Excellent — consistent and on time':gap<=20?'Good — slight timing drift':gap<=35?'Regular but timing needs attention':'Consistency and discipline diverging — check patterns';
-  const gapColor=gap===null?'var(--muted)':gap<=10?'var(--green)':gap<=20?'var(--teal)':gap<=35?'var(--orange)':'var(--red)';
+  const gapMsg=(gap===null||scoringDays.length<3)?'Log at least 3 days to see pattern':gap<=10?'Excellent — consistent and on time':gap<=20?'Good — slight timing drift':gap<=35?'Regular but timing needs attention':'Consistency and discipline diverging — check patterns';
+  const gapColor=(gap===null||scoringDays.length<3)?'var(--muted)':gap<=10?'var(--green)':gap<=20?'var(--teal)':gap<=35?'var(--orange)':'var(--red)';
 
   // Average wake display
   const avgWakeMin2=wakeTimesMin.filter(v=>v!==null);
