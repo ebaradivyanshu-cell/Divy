@@ -729,6 +729,21 @@ const FOOD_DB=[
   {n:'Coconut meat (30g)',cal:100,u:'pcs',cat:'Fruit',p:0.9,c:4.3,f:9.4,k:120,ph:30,na:7},
   {n:'Fig / Anjeer (1 medium ~40g)',cal:30,u:'pcs',cat:'Fruit',p:0.3,c:7.7,f:0.1,k:77,ph:7,na:1},
   {n:'Dates / Khajoor (2 pieces ~30g)',cal:83,u:'pcs',cat:'Fruit',p:0.6,c:22,f:0.1,k:168,ph:20,na:1},
+
+  // ── PURIS & FRIED BREADS ──
+  {n:'Puri (1 piece ~30g)',cal:130,u:'pcs',cat:'Grain',p:2.5,c:15,f:6.5,k:45,ph:40,na:150},
+  {n:'Palak Puri (1 piece ~35g)',cal:135,u:'pcs',cat:'Grain',p:3,c:15,f:7,k:80,ph:45,na:160},
+  {n:'Methi Puri (1 piece ~35g)',cal:138,u:'pcs',cat:'Grain',p:3,c:15,f:7.5,k:90,ph:50,na:155},
+  {n:'Aloo Stuffed Puri (1 piece ~60g)',cal:190,u:'pcs',cat:'Grain',p:3.5,c:22,f:9,k:160,ph:55,na:220},
+  {n:'Dal Kachori (1 piece ~60g)',cal:220,u:'pcs',cat:'Grain',p:5,c:24,f:11,k:120,ph:70,na:280},
+  {n:'Bedmi Puri / Dal Puri (1 piece ~50g)',cal:185,u:'pcs',cat:'Grain',p:5,c:20,f:9,k:110,ph:65,na:250},
+  {n:'Bhatura (1 piece ~80g)',cal:280,u:'pcs',cat:'Grain',p:6,c:35,f:12,k:80,ph:65,na:350},
+  // ── FIBRE FOODS ──
+  {n:'Maize Dextrin Fiber (6g serving)',cal:25,u:'pcs',cat:'Supplement',p:0,c:6,f:0,k:0,ph:0,na:5},
+  {n:'Psyllium Husk / Isabgol (1 tsp ~5g)',cal:15,u:'pcs',cat:'Supplement',p:0.2,c:4,f:0.1,k:20,ph:8,na:3},
+  {n:'Oat Bran (30g)',cal:80,u:'pcs',cat:'Grain',p:4,c:15,f:2,k:130,ph:100,na:2},
+  {n:'Flaxseed / Alsi (1 tbsp ~10g)',cal:55,u:'pcs',cat:'Fat',p:1.9,c:3,f:4.3,k:83,ph:66,na:3},
+  {n:'Chia Seeds (1 tbsp ~12g)',cal:58,u:'pcs',cat:'Fat',p:2,c:5,f:3.7,k:44,ph:89,na:2},
   // ── SWEETENERS ──
   {n:'TruActive Monkfruit Sweetener (1 tsp)',cal:0,u:'pcs',cat:'Condiment',p:0,c:0,f:0,k:0,ph:0,na:0},
   {n:'Monkfruit Sweetener (1 tsp)',cal:0,u:'pcs',cat:'Condiment',p:0,c:0,f:0,k:0,ph:0,na:0},
@@ -1503,9 +1518,15 @@ function rHome(){
   const days=daysSinceStart();
 
   let dots='';
+  // Calculate the start date of current cycle
+  const cycleStartDate=new Date(TODAY);
+  cycleStartDate.setDate(cycleStartDate.getDate()-(S.cycleDay-1));
   for(let d=1;d<=8;d++){
     const cls=d<S.cycleDay?'cd cd-d':d===S.cycleDay?'cd cd-n':'cd cd-f';
-    dots+=`<div class="${cls}">${d<S.cycleDay?'✓':d}</div>`;
+    const dayDate=new Date(cycleStartDate);dayDate.setDate(cycleStartDate.getDate()+(d-1));
+    const y=dayDate.getFullYear(),m=String(dayDate.getMonth()+1).padStart(2,'0'),dd=String(dayDate.getDate()).padStart(2,'0');
+    const ds=`${y}-${m}-${dd}`;
+    dots+=`<div class="${cls}" style="cursor:pointer" onclick="CAL_VIEW_DATE='${ds}';CAL_DAY_TAB='schedule';CUR='cal';document.querySelectorAll('.tb').forEach((b,i)=>b.classList.toggle('on',i===1));renderTab('cal')">${d<S.cycleDay?'✓':d}</div>`;
   }
 
   const rType=S.totalCycles%2===0?'Celebration Meal 🍗':'Book or Experience 📚';
@@ -3090,14 +3111,22 @@ function rSOS(){
 
     <div class="c" style="border-color:var(--red);background:#fde8e8">
       <div class="ctitle" style="color:var(--red)">💊 Current Medications</div>
-      ${[
+      ${(TODAY>=MED_CHANGE_DATE?[
+        ['Tacrolimus (Takfa)','4mg · 9 AM and 9 PM','CRITICAL — immunosuppressant'],
+        ['Mycophenolate (Mycofit)','360mg · 8 AM and 8 PM','CRITICAL — immunosuppressant'],
+        ['Prednisolone (Omnacortil)','5mg · morning after breakfast','Do not stop abruptly'],
+        ['Metoprolol (MetXL)','50mg morning + 50mg 6:30 PM','Beta-blocker'],
+        ['Telmisartan (Telma)','40mg · morning + 40mg 6:30 PM','BP medication'],
+        ['Cilnidipine (Cilindinpine)','5mg · 12:00 PM noon','Calcium channel blocker — new from 31 Mar'],
+        ['Atorvastatin (Atorva)','10mg · 8 PM','Statin'],
+      ]:[
         ['Tacrolimus (Takfa)','4mg · 9 AM and 9 PM','CRITICAL — immunosuppressant'],
         ['Mycophenolate (Mycofit)','360mg · 8 AM and 8 PM','CRITICAL — immunosuppressant'],
         ['Prednisolone (Omnacortil)','5mg · morning after breakfast','Do not stop abruptly'],
         ['Metoprolol (MetXL)','50mg morning · 25mg 6:30 PM','Beta-blocker'],
         ['Telmisartan (Telma)','40mg · 8 PM','BP medication'],
         ['Atorvastatin (Atorva)','10mg · 8 PM','Statin'],
-      ].map(([n,d,note])=>`
+      ]).map(([n,d,note])=>`
         <div style="padding:8px 0;border-bottom:1px solid #2a1010">
           <div style="font-size:13px;font-weight:600;color:var(--text)">${n}</div>
           <div style="font-size:11px;color:var(--gold)">${d}</div>
@@ -3411,9 +3440,9 @@ function rCalDay(dateStr){
           :isToday?`<div style="padding:8px 0;border-bottom:1px solid var(--b1)">
             <div style="font-size:11px;color:var(--sub);margin-bottom:6px">Morning BP</div>
             <div style="display:flex;gap:6px;align-items:center">
-              <input id="bp-m-sys" class="inp inp-sm" type="number" placeholder="Systolic" style="flex:1"/>
+              <input id="bp-m-sys" class="inp inp-sm" type="number" placeholder="Sys e.g. 120" style="flex:1;min-width:80px"/>
               <span style="color:var(--muted)">/</span>
-              <input id="bp-m-dia" class="inp inp-sm" type="number" placeholder="Diastolic" style="flex:1"/>
+              <input id="bp-m-dia" class="inp inp-sm" type="number" placeholder="Dia e.g. 80" style="flex:1;min-width:80px"/>
               <button onclick="logBP('${dateStr}','morning','bp-m-sys','bp-m-dia')" class="btn btn-dim" style="font-size:11px;padding:6px 10px">Log</button>
             </div>
           </div>`:`<div style="padding:6px 0;border-bottom:1px solid var(--b1);font-size:11px;color:var(--muted)">Morning BP: not logged</div>`}
@@ -3426,9 +3455,9 @@ function rCalDay(dateStr){
           :isToday?`<div style="padding:8px 0">
             <div style="font-size:11px;color:var(--sub);margin-bottom:6px">Evening BP</div>
             <div style="display:flex;gap:6px;align-items:center">
-              <input id="bp-e-sys" class="inp inp-sm" type="number" placeholder="Systolic" style="flex:1"/>
+              <input id="bp-e-sys" class="inp inp-sm" type="number" placeholder="Sys e.g. 120" style="flex:1;min-width:80px"/>
               <span style="color:var(--muted)">/</span>
-              <input id="bp-e-dia" class="inp inp-sm" type="number" placeholder="Diastolic" style="flex:1"/>
+              <input id="bp-e-dia" class="inp inp-sm" type="number" placeholder="Dia e.g. 80" style="flex:1;min-width:80px"/>
               <button onclick="logBP('${dateStr}','evening','bp-e-sys','bp-e-dia')" class="btn btn-dim" style="font-size:11px;padding:6px 10px">Log</button>
             </div>
           </div>`:`<div style="padding:6px 0;font-size:11px;color:var(--muted)">Evening BP: not logged</div>`}
