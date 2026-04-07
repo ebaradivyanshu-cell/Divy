@@ -1449,10 +1449,15 @@ function saveItiSetup(){
     const custom=document.getElementById('iti-custom-'+ms);
     if(custom&&custom.value)rewards[ms]='custom:'+custom.value;
   });
-  ITI_D={pw,rewards,open:false};
+  ITI_D={pw,rewards};
   saveS('dv4-iti',ITI_D);
   itiPush();
-  flash('Saved secretly 💝');ITI_OPEN=true;renderTab('rewards');
+  ITI_OPEN=false; // Lock immediately after save
+  flash('Saved secretly 💝');
+  // Go back to Home — Divy should not see the content
+  CUR='home';
+  document.querySelectorAll('.tb').forEach((b,i)=>b.classList.toggle('on',i===0));
+  renderTab('home');
 }
 
 function tryItiPw(){
@@ -1480,7 +1485,11 @@ function updateIti(){
   if(np)ITI_D.pw=np;
   saveS('dv4-iti',ITI_D);
   itiPush();
+  ITI_OPEN=false; // Lock after update
   flash('Updated & synced 💝');
+  CUR='home';
+  document.querySelectorAll('.tb').forEach((b,i)=>b.classList.toggle('on',i===0));
+  renderTab('home');
 }
 
 // ═══════════ HEADER ═══════════
@@ -1496,6 +1505,8 @@ function updateHeader(){
 function renderTab(t){
   checkDateRollover();
   autoTickIfComplete();
+  // Lock rewards when navigating away
+  if(t!=='rewards'&&CUR==='rewards') ITI_OPEN=false;
   try{
     let html='';
     if(t==='home') html=rHome();
@@ -1757,6 +1768,61 @@ function rHome(){
         ✦ Panna in gold on Mercury finger — your Lagna lord, always.
       </div>
     </div>
+
+    <!-- WEEKLY SNAPSHOT on Home -->
+    ${(()=>{
+      const days7=[];
+      for(let i=6;i>=0;i--){
+        const d=new Date();d.setDate(d.getDate()-i);
+        const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');
+        const ds=`${y}-${m}-${dd}`;
+        if(ds>=PREP_START&&ds<=TODAY) days7.push(ds);
+      }
+      if(days7.length<2) return '';
+
+      // BP this week
+      const bpReadings=days7.flatMap(ds=>{
+        const bp=loadS('dv4-bp-'+ds,{});
+        return [bp.morning,bp.evening].filter(Boolean);
+      });
+      const avgSys=bpReadings.length?Math.round(bpReadings.reduce((s,v)=>s+v.sys,0)/bpReadings.length):null;
+      const avgDia=bpReadings.length?Math.round(bpReadings.reduce((s,v)=>s+v.dia,0)/bpReadings.length):null;
+      const bpCol=!avgSys?'var(--muted)':avgSys>140||avgDia>90?'var(--red)':avgSys>130||avgDia>85?'var(--orange)':'var(--green)';
+
+      // Exercise this week
+      const exItems=['breathwork','walk_lake','rope','band_chest','band_row','band_clam','band_curl','band_walk','band_press','eve_walk'];
+      const exDoneTotal=days7.reduce((s,ds)=>{
+        const ex=ds===TODAY?EX_LOG:loadS('dv4-ex-'+ds,{});
+        return s+exItems.filter(id=>ex[id]&&ex[id].done).length;
+      },0);
+      const exMaxTotal=days7.length*exItems.length;
+      const exPct=Math.round(exDoneTotal/exMaxTotal*100);
+      const exCol=exPct>=70?'var(--green)':exPct>=40?'var(--orange)':'var(--red)';
+
+      // Green days
+      const greenDays=days7.filter(ds=>getDayCompletion(ds).pass).length;
+
+      return `<div class="c" style="cursor:pointer" onclick="CAL_VIEW_DATE=null;CUR='cal';document.querySelectorAll('.tb').forEach((b,i)=>b.classList.toggle('on',i===1));renderTab('cal')">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div class="ctitle" style="margin-bottom:0">This Week</div>
+          <div style="font-size:10px;color:var(--gold)">View full →</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+          <div style="background:var(--p2);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:18px;font-weight:700;color:var(--green)">${greenDays}/${days7.length}</div>
+            <div style="font-size:9px;color:var(--muted);margin-top:2px">Green days</div>
+          </div>
+          <div style="background:var(--p2);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:18px;font-weight:700;color:${exCol}">${exPct}%</div>
+            <div style="font-size:9px;color:var(--muted);margin-top:2px">Exercise</div>
+          </div>
+          <div style="background:var(--p2);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:18px;font-weight:700;color:${bpCol}">${avgSys?avgSys+'/'+avgDia:'—'}</div>
+            <div style="font-size:9px;color:var(--muted);margin-top:2px">Avg BP</div>
+          </div>
+        </div>
+      </div>`;
+    })()}
 
     <!-- DAY LOCK MODAL -->
     <div id="lock-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);align-items:center;justify-content:center;z-index:500;padding:20px">
