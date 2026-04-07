@@ -4249,19 +4249,8 @@ function rWeeklyDashboard(){
 
   // ── Timing scores — exclude today if before 9PM (partial day skews scores) ──
   const nowH=new Date().getHours();
-  const includeTodayInScores=nowH>=21; // Only include today after 9 PM
+  const includeTodayInScores=nowH>=21;
   const scoringDays=validDays.filter(d=>d.ds!==TODAY||(d.ds===TODAY&&includeTodayInScores));
-
-  // ── Meal timing from food log ──
-  function getMealTime(ds,meal){
-    const food=ds===TODAY?FOOD_LOG:loadS('dv4-food-'+ds,[]);
-    if(!Array.isArray(food)) return null;
-    const entry=food.find(f=>f.meal===meal);
-    return entry?entry.time:null;
-  }
-
-  // Target times in minutes from midnight
-  const MEAL_TARGETS={breakfast:7*60,lunch:13*60,dinner:19*60}; // 7AM, 1PM, 7PM
 
   function timeToMin(t){
     if(!t) return null;
@@ -4272,17 +4261,63 @@ function rWeeklyDashboard(){
     return h*60+m;
   }
 
-  // Consistency score — how similar are your times day to day (low std dev = high score)
-  function consistencyScore(times){
-    const valid=times.filter(t=>t!==null);
-    if(valid.length<2) return null;
-    const mean=valid.reduce((s,v)=>s+v,0)/valid.length;
-    const stdDev=Math.sqrt(valid.reduce((s,v)=>s+(v-mean)**2,0)/valid.length);
-    // 0 min stddev = 100%, 60 min stddev = 0%
-    return Math.max(0,Math.round(100-stdDev*(100/60)));
+  function getMealTime(ds,meal){
+    const food=ds===TODAY?FOOD_LOG:loadS('dv4-food-'+ds,[]);
+    if(!Array.isArray(food)) return null;
+    const entry=food.find(f=>f.meal===meal);
+    return entry?entry.time:null;
   }
 
-  // Discipline score — how close to target time (0 gap = 100%, 60+ min gap = 0%)
+  function getExTime(ds,id){
+    const ex=ds===TODAY?EX_LOG:loadS('dv4-ex-'+ds,{});
+    return ex[id]&&ex[id].done&&ex[id].time?ex[id].time:null;
+  }
+
+  // ── CONSISTENCY — did you DO it every day? (completion rate per activity) ──
+  // For each tracked activity: what % of days was it done?
+  const N=scoringDays.length||1;
+
+  const activityConsistency=[
+    // Wake logged
+    {l:'Wake',done:scoringDays.filter(d=>VITALS[d.ds]&&VITALS[d.ds].wake).length},
+    // Sleep logged
+    {l:'Sleep',done:scoringDays.filter(d=>VITALS[d.ds]&&VITALS[d.ds].sleep).length},
+    // Morning walk done
+    {l:'Walk',done:scoringDays.filter(d=>{const ex=d.ds===TODAY?EX_LOG:loadS('dv4-ex-'+d.ds,{});return ex['walk_lake']&&ex['walk_lake'].done;}).length},
+    // Breathwork done
+    {l:'Breathwork',done:scoringDays.filter(d=>{const ex=d.ds===TODAY?EX_LOG:loadS('dv4-ex-'+d.ds,{});return ex['breathwork']&&ex['breathwork'].done;}).length},
+    // Surya Arghya done (any 'd' check in schedule matching arghya item index)
+    {l:'Arghya',done:scoringDays.filter(d=>{
+      const ch=d.ds===TODAY?CHECKS:loadS('dv4-ch-'+d.ds,{});
+      const sch=SCH_HOME;
+      const idx=sch.findIndex(s=>s.ic==='☀️');
+      return idx>=0&&isDone(ch['d'+idx]);
+    }).length},
+    // Breakfast logged
+    {l:'Breakfast',done:scoringDays.filter(d=>getMealTime(d.ds,'breakfast')).length},
+    // Lunch logged
+    {l:'Lunch',done:scoringDays.filter(d=>getMealTime(d.ds,'lunch')).length},
+    // Evening walk done
+    {l:'Eve Walk',done:scoringDays.filter(d=>{const ex=d.ds===TODAY?EX_LOG:loadS('dv4-ex-'+d.ds,{});return ex['eve_walk']&&ex['eve_walk'].done;}).length},
+  ].map(a=>({...a,pct:N>0?Math.round(a.done/N*100):0}));
+
+  const overallConsistency=scoringDays.length>=2
+    ?Math.round(activityConsistency.reduce((s,a)=>s+a.pct,0)/activityConsistency.length)
+    :null;
+
+  // ── DISCIPLINE — on days you did it, how close to target time? ──
+  const TARGETS={
+    wake:5*60,         // 5:00 AM
+    walk:6*60,         // 6:00 AM
+    breathwork:5*60+20,// 5:20 AM
+    arghya:7*60+15,    // 7:15 AM
+    breakfast:7*60+30, // 7:30 AM
+    lunch:13*60,       // 1:00 PM
+    dinner:19*60,      // 7:00 PM
+    sleep:21*60+30,    // 9:30 PM
+    eveWalk:18*60+30,  // 6:30 PM
+  };
+
   function disciplineScore(times,targetMin){
     const valid=times.filter(t=>t!==null);
     if(!valid.length) return null;
@@ -4290,55 +4325,36 @@ function rWeeklyDashboard(){
     return Math.max(0,Math.round(100-avgGap*(100/60)));
   }
 
-  // Collect timings for the week
-  const wakeTimesMin=scoringDays.map(d=>{
-    const v=VITALS[d.ds];
-    if(!v||!v.wake) return null;
-    return timeToMin(v.wake);
-  });
+  const wakeTimes=scoringDays.map(d=>{const v=VITALS[d.ds];return v&&v.wake?timeToMin(v.wake):null;});
+  const sleepTimes=scoringDays.map(d=>{const v=VITALS[d.ds];return v&&v.sleep?timeToMin(v.sleep):null;});
+  const walkTimes=scoringDays.map(d=>timeToMin(getExTime(d.ds,'walk_lake')));
+  const breathTimes=scoringDays.map(d=>timeToMin(getExTime(d.ds,'breathwork')));
+  const eveWalkTimes=scoringDays.map(d=>timeToMin(getExTime(d.ds,'eve_walk')));
+  const bfTimes=scoringDays.map(d=>timeToMin(getMealTime(d.ds,'breakfast')));
+  const lunchTimes=scoringDays.map(d=>timeToMin(getMealTime(d.ds,'lunch')));
+  const dinnerTimes=scoringDays.map(d=>timeToMin(getMealTime(d.ds,'dinner')));
 
-  const sleepTimesMin=scoringDays.map(d=>{
-    const v=VITALS[d.ds];
-    if(!v||!v.sleep) return null;
-    return timeToMin(v.sleep);
-  });
+  const disciplineItems=[
+    {l:'Wake',score:disciplineScore(wakeTimes,TARGETS.wake),target:'5:00 AM'},
+    {l:'Walk',score:disciplineScore(walkTimes,TARGETS.walk),target:'6:00 AM'},
+    {l:'Breathwork',score:disciplineScore(breathTimes,TARGETS.breathwork),target:'5:20 AM'},
+    {l:'Breakfast',score:disciplineScore(bfTimes,TARGETS.breakfast),target:'7:30 AM'},
+    {l:'Lunch',score:disciplineScore(lunchTimes,TARGETS.lunch),target:'1:00 PM'},
+    {l:'Dinner',score:disciplineScore(dinnerTimes,TARGETS.dinner),target:'7:00 PM'},
+    {l:'Sleep',score:disciplineScore(sleepTimes,TARGETS.sleep),target:'9:30 PM'},
+    {l:'Eve Walk',score:disciplineScore(eveWalkTimes,TARGETS.eveWalk),target:'6:30 PM'},
+  ].filter(d=>d.score!==null);
 
-  const breakfastTimesMin=scoringDays.map(d=>getMealTime(d.ds,'breakfast')).map(timeToMin);
-  const lunchTimesMin=scoringDays.map(d=>getMealTime(d.ds,'lunch')).map(timeToMin);
-  const dinnerTimesMin=scoringDays.map(d=>getMealTime(d.ds,'dinner')).map(timeToMin);
-
-  // Schedule item times
-  const arghyaTimes=validDays.map(d=>{
-    const ch=d.ds===TODAY?CHECKS:loadS('dv4-ch-'+d.ds,{});
-    const v=Object.entries(ch).find(([k,v])=>k.startsWith('d')&&isDone(v)&&getCheckTime(v));
-    return v?getCheckTime(v[1]):null;
-  });
-
-  // Consistency — variance within each timing category
-  const wakeConsistency=consistencyScore(wakeTimesMin);
-  const breakfastConsistency=consistencyScore(breakfastTimesMin);
-  const lunchConsistency=consistencyScore(lunchTimesMin);
-  const dinnerConsistency=consistencyScore(dinnerTimesMin);
-
-  const validCons=[wakeConsistency,breakfastConsistency,lunchConsistency,dinnerConsistency].filter(v=>v!==null);
-  const overallConsistency=validCons.length?Math.round(validCons.reduce((s,v)=>s+v,0)/validCons.length):null;
-
-  // Discipline — closeness to target
-  const wakeTarget=5*60; // 5:00 AM
-  const wakeDisc=disciplineScore(wakeTimesMin,wakeTarget);
-  const bfDisc=disciplineScore(breakfastTimesMin,MEAL_TARGETS.breakfast);
-  const lunchDisc=disciplineScore(lunchTimesMin,MEAL_TARGETS.lunch);
-  const dinnerDisc=disciplineScore(dinnerTimesMin,MEAL_TARGETS.dinner);
-
-  const validDisc=[wakeDisc,bfDisc,lunchDisc,dinnerDisc].filter(v=>v!==null);
-  const overallDiscipline=validDisc.length?Math.round(validDisc.reduce((s,v)=>s+v,0)/validDisc.length):null;
+  const overallDiscipline=disciplineItems.length>=2
+    ?Math.round(disciplineItems.reduce((s,d)=>s+d.score,0)/disciplineItems.length)
+    :null;
 
   const gap=overallConsistency!==null&&overallDiscipline!==null?Math.abs(overallConsistency-overallDiscipline):null;
-  const gapMsg=(gap===null||scoringDays.length<3)?'Log at least 3 days to see pattern':gap<=10?'Excellent — consistent and on time':gap<=20?'Good — slight timing drift':gap<=35?'Regular but timing needs attention':'Consistency and discipline diverging — check patterns';
-  const gapColor=(gap===null||scoringDays.length<3)?'var(--muted)':gap<=10?'var(--green)':gap<=20?'var(--teal)':gap<=35?'var(--orange)':'var(--red)';
+  const gapMsg=(scoringDays.length<3)?'Log at least 3 days to see scores':gap<=10?'Excellent — doing it daily and on time':gap<=20?'Good — slight gap between regularity and timing':gap<=35?'Either skipping days or timing has drifted':'Check which activities are being skipped or delayed';
+  const gapColor=(scoringDays.length<3)?'var(--muted)':gap<=10?'var(--green)':gap<=20?'var(--teal)':gap<=35?'var(--orange)':'var(--red)';
 
   // Average wake display
-  const avgWakeMin2=wakeTimesMin.filter(v=>v!==null);
+  const avgWakeMin2=wakeTimes.filter(v=>v!==null);
   const avgWakeDisplay=avgWakeMin2.length?`${String(Math.floor(avgWakeMin2.reduce((s,v)=>s+v,0)/avgWakeMin2.length/60)).padStart(2,'0')}:${String(Math.round(avgWakeMin2.reduce((s,v)=>s+v,0)/avgWakeMin2.length%60)).padStart(2,'0')} AM`:null;
 
   // Exercise detail per day
@@ -4389,20 +4405,19 @@ function rWeeklyDashboard(){
       <div style="font-size:13px;font-weight:700;color:var(--gold)">${avgWakeDisplay}</div>
     </div>`:''}
 
-    <!-- Consistency + Discipline scores -->
     ${overallConsistency!==null||overallDiscipline!==null?`
     <div style="background:var(--p2);border-radius:10px;padding:12px;margin-bottom:10px">
-      <div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:10px">Timing Scores</div>
+      <div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:10px">Consistency &amp; Discipline</div>
       <div style="display:flex;gap:10px;margin-bottom:10px">
         <div style="flex:1;text-align:center;background:var(--p1);border-radius:8px;padding:10px">
           <div style="font-size:22px;font-weight:700;color:var(--teal)">${overallConsistency!==null?overallConsistency+'%':'—'}</div>
           <div style="font-size:10px;color:var(--sub);margin-top:2px">Consistency</div>
-          <div style="font-size:9px;color:var(--muted);margin-top:2px">same time daily</div>
+          <div style="font-size:9px;color:var(--muted);margin-top:2px">doing it daily</div>
         </div>
         <div style="flex:1;text-align:center;background:var(--p1);border-radius:8px;padding:10px">
           <div style="font-size:22px;font-weight:700;color:var(--orange)">${overallDiscipline!==null?overallDiscipline+'%':'—'}</div>
           <div style="font-size:10px;color:var(--sub);margin-top:2px">Discipline</div>
-          <div style="font-size:9px;color:var(--muted);margin-top:2px">close to target time</div>
+          <div style="font-size:9px;color:var(--muted);margin-top:2px">doing it on time</div>
         </div>
       </div>
       ${gap!==null?`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
@@ -4415,25 +4430,48 @@ function rWeeklyDashboard(){
         </div>
       </div>`:''}
       <div style="font-size:11px;color:${gapColor};font-weight:600">${gapMsg}</div>
-      <div style="font-size:9px;color:var(--muted);margin-top:4px">Gap of ${gap!==null?gap+'°':'—'} · nearer the scores, better the progress</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:4px">Gap ${gap!==null?gap+'°':'—'} · nearer the scores, better the progress</div>
     </div>
+
     <details style="cursor:pointer;margin-bottom:10px">
       <summary style="font-size:11px;font-weight:700;color:var(--sub);padding:6px 0;list-style:none;display:flex;justify-content:space-between">
-        <span>Meal Timing Detail</span><span style="font-size:10px;color:var(--muted)">▾</span>
+        <span>Consistency Detail</span><span style="font-size:10px;color:var(--muted)">▾</span>
       </summary>
       <div style="margin-top:8px;display:grid;gap:4px">
-        ${[
-          {l:'Breakfast',times:breakfastTimesMin,target:MEAL_TARGETS.breakfast,cons:breakfastConsistency,disc:bfDisc},
-          {l:'Lunch',times:lunchTimesMin,target:MEAL_TARGETS.lunch,cons:lunchConsistency,disc:lunchDisc},
-          {l:'Dinner',times:dinnerTimesMin,target:MEAL_TARGETS.dinner,cons:dinnerConsistency,disc:dinnerDisc},
-          {l:'Wake',times:wakeTimesMin,target:wakeTarget,cons:wakeConsistency,disc:wakeDisc},
-        ].filter(r=>r.times.filter(v=>v!==null).length>0).map(r=>`
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:var(--p2);border-radius:8px">
-            <div style="font-size:11px;color:var(--text);width:60px">${r.l}</div>
-            <div style="font-size:10px;color:var(--teal)">${r.cons!==null?r.cons+'% C':'—'}</div>
-            <div style="font-size:10px;color:var(--orange)">${r.disc!==null?r.disc+'% D':'—'}</div>
-            <div style="font-size:9px;color:var(--muted)">${r.times.filter(v=>v!==null).length}/${validDays.length} days logged</div>
+        ${activityConsistency.map(a=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:var(--p2);border-radius:8px">
+            <div style="font-size:11px;color:var(--text)">${a.l}</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:80px;height:5px;background:var(--b1);border-radius:3px;overflow:hidden">
+                <div style="height:100%;width:${a.pct}%;background:${a.pct>=80?'var(--green)':a.pct>=50?'var(--gold)':'var(--red)'};border-radius:3px"></div>
+              </div>
+              <div style="font-size:11px;font-weight:700;color:${a.pct>=80?'var(--green)':a.pct>=50?'var(--gold)':'var(--red)'};width:32px;text-align:right">${a.pct}%</div>
+              <div style="font-size:10px;color:var(--muted);width:30px">${a.done}/${scoringDays.length}d</div>
+            </div>
           </div>`).join('')}
+        <div style="font-size:9px;color:var(--muted);margin-top:4px;padding:0 4px">% of days the activity was completed</div>
+      </div>
+    </details>
+
+    <details style="cursor:pointer;margin-bottom:10px">
+      <summary style="font-size:11px;font-weight:700;color:var(--sub);padding:6px 0;list-style:none;display:flex;justify-content:space-between">
+        <span>Discipline Detail</span><span style="font-size:10px;color:var(--muted)">▾</span>
+      </summary>
+      <div style="margin-top:8px;display:grid;gap:4px">
+        ${disciplineItems.map(d=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:var(--p2);border-radius:8px">
+            <div>
+              <div style="font-size:11px;color:var(--text)">${d.l}</div>
+              <div style="font-size:9px;color:var(--muted)">target ${d.target}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:80px;height:5px;background:var(--b1);border-radius:3px;overflow:hidden">
+                <div style="height:100%;width:${d.score}%;background:${d.score>=80?'var(--green)':d.score>=50?'var(--gold)':'var(--red)'};border-radius:3px"></div>
+              </div>
+              <div style="font-size:11px;font-weight:700;color:${d.score>=80?'var(--green)':d.score>=50?'var(--gold)':'var(--red)'};width:32px;text-align:right">${d.score}%</div>
+            </div>
+          </div>`).join('')}
+        <div style="font-size:9px;color:var(--muted);margin-top:4px;padding:0 4px">% closeness to target time on days activity was done</div>
       </div>
     </details>`:''}
 
