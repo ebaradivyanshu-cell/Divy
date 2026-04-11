@@ -3409,8 +3409,6 @@ function rCalDay(dateStr){
   if(CAL_DAY_TAB==='schedule'){
     const sch=prepDay?prepDay.movement:effectiveMode==='hotel'?SCH_HOTEL:effectiveMode==='intl'?SCH_INTL:SCH_HOME;
 
-    }
-
     if(isPrep){
       html+=`<div style="background:#dceeff;border:1px solid #4a90d0;border-radius:10px;padding:12px;margin-bottom:10px">
         <div style="font-size:11px;color:#60b0e0;font-weight:700">${prepDay.theme}</div>
@@ -3598,6 +3596,7 @@ function rCalDay(dateStr){
         </div>`:''}
       </div>`;
     }
+  }
   else if(CAL_DAY_TAB==='exercise'){
     html+=`<div style="background:linear-gradient(135deg,var(--p3),var(--p2));border:1px solid var(--gold);border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
       <div><div style="font-size:26px;font-weight:700;color:var(--gold)">${exPts()} pts</div>
@@ -3614,6 +3613,9 @@ function rCalDay(dateStr){
         No band. No rope. No score pressure.<br>
         <span style="color:var(--gold)">60% completion = green today.</span></div>
       </div>`;
+    }
+
+    if(isPrep){
       // Prep days — show only that day's movement, no full exercise plan
       html+=`<div style="background:#dceeff;border:1px solid #4a90d0;border-radius:10px;padding:12px;margin-bottom:10px">
         <div style="font-size:11px;font-weight:700;color:#60b0e0;margin-bottom:4px">${prepDay.label}</div>
