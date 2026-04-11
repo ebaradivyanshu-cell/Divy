@@ -1619,7 +1619,7 @@ function rHome(){
           </div>`
         :(()=>{
             const comp=getDayCompletion(TODAY);
-            const need=Math.ceil(comp.total*0.8)-comp.done;
+            const need=Math.ceil(comp.total*(comp.passThreshold||80)/100)-comp.done;
             return `<div style="background:var(--p2);border:1px solid var(--b1);border-radius:10px;padding:12px;text-align:center">
               <div style="font-size:13px;font-weight:700;color:var(--gold)">Day ${S.cycleDay}/8 — ${comp.pct}% complete</div>
               <div style="font-size:11px;color:var(--sub);margin-top:4px">${need>0?'Need '+need+' more · auto-marks at 80%':'Calculating...'}</div>
@@ -3301,9 +3301,11 @@ function getDayCompletion(dateStr){
   const done=schDone+exDone+medDone+calPass+waterPass;
   const total=schTotal+exTotal+medTotal+calTotal+waterTotal;
   const pct=total>0?Math.round((done/total)*100):0;
+  const isSundayDate=new Date(dateStr).getDay()===0;
+  const passThreshold=isSundayDate?60:80; // Sunday = 60%, all other days = 80%
 
   const result={
-    done,total,pct,pass:pct>=80,
+    done,total,pct,pass:pct>=passThreshold,passThreshold,
     breakdown:{
       sch:{done:schDone,total:schTotal},
       ex:{done:exDone,total:exTotal,pass:exPass,isPrep},
@@ -3345,11 +3347,12 @@ function rCalDay(dateStr){
   const trip=getTripForDate(dateStr);
   const comp=getDayCompletion(dateStr);
   const dayChecks=dateStr===TODAY?CHECKS:loadS('dv4-ch-'+dateStr,{});
-  const liveChecks=dayChecks; // Always fresh — no longer use CHECKS for non-today
+  const liveChecks=dayChecks;
   let effectiveMode=S.mode;
   if(trip) effectiveMode=trip.type==='international'?'intl':trip.type==='domestic'?'hotel':'home';
 
   const d=new Date(dateStr);
+  const isSunday=d.getDay()===0; // Sunday = rest day
   const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const dayLabel=days[d.getDay()]+', '+d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();
@@ -3406,6 +3409,8 @@ function rCalDay(dateStr){
   if(CAL_DAY_TAB==='schedule'){
     const sch=prepDay?prepDay.movement:effectiveMode==='hotel'?SCH_HOTEL:effectiveMode==='intl'?SCH_INTL:SCH_HOME;
 
+    }
+
     if(isPrep){
       html+=`<div style="background:#dceeff;border:1px solid #4a90d0;border-radius:10px;padding:12px;margin-bottom:10px">
         <div style="font-size:11px;color:#60b0e0;font-weight:700">${prepDay.theme}</div>
@@ -3446,7 +3451,7 @@ function rCalDay(dateStr){
         </div>`).join('')}
     </div>`;
 
-    html+=`<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px">${comp.pct}% complete · ${comp.pass?'✅ Day complete!':'Need '+(Math.ceil(comp.total*0.8)-comp.done)+' more for 80%'}</div>
+    html+=`<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px">${comp.pct}% complete · ${comp.pass?'✅ Day complete!':'Need '+(Math.ceil(comp.total*(comp.passThreshold||80)/100)-comp.done)+' more for 80%'}</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:8px">
       ${[
         {l:'Habits',d:comp.breakdown.sch.done,t:comp.breakdown.sch.total,c:'var(--gold)'},
@@ -3593,7 +3598,6 @@ function rCalDay(dateStr){
         </div>`:''}
       </div>`;
     }
-  }
   else if(CAL_DAY_TAB==='exercise'){
     html+=`<div style="background:linear-gradient(135deg,var(--p3),var(--p2));border:1px solid var(--gold);border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
       <div><div style="font-size:26px;font-weight:700;color:var(--gold)">${exPts()} pts</div>
@@ -3601,7 +3605,15 @@ function rCalDay(dateStr){
       <div style="text-align:right;font-size:11px;color:var(--sub)">80% of day<br>= green ✅</div>
     </div>`;
 
-    if(isPrep){
+    if(isSunday&&!isPrep){
+      html+=`<div style="background:#f5f0e0;border:1px solid var(--gold);border-radius:10px;padding:14px;margin-bottom:10px;text-align:center">
+        <div style="font-size:20px;margin-bottom:6px">☀️</div>
+        <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:4px">Sunday — Rest Day</div>
+        <div style="font-size:11px;color:var(--sub);line-height:1.7">Sun's day. Restore, don't deplete.<br>
+        Walk only — easy pace, Jakkur Lake if you wish.<br>
+        No band. No rope. No score pressure.<br>
+        <span style="color:var(--gold)">60% completion = green today.</span></div>
+      </div>`;
       // Prep days — show only that day's movement, no full exercise plan
       html+=`<div style="background:#dceeff;border:1px solid #4a90d0;border-radius:10px;padding:12px;margin-bottom:10px">
         <div style="font-size:11px;font-weight:700;color:#60b0e0;margin-bottom:4px">${prepDay.label}</div>
@@ -4054,7 +4066,7 @@ PALMISTRY:
 CURRENT STATUS TODAY (${TODAY}):
 - ${isPrep?prepDay.label+' — '+prepDay.theme:'Day '+dayNum+' of journey'}
 - ${trip?'Travel day: '+trip.type:'Home day in Bengaluru'}
-- Day completion: ${comp.done}/${comp.total} items (${comp.pct}%) — ${comp.pass?'✅ Green day':'needs '+Math.max(0,Math.ceil(comp.total*0.8)-comp.done)+' more for 80%'}
+- Day completion: ${comp.done}/${comp.total} items (${comp.pct}%) — ${comp.pass?'✅ Green day':'needs '+Math.max(0,Math.ceil(comp.total*(comp.passThreshold||80)/100)-comp.done)+' more for 80%'}
 - Meds checked: ${medsDone}/6
 - Supplements done: ${suppsDone.length}/6
 - Water: ${water}ml / 3500ml
@@ -4570,44 +4582,59 @@ function rWeeklyDashboard(){
       </div>
     </details>
 
-    <!-- BP Weekly Summary -->
+    <!-- BP 3-Week History -->
     ${(()=>{
-      const bpData=validDays.map(({ds})=>{
+      // Build last 21 days
+      const bp21=[];
+      for(let i=20;i>=0;i--){
+        const d=new Date();d.setDate(d.getDate()-i);
+        const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');
+        const ds=`${y}-${m}-${dd}`;
+        if(ds<PREP_START||ds>TODAY) continue;
         const bp=loadS('dv4-bp-'+ds,{});
-        return {ds,morning:bp.morning,evening:bp.evening,day:new Date(ds).getDay()};
-      }).filter(d=>d.morning||d.evening);
-      if(!bpData.length) return '<div style="font-size:11px;color:var(--muted);padding:8px 0;text-align:center">No BP readings logged this week</div>';
+        bp21.push({ds,day:d.getDay(),date:d.getDate(),month:d.getMonth(),morning:bp.morning,evening:bp.evening});
+      }
+      const hasAny=bp21.some(d=>d.morning||d.evening);
+      if(!hasAny) return '<div style="font-size:11px;color:var(--muted);padding:8px 0;text-align:center">No BP readings logged yet</div>';
+
       const dayNames=['Su','Mo','Tu','We','Th','Fr','Sa'];
+      const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       const bpColor=(sys,dia)=>!sys?'var(--muted)':sys>140||dia>90?'var(--red)':sys>130||dia>85?'var(--orange)':'var(--green)';
-      const allReadings=bpData.flatMap(d=>[d.morning,d.evening].filter(Boolean));
-      const avgSys=allReadings.length?Math.round(allReadings.reduce((s,v)=>s+v.sys,0)/allReadings.length):null;
-      const avgDia=allReadings.length?Math.round(allReadings.reduce((s,v)=>s+v.dia,0)/allReadings.length):null;
+
+      const allR=bp21.flatMap(d=>[d.morning,d.evening].filter(Boolean));
+      const avgSys=allR.length?Math.round(allR.reduce((s,v)=>s+v.sys,0)/allR.length):null;
+      const avgDia=allR.length?Math.round(allR.reduce((s,v)=>s+v.dia,0)/allR.length):null;
+
       return `<details style="cursor:pointer;margin-top:6px">
         <summary style="font-size:12px;font-weight:700;color:var(--gold);padding:8px 0;list-style:none;display:flex;justify-content:space-between;align-items:center">
-          <span>Blood Pressure This Week</span>
-          <span style="font-size:11px;color:${bpColor(avgSys,avgDia)}">${avgSys?avgSys+'/'+avgDia+' avg':'tap to expand'} ▾</span>
+          <span>Blood Pressure — Last 3 Weeks</span>
+          <span style="font-size:11px;color:${bpColor(avgSys,avgDia)}">${avgSys?avgSys+'/'+avgDia+' avg':'tap ▾'}</span>
         </summary>
         <div style="margin-top:8px;border-top:1px solid var(--b1);padding-top:8px">
-          <div style="display:grid;grid-template-columns:28px 1fr 1fr;gap:4px;margin-bottom:6px">
-            <div></div>
+          <div style="display:grid;grid-template-columns:52px 1fr 1fr;gap:3px;margin-bottom:6px;padding:0 2px">
+            <div style="font-size:9px;color:var(--muted)">Date</div>
             <div style="font-size:9px;color:var(--muted);text-align:center">Morning</div>
             <div style="font-size:9px;color:var(--muted);text-align:center">Evening</div>
           </div>
-          ${validDays.map(({ds,day})=>{
-            const bp=loadS('dv4-bp-'+ds,{});
-            const m=bp.morning;const e=bp.evening;
-            const isTdy=ds===TODAY;
-            return `<div style="display:grid;grid-template-columns:28px 1fr 1fr;gap:4px;align-items:center;padding:4px 0;border-bottom:1px solid var(--b1)">
-              <div style="font-size:10px;font-weight:700;color:${isTdy?'var(--gold)':'var(--sub)'}">${dayNames[day]}</div>
-              <div style="text-align:center;font-size:11px;font-weight:700;color:${bpColor(m?.sys,m?.dia)}">${m?m.sys+'/'+m.dia:'—'}</div>
-              <div style="text-align:center;font-size:11px;font-weight:700;color:${bpColor(e?.sys,e?.dia)}">${e?e.sys+'/'+e.dia:'—'}</div>
-            </div>`;
-          }).join('')}
-          ${avgSys?`<div style="margin-top:8px;padding:8px;background:var(--p2);border-radius:8px;display:flex;justify-content:space-between;align-items:center">
-            <div style="font-size:11px;color:var(--sub)">Week average</div>
-            <div style="font-size:15px;font-weight:700;color:${bpColor(avgSys,avgDia)}">${avgSys}/${avgDia} mmHg</div>
+          <div style="max-height:300px;overflow-y:auto;-webkit-overflow-scrolling:touch">
+            ${bp21.slice().reverse().map(({ds,day,date,month,morning:m,evening:e})=>{
+              const isTdy=ds===TODAY;
+              const hasBP=m||e;
+              if(!hasBP&&!isTdy) return '';
+              return `<div style="display:grid;grid-template-columns:52px 1fr 1fr;gap:3px;align-items:center;padding:5px 2px;border-bottom:1px solid var(--b1);background:${isTdy?'var(--p2)':'transparent'}">
+                <div>
+                  <div style="font-size:10px;font-weight:700;color:${isTdy?'var(--gold)':'var(--sub)'}">${dayNames[day]} ${date} ${months[month]}</div>
+                </div>
+                <div style="text-align:center;font-size:12px;font-weight:700;color:${bpColor(m?.sys,m?.dia)}">${m?m.sys+'/'+m.dia:'—'}</div>
+                <div style="text-align:center;font-size:12px;font-weight:700;color:${bpColor(e?.sys,e?.dia)}">${e?e.sys+'/'+e.dia:'—'}</div>
+              </div>`;
+            }).join('')}
+          </div>
+          ${avgSys?`<div style="margin-top:10px;padding:8px;background:var(--p2);border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-size:10px;color:var(--sub)">21-day average</div><div style="font-size:9px;color:var(--muted)">${allR.length} readings</div></div>
+            <div style="font-size:16px;font-weight:700;color:${bpColor(avgSys,avgDia)}">${avgSys}/${avgDia} mmHg</div>
           </div>`:''}
-          <div style="font-size:9px;color:var(--muted);margin-top:6px">🟢 Normal &lt;130/85 · 🟡 Elevated 130-140 · 🔴 High &gt;140/90</div>
+          <div style="font-size:9px;color:var(--muted);margin-top:6px">🟢 &lt;130/85 · 🟡 130-140 · 🔴 &gt;140/90</div>
         </div>
       </details>`;
     })()}
