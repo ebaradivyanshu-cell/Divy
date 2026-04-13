@@ -343,6 +343,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 // ═══════════ CONSTANTS ═══════════
 const SW=98,GW=75;
 const START_DATE='2026-03-28';
+const MEDITATION_START='2026-04-13'; // Morning sit + Yoga Nidra added from this date
 const PREP_START='2026-03-23';
 
 const PREP_DAYS={
@@ -3255,8 +3256,10 @@ function getDayCompletion(dateStr){
 
   // ── PILLAR 1: HABITS (pure schedule items only — no duplicates) ──
   const sch=prepDay?prepDay.movement:effectiveMode==='hotel'?SCH_HOTEL:effectiveMode==='intl'?SCH_INTL:SCH_HOME;
-  const schDone=Object.entries(dayChecks).filter(([k,v])=>k.startsWith('d')&&isDone(v)).length;
-  const schTotal=sch.length;
+  // Meditation items (Morning sit 🧘 + Yoga Nidra 🌙) only count from MEDITATION_START
+  const effectiveSch=dateStr>=MEDITATION_START?sch:sch.filter(item=>item.ic!=='🧘'&&item.ic!=='🌙');
+  const schTotal=effectiveSch.length;
+  const schDone=Math.min(Object.entries(dayChecks).filter(([k,v])=>k.startsWith('d')&&isDone(v)).length, schTotal);
 
   // ── PILLAR 2: EXERCISE (mandatory minimum: breathwork + morning walk) ──
   // For prep days — exercise is part of schedule items, no separate exercise check
@@ -3414,6 +3417,8 @@ function rCalDay(dateStr){
   // ── SCHEDULE TAB ──
   if(CAL_DAY_TAB==='schedule'){
     const sch=prepDay?prepDay.movement:effectiveMode==='hotel'?SCH_HOTEL:effectiveMode==='intl'?SCH_INTL:SCH_HOME;
+    // Only show meditation items from MEDITATION_START onwards
+    const displaySch=dateStr>=MEDITATION_START?sch:sch.filter(item=>item.ic!=='🧘'&&item.ic!=='🌙');
 
     if(isPrep){
       html+=`<div style="background:#dceeff;border:1px solid #4a90d0;border-radius:10px;padding:12px;margin-bottom:10px">
@@ -3426,7 +3431,7 @@ function rCalDay(dateStr){
         <div style="font-size:11px;color:var(--muted);margin-top:2px">Minimum: 15 min walk + breathwork + all medications. Non-negotiable.</div>
       </div>`;
     }
-    html+=sch.map((item,i)=>`
+    html+=displaySch.map((item,i)=>`
       <div class="si ${isDone(liveChecks['d'+i])?'dn':''}" ${isToday&&!item.auto?`onclick="toggleCheck('d${i}');renderTab('cal')"`:''} style="cursor:${isToday&&!item.auto?'pointer':'default'}">
         <div class="si-ic">${item.ic}</div>
         <div class="si-inf">
