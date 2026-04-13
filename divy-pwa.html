@@ -2977,10 +2977,10 @@ function checkDayLock(){
   const yd=`${y}-${m}-${day}`;
   if(yd<PREP_START) return false; // before journey
   if(DAY_LOCK.lastDate===TODAY) return false; // already handled today
-  // Use full holistic getDayCompletion
+  if(d.getDay()===0) return false; // Sunday — 60% threshold, no lock needed
   const comp=getDayCompletion(yd);
-  if(comp.pass) return false; // 80%+ = pass
-  return yd; // return yesterday date if lock needed
+  if(comp.pass) return false; // passed threshold = no lock
+  return yd;
 }
 
 function resolvelock(reason){
