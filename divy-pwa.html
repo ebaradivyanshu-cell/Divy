@@ -343,7 +343,11 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 // ═══════════ CONSTANTS ═══════════
 const SW=98,GW=75;
 const START_DATE='2026-03-28';
-const MEDITATION_START='2026-04-13'; // Morning sit + Yoga Nidra added from this date
+const MEDITATION_START='2026-05-11'; // All protocol v2 changes gate here
+const PROTOCOL_V2='2026-05-11'; // Exercise alternates, Sunday 60%, rope target, Friday warning
+const FAST_DAY=3; // Wednesday = 3 (0=Sun, 1=Mon... 3=Wed)
+const FAST_CAL_TARGET=500; // kcal target on fast days
+const FAST_WATER_TARGET=3000; // 3L minimum on fast days // Morning sit + Yoga Nidra added from this date
 const PREP_START='2026-03-23';
 
 const PREP_DAYS={
@@ -412,397 +416,442 @@ const MILESTONES=[95,92,89,85,82,79,75];
 // FOOD DATABASE (per 100g raw / 100ml liquid)
 const FOOD_DB=[
   // ── GRAINS & RICE ──
-  {n:'Basmati Rice (raw)',cal:349,u:'g',cat:'Grain',p:7,c:78,f:0.5,k:115,ph:115,na:5},
-  {n:'Basmati Rice (cooked)',cal:130,u:'g',cat:'Grain',p:2.7,c:28,f:0.3,k:35,ph:43,na:1},
-  {n:'Brown Rice (raw)',cal:370,u:'g',cat:'Grain',p:8,c:77,f:3,k:223,ph:333,na:7},
-  {n:'Brown Rice (cooked)',cal:216,u:'g',cat:'Grain',p:5,c:45,f:1.8,k:84,ph:162,na:10},
-  {n:'Whole Wheat Atta (raw)',cal:340,u:'g',cat:'Grain',p:13,c:71,f:2,k:363,ph:346,na:5},
-  {n:'Whole Wheat Roti (1 medium ~40g)',cal:71,u:'pcs',cat:'Grain',p:2.5,c:14,f:0.9,k:78,ph:74,na:2},
-  {n:'Multigrain Roti (1 medium)',cal:80,u:'pcs',cat:'Grain',p:3,c:15,f:1.2,k:90,ph:85,na:3},
-  {n:'Maida / Refined Flour',cal:364,u:'g',cat:'Grain',p:10,c:76,f:1,k:107,ph:108,na:2},
-  {n:'Besan (Gram Flour)',cal:387,u:'g',cat:'Grain',p:22,c:58,f:6,k:846,ph:318,na:64},
-  {n:'Poha (raw)',cal:333,u:'g',cat:'Grain',p:6,c:77,f:0.5,k:177,ph:140,na:8},
-  {n:'Poha (cooked)',cal:110,u:'g',cat:'Grain',p:2,c:25,f:0.5,k:60,ph:45,na:5},
-  {n:'Suji / Semolina (raw)',cal:360,u:'g',cat:'Grain',p:13,c:73,f:1,k:186,ph:136,na:1},
-  {n:'Oats (Rolled, raw)',cal:389,u:'g',cat:'Grain',p:17,c:66,f:7,k:429,ph:523,na:6},
-  {n:'Oats (cooked with water)',cal:68,u:'g',cat:'Grain',p:2.4,c:12,f:1.4,k:61,ph:77,na:49},
-  {n:'Bread (whole wheat, 1 slice)',cal:79,u:'pcs',cat:'Grain',p:4,c:15,f:1,k:95,ph:57,na:132},
-  {n:'Bread (white, 1 slice)',cal:75,u:'pcs',cat:'Grain',p:2.5,c:14,f:0.8,k:31,ph:25,na:148},
-  {n:'Pav (1 piece)',cal:110,u:'pcs',cat:'Grain',p:3,c:21,f:1.5,k:45,ph:35,na:180},
+  {n:'Basmati Rice (raw)',cal:349,u:'g',cat:'Grain',p:7,c:78,f:0.5,k:115,ph:115,na:5,fi:0.4},
+  {n:'Basmati Rice (cooked)',cal:130,u:'g',cat:'Grain',p:2.7,c:28,f:0.3,k:35,ph:43,na:1,fi:0.2},
+  {n:'Brown Rice (raw)',cal:370,u:'g',cat:'Grain',p:8,c:77,f:3,k:223,ph:333,na:7,fi:3.5},
+  {n:'Brown Rice (cooked)',cal:216,u:'g',cat:'Grain',p:5,c:45,f:1.8,k:84,ph:162,na:10,fi:1.8},
+  {n:'Whole Wheat Atta (raw)',cal:340,u:'g',cat:'Grain',p:13,c:71,f:2,k:363,ph:346,na:5,fi:10},
+  {n:'Whole Wheat Roti (1 medium ~40g)',cal:71,u:'pcs',cat:'Grain',p:2.5,c:14,f:0.9,k:78,ph:74,na:2,fi:2.7},
+  {n:'Multigrain Roti (1 medium)',cal:80,u:'pcs',cat:'Grain',p:3,c:15,f:1.2,k:90,ph:85,na:3,fi:3.5},
+  {n:'Maida / Refined Flour',cal:364,u:'g',cat:'Grain',p:10,c:76,f:1,k:107,ph:108,na:2,fi:2.7},
+  {n:'Besan (Gram Flour)',cal:387,u:'g',cat:'Grain',p:22,c:58,f:6,k:846,ph:318,na:64,fi:10.9},
+  {n:'Poha (raw)',cal:333,u:'g',cat:'Grain',p:6,c:77,f:0.5,k:177,ph:140,na:8,fi:1.5},
+  {n:'Poha (cooked)',cal:110,u:'g',cat:'Grain',p:2,c:25,f:0.5,k:60,ph:45,na:5,fi:0.5},
+  {n:'Suji / Semolina (raw)',cal:360,u:'g',cat:'Grain',p:13,c:73,f:1,k:186,ph:136,na:1,fi:3.6},
+  {n:'Oats (Rolled, raw)',cal:389,u:'g',cat:'Grain',p:17,c:66,f:7,k:429,ph:523,na:6,fi:10.1},
+  {n:'Oats (cooked with water)',cal:68,u:'g',cat:'Grain',p:2.4,c:12,f:1.4,k:61,ph:77,na:49,fi:1.7},
+  {n:'Bread (whole wheat, 1 slice)',cal:79,u:'pcs',cat:'Grain',p:4,c:15,f:1,k:95,ph:57,na:132,fi:1.9},
+  {n:'Bread (white, 1 slice)',cal:75,u:'pcs',cat:'Grain',p:2.5,c:14,f:0.8,k:31,ph:25,na:148,fi:0.6},
+  {n:'Pav (1 piece)',cal:110,u:'pcs',cat:'Grain',p:3,c:21,f:1.5,k:45,ph:35,na:180,fi:0.5},
   // ── MILLETS ──
-  {n:'Jowar / Sorghum (raw)',cal:349,u:'g',cat:'Millet',p:11,c:73,f:3,k:350,ph:287,na:6},
-  {n:'Jowar Roti (1 medium)',cal:88,u:'pcs',cat:'Millet',p:2.8,c:18,f:0.8,k:90,ph:72,na:2},
-  {n:'Bajra / Pearl Millet (raw)',cal:361,u:'g',cat:'Millet',p:12,c:67,f:5,k:307,ph:296,na:10},
-  {n:'Bajra Roti (1 medium)',cal:97,u:'pcs',cat:'Millet',p:3.2,c:18,f:1.3,k:82,ph:79,na:3},
-  {n:'Ragi / Finger Millet (raw)',cal:336,u:'g',cat:'Millet',p:7.3,c:72,f:1.9,k:408,ph:283,na:11},
-  {n:'Ragi Dosa (1 piece)',cal:95,u:'pcs',cat:'Millet',p:2.5,c:18,f:1.2,k:95,ph:65,na:15},
-  {n:'Ragi Roti (1 medium)',cal:105,u:'pcs',cat:'Millet',p:2,c:22,f:0.5,k:113,ph:78,na:3},
-  {n:'Foxtail Millet (raw)',cal:351,u:'g',cat:'Millet',p:12,c:63,f:4,k:250,ph:290,na:5},
-  {n:'Little Millet (raw)',cal:341,u:'g',cat:'Millet',p:9,c:65,f:4,k:130,ph:220,na:4},
-  {n:'Barnyard Millet (raw)',cal:342,u:'g',cat:'Millet',p:11,c:65,f:3.5,k:180,ph:250,na:3},
-  {n:'Kodo Millet (raw)',cal:353,u:'g',cat:'Millet',p:9,c:66,f:3,k:160,ph:188,na:3},
+  {n:'Jowar / Sorghum (raw)',cal:349,u:'g',cat:'Millet',p:11,c:73,f:3,k:350,ph:287,na:6,fi:6.3},
+  {n:'Jowar Roti (1 medium)',cal:88,u:'pcs',cat:'Millet',p:2.8,c:18,f:0.8,k:90,ph:72,na:2,fi:6.3},
+  {n:'Bajra / Pearl Millet (raw)',cal:361,u:'g',cat:'Millet',p:12,c:67,f:5,k:307,ph:296,na:10,fi:1.2},
+  {n:'Bajra Roti (1 medium)',cal:97,u:'pcs',cat:'Millet',p:3.2,c:18,f:1.3,k:82,ph:79,na:3,fi:1.2},
+  {n:'Ragi / Finger Millet (raw)',cal:336,u:'g',cat:'Millet',p:7.3,c:72,f:1.9,k:408,ph:283,na:11,fi:3.6},
+  {n:'Ragi Dosa (1 piece)',cal:95,u:'pcs',cat:'Millet',p:2.5,c:18,f:1.2,k:95,ph:65,na:15,fi:3.6},
+  {n:'Ragi Roti (1 medium)',cal:105,u:'pcs',cat:'Millet',p:2,c:22,f:0.5,k:113,ph:78,na:3,fi:3.6},
+  {n:'Foxtail Millet (raw)',cal:351,u:'g',cat:'Millet',p:12,c:63,f:4,k:250,ph:290,na:5,fi:8},
+  {n:'Little Millet (raw)',cal:341,u:'g',cat:'Millet',p:9,c:65,f:4,k:130,ph:220,na:4,fi:7.6},
+  {n:'Barnyard Millet (raw)',cal:342,u:'g',cat:'Millet',p:11,c:65,f:3.5,k:180,ph:250,na:3,fi:9.8},
+  {n:'Kodo Millet (raw)',cal:353,u:'g',cat:'Millet',p:9,c:66,f:3,k:160,ph:188,na:3,fi:9},
   // ── DALS & PULSES ──
-  {n:'Toor / Arhar Dal (raw)',cal:343,u:'g',cat:'Dal',p:22,c:57,f:2,k:1392,ph:304,na:17},
-  {n:'Toor Dal (cooked)',cal:116,u:'g',cat:'Dal',p:7,c:21,f:0.4,k:396,ph:99,na:5},
-  {n:'Moong Dal (raw)',cal:347,u:'g',cat:'Dal',p:24,c:60,f:1.2,k:1246,ph:367,na:15},
-  {n:'Moong Dal (cooked)',cal:105,u:'g',cat:'Dal',p:7,c:19,f:0.4,k:369,ph:99,na:4},
-  {n:'Moong Dal Sprouts',cal:30,u:'g',cat:'Dal',p:3,c:4,f:0.2,k:149,ph:54,na:6},
-  {n:'Masoor Dal (raw)',cal:353,u:'g',cat:'Dal',p:26,c:60,f:1,k:955,ph:451,na:6},
-  {n:'Masoor Dal (cooked)',cal:116,u:'g',cat:'Dal',p:9,c:20,f:0.4,k:369,ph:180,na:4},
-  {n:'Urad Dal (raw)',cal:341,u:'g',cat:'Dal',p:25,c:59,f:1.4,k:983,ph:379,na:38},
-  {n:'Urad Dal (cooked)',cal:105,u:'g',cat:'Dal',p:8,c:18,f:0.4,k:362,ph:138,na:14},
-  {n:'Chana Dal (raw)',cal:364,u:'g',cat:'Dal',p:20,c:61,f:5,k:846,ph:331,na:24},
-  {n:'Chana Dal (cooked)',cal:164,u:'g',cat:'Dal',p:9,c:27,f:2.6,k:291,ph:168,na:7},
-  {n:'Rajma / Kidney Beans (raw)',cal:333,u:'g',cat:'Dal',p:24,c:60,f:1.5,k:1406,ph:407,na:24},
-  {n:'Rajma (cooked)',cal:127,u:'g',cat:'Dal',p:9,c:23,f:0.5,k:403,ph:243,na:2},
-  {n:'Chole / Chickpea (raw)',cal:364,u:'g',cat:'Dal',p:19,c:61,f:6,k:875,ph:366,na:24},
-  {n:'Chole (cooked)',cal:164,u:'g',cat:'Dal',p:9,c:27,f:2.6,k:291,ph:168,na:7},
-  {n:'Lobiya / Black Eyed Peas (cooked)',cal:116,u:'g',cat:'Dal',p:8,c:21,f:0.5,k:278,ph:156,na:4},
-  {n:'Moth Dal (cooked)',cal:107,u:'g',cat:'Dal',p:7,c:19,f:0.5,k:300,ph:140,na:5},
-  {n:'Soya Chunks (dry)',cal:336,u:'g',cat:'Protein',p:52,c:33,f:0.5,k:1243,ph:700,na:30},
-  {n:'Soya Chunks (cooked 100g dry)',cal:336,u:'g',cat:'Protein',p:52,c:33,f:0.5,k:1243,ph:700,na:30},
+  {n:'Toor / Arhar Dal (raw)',cal:343,u:'g',cat:'Dal',p:22,c:57,f:2,k:1392,ph:304,na:17,fi:0},
+  {n:'Toor Dal (cooked)',cal:116,u:'g',cat:'Dal',p:7,c:21,f:0.4,k:396,ph:99,na:5,fi:15},
+  {n:'Moong Dal (raw)',cal:347,u:'g',cat:'Dal',p:24,c:60,f:1.2,k:1246,ph:367,na:15,fi:16},
+  {n:'Moong Dal (cooked)',cal:105,u:'g',cat:'Dal',p:7,c:19,f:0.4,k:369,ph:99,na:4,fi:16},
+  {n:'Moong Dal Sprouts',cal:30,u:'g',cat:'Dal',p:3,c:4,f:0.2,k:149,ph:54,na:6,fi:16},
+  {n:'Masoor Dal (raw)',cal:353,u:'g',cat:'Dal',p:26,c:60,f:1,k:955,ph:451,na:6,fi:10.9},
+  {n:'Masoor Dal (cooked)',cal:116,u:'g',cat:'Dal',p:9,c:20,f:0.4,k:369,ph:180,na:4,fi:10.9},
+  {n:'Urad Dal (raw)',cal:341,u:'g',cat:'Dal',p:25,c:59,f:1.4,k:983,ph:379,na:38,fi:18.3},
+  {n:'Urad Dal (cooked)',cal:105,u:'g',cat:'Dal',p:8,c:18,f:0.4,k:362,ph:138,na:14,fi:18.3},
+  {n:'Chana Dal (raw)',cal:364,u:'g',cat:'Dal',p:20,c:61,f:5,k:846,ph:331,na:24,fi:17.4},
+  {n:'Chana Dal (cooked)',cal:164,u:'g',cat:'Dal',p:9,c:27,f:2.6,k:291,ph:168,na:7,fi:17.4},
+  {n:'Rajma / Kidney Beans (raw)',cal:333,u:'g',cat:'Dal',p:24,c:60,f:1.5,k:1406,ph:407,na:24,fi:25},
+  {n:'Rajma (cooked)',cal:127,u:'g',cat:'Dal',p:9,c:23,f:0.5,k:403,ph:243,na:2,fi:25},
+  {n:'Chole / Chickpea (raw)',cal:364,u:'g',cat:'Dal',p:19,c:61,f:6,k:875,ph:366,na:24,fi:17},
+  {n:'Chole (cooked)',cal:164,u:'g',cat:'Dal',p:9,c:27,f:2.6,k:291,ph:168,na:7,fi:17},
+  {n:'Lobiya / Black Eyed Peas (cooked)',cal:116,u:'g',cat:'Dal',p:8,c:21,f:0.5,k:278,ph:156,na:4,fi:10.6},
+  {n:'Moth Dal (cooked)',cal:107,u:'g',cat:'Dal',p:7,c:19,f:0.5,k:300,ph:140,na:5,fi:9},
+  {n:'Soya Chunks (dry)',cal:336,u:'g',cat:'Protein',p:52,c:33,f:0.5,k:1243,ph:700,na:30,fi:4.2},
+  {n:'Soya Chunks (cooked 100g dry)',cal:336,u:'g',cat:'Protein',p:52,c:33,f:0.5,k:1243,ph:700,na:30,fi:4.2},
   // ── SOUTH INDIAN ──
-  {n:'Idli (1 piece ~40g)',cal:39,u:'pcs',cat:'South Indian',p:1.8,c:8,f:0.3,k:35,ph:28,na:90},
-  {n:'Dosa (plain, 1 piece)',cal:112,u:'pcs',cat:'South Indian',p:3,c:20,f:2,k:50,ph:60,na:140},
-  {n:'Masala Dosa (1 piece)',cal:168,u:'pcs',cat:'South Indian',p:4,c:28,f:4,k:180,ph:80,na:250},
-  {n:'Uttapam (1 piece)',cal:120,u:'pcs',cat:'South Indian',p:4,c:20,f:2.5,k:80,ph:70,na:180},
-  {n:'Dosa Batter (raw)',cal:74,u:'g',cat:'South Indian',p:3,c:14,f:0.5,k:45,ph:50,na:180},
-  {n:'Sambar (per bowl ~200ml)',cal:80,u:'pcs',cat:'South Indian',p:4,c:12,f:1.5,k:320,ph:90,na:400},
-  {n:'Rasam (per bowl ~200ml)',cal:35,u:'pcs',cat:'South Indian',p:1,c:6,f:0.5,k:180,ph:30,na:350},
-  {n:'Coconut Chutney (2 tbsp)',cal:60,u:'pcs',cat:'South Indian',p:0.5,c:3,f:5,k:100,ph:20,na:80},
-  {n:'Upma (1 bowl ~150g)',cal:150,u:'pcs',cat:'South Indian',p:4,c:25,f:3,k:120,ph:80,na:350},
-  {n:'Pongal (1 bowl ~150g)',cal:180,u:'pcs',cat:'South Indian',p:5,c:30,f:4,k:100,ph:90,na:300},
-  {n:'Rava Idli (1 piece)',cal:65,u:'pcs',cat:'South Indian',p:2,c:11,f:1.2,k:50,ph:35,na:130},
+  {n:'Idli (1 piece ~40g)',cal:39,u:'pcs',cat:'South Indian',p:1.8,c:8,f:0.3,k:35,ph:28,na:90,fi:0.7},
+  {n:'Dosa (plain, 1 piece)',cal:112,u:'pcs',cat:'South Indian',p:3,c:20,f:2,k:50,ph:60,na:140,fi:1},
+  {n:'Masala Dosa (1 piece)',cal:168,u:'pcs',cat:'South Indian',p:4,c:28,f:4,k:180,ph:80,na:250,fi:1},
+  {n:'Uttapam (1 piece)',cal:120,u:'pcs',cat:'South Indian',p:4,c:20,f:2.5,k:80,ph:70,na:180,fi:1.5},
+  {n:'Dosa Batter (raw)',cal:74,u:'g',cat:'South Indian',p:3,c:14,f:0.5,k:45,ph:50,na:180,fi:1},
+  {n:'Sambar (per bowl ~200ml)',cal:80,u:'pcs',cat:'South Indian',p:4,c:12,f:1.5,k:320,ph:90,na:400,fi:3},
+  {n:'Rasam (per bowl ~200ml)',cal:35,u:'pcs',cat:'South Indian',p:1,c:6,f:0.5,k:180,ph:30,na:350,fi:0.5},
+  {n:'Coconut Chutney (2 tbsp)',cal:60,u:'pcs',cat:'South Indian',p:0.5,c:3,f:5,k:100,ph:20,na:80,fi:2.4},
+  {n:'Upma (1 bowl ~150g)',cal:150,u:'pcs',cat:'South Indian',p:4,c:25,f:3,k:120,ph:80,na:350,fi:1.8},
+  {n:'Pongal (1 bowl ~150g)',cal:180,u:'pcs',cat:'South Indian',p:5,c:30,f:4,k:100,ph:90,na:300,fi:1.5},
+  {n:'Rava Idli (1 piece)',cal:65,u:'pcs',cat:'South Indian',p:2,c:11,f:1.2,k:50,ph:35,na:130,fi:0.7},
   // ── NORTH INDIAN DISHES ──
-  {n:'Dal Makhani (1 bowl ~150g)',cal:200,u:'pcs',cat:'Dish',p:8,c:22,f:9,k:400,ph:180,na:500},
-  {n:'Chole Masala (1 bowl ~150g)',cal:195,u:'pcs',cat:'Dish',p:9,c:28,f:6,k:350,ph:180,na:480},
-  {n:'Rajma Chawal (1 plate)',cal:380,u:'pcs',cat:'Dish',p:14,c:65,f:5,k:600,ph:280,na:450},
-  {n:'Khichdi (1 bowl ~200g)',cal:180,u:'pcs',cat:'Dish',p:7,c:32,f:3,k:200,ph:110,na:300},
-  {n:'Palak Paneer (1 bowl ~150g)',cal:200,u:'pcs',cat:'Dish',p:9,c:8,f:15,k:350,ph:250,na:420},
-  {n:'Aloo Sabzi (1 bowl)',cal:150,u:'pcs',cat:'Dish',p:3,c:25,f:4,k:400,ph:70,na:300},
-  {n:'Bhindi Masala (1 bowl)',cal:100,u:'pcs',cat:'Dish',p:3,c:12,f:4,k:280,ph:55,na:320},
-  {n:'Lauki Sabzi (1 bowl)',cal:60,u:'pcs',cat:'Dish',p:1.5,c:9,f:2,k:200,ph:25,na:280},
-  {n:'Pav Bhaji (1 plate)',cal:400,u:'pcs',cat:'Dish',p:8,c:55,f:14,k:450,ph:120,na:800},
-  {n:'Paratha (plain, 1 piece)',cal:200,u:'pcs',cat:'Dish',p:4,c:28,f:8,k:80,ph:90,na:200},
-  {n:'Paratha (aloo, 1 piece)',cal:250,u:'pcs',cat:'Dish',p:5,c:35,f:10,k:200,ph:100,na:280},
-  {n:'Thepla (1 piece)',cal:130,u:'pcs',cat:'Dish',p:3.5,c:18,f:5,k:100,ph:70,na:150},
-  {n:'Dhokla (2 pieces)',cal:120,u:'pcs',cat:'Dish',p:5,c:18,f:2,k:80,ph:60,na:350},
-  {n:'Poha (cooked bowl ~150g)',cal:165,u:'pcs',cat:'Dish',p:3,c:35,f:3,k:100,ph:65,na:150},
-  {n:'Upma (semolina, bowl)',cal:200,u:'pcs',cat:'Dish',p:5,c:32,f:5,k:140,ph:90,na:400},
+  {n:'Dal Makhani (1 bowl ~150g)',cal:200,u:'pcs',cat:'Dish',p:8,c:22,f:9,k:400,ph:180,na:500,fi:6.5},
+  {n:'Chole Masala (1 bowl ~150g)',cal:195,u:'pcs',cat:'Dish',p:9,c:28,f:6,k:350,ph:180,na:480,fi:17},
+  {n:'Rajma Chawal (1 plate)',cal:380,u:'pcs',cat:'Dish',p:14,c:65,f:5,k:600,ph:280,na:450,fi:25},
+  {n:'Khichdi (1 bowl ~200g)',cal:180,u:'pcs',cat:'Dish',p:7,c:32,f:3,k:200,ph:110,na:300,fi:3},
+  {n:'Palak Paneer (1 bowl ~150g)',cal:200,u:'pcs',cat:'Dish',p:9,c:8,f:15,k:350,ph:250,na:420,fi:0},
+  {n:'Aloo Sabzi (1 bowl)',cal:150,u:'pcs',cat:'Dish',p:3,c:25,f:4,k:400,ph:70,na:300,fi:2},
+  {n:'Bhindi Masala (1 bowl)',cal:100,u:'pcs',cat:'Dish',p:3,c:12,f:4,k:280,ph:55,na:320,fi:3.2},
+  {n:'Lauki Sabzi (1 bowl)',cal:60,u:'pcs',cat:'Dish',p:1.5,c:9,f:2,k:200,ph:25,na:280,fi:0.5},
+  {n:'Pav Bhaji (1 plate)',cal:400,u:'pcs',cat:'Dish',p:8,c:55,f:14,k:450,ph:120,na:800,fi:0.5},
+  {n:'Paratha (plain, 1 piece)',cal:200,u:'pcs',cat:'Dish',p:4,c:28,f:8,k:80,ph:90,na:200,fi:2},
+  {n:'Paratha (aloo, 1 piece)',cal:250,u:'pcs',cat:'Dish',p:5,c:35,f:10,k:200,ph:100,na:280,fi:2},
+  {n:'Thepla (1 piece)',cal:130,u:'pcs',cat:'Dish',p:3.5,c:18,f:5,k:100,ph:70,na:150,fi:3.5},
+  {n:'Dhokla (2 pieces)',cal:120,u:'pcs',cat:'Dish',p:5,c:18,f:2,k:80,ph:60,na:350,fi:1.5},
+  {n:'Poha (cooked bowl ~150g)',cal:165,u:'pcs',cat:'Dish',p:3,c:35,f:3,k:100,ph:65,na:150,fi:1.2},
+  {n:'Upma (semolina, bowl)',cal:200,u:'pcs',cat:'Dish',p:5,c:32,f:5,k:140,ph:90,na:400,fi:1.8},
   // ── PROTEINS ──
-  {n:'Egg (whole, raw)',cal:155,u:'g',cat:'Protein',p:13,c:1.1,f:11,k:138,ph:198,na:124},
-  {n:'Egg (boiled, 1 large)',cal:78,u:'pcs',cat:'Protein',p:6,c:0.6,f:5,k:69,ph:99,na:62},
-  {n:'Egg White (raw)',cal:52,u:'g',cat:'Protein',p:11,c:0.7,f:0.2,k:163,ph:15,na:166},
-  {n:'Egg Bhurji (2 eggs)',cal:220,u:'pcs',cat:'Protein',p:14,c:5,f:16,k:200,ph:210,na:350},
-  {n:'Omelette (2 eggs)',cal:200,u:'pcs',cat:'Protein',p:13,c:2,f:15,k:180,ph:200,na:320},
-  {n:'Tofu (raw)',cal:76,u:'g',cat:'Protein',p:8,c:2,f:4.5,k:121,ph:97,na:7},
-  {n:'Tofu (grilled 100g)',cal:110,u:'g',cat:'Protein',p:12,c:3,f:6,k:150,ph:120,na:15},
-  {n:'Chicken Breast (raw)',cal:120,u:'g',cat:'Protein',p:22,c:0,f:3,k:370,ph:220,na:74},
-  {n:'Chicken Breast (grilled 100g)',cal:165,u:'g',cat:'Protein',p:31,c:0,f:4,k:256,ph:220,na:74},
-  {n:'Chicken Curry (1 bowl ~150g)',cal:220,u:'pcs',cat:'Protein',p:24,c:5,f:12,k:380,ph:230,na:550},
-  {n:'Goat Mutton (raw, boneless)',cal:109,u:'g',cat:'Protein',p:17,c:0,f:4,k:385,ph:190,na:72},
-  {n:'Mutton Curry (1 bowl ~150g)',cal:270,u:'pcs',cat:'Protein',p:22,c:6,f:17,k:400,ph:200,na:600},
-  {n:'Paneer (raw)',cal:265,u:'g',cat:'Protein',p:18,c:3,f:20,k:130,ph:478,na:42},
-  {n:'Paneer (grilled 100g)',cal:280,u:'g',cat:'Protein',p:19,c:4,f:21,k:135,ph:490,na:50},
+  {n:'Egg (whole, raw)',cal:155,u:'g',cat:'Protein',p:13,c:1.1,f:11,k:138,ph:198,na:124,fi:0},
+  {n:'Egg (boiled, 1 large)',cal:78,u:'pcs',cat:'Protein',p:6,c:0.6,f:5,k:69,ph:99,na:62,fi:0},
+  {n:'Egg White (raw)',cal:52,u:'g',cat:'Protein',p:11,c:0.7,f:0.2,k:163,ph:15,na:166,fi:0},
+  {n:'Egg Bhurji (2 eggs)',cal:220,u:'pcs',cat:'Protein',p:14,c:5,f:16,k:200,ph:210,na:350,fi:0},
+  {n:'Omelette (2 eggs)',cal:200,u:'pcs',cat:'Protein',p:13,c:2,f:15,k:180,ph:200,na:320,fi:0},
+  {n:'Tofu (raw)',cal:76,u:'g',cat:'Protein',p:8,c:2,f:4.5,k:121,ph:97,na:7,fi:0.3},
+  {n:'Tofu (grilled 100g)',cal:110,u:'g',cat:'Protein',p:12,c:3,f:6,k:150,ph:120,na:15,fi:0.3},
+  {n:'Chicken Breast (raw)',cal:120,u:'g',cat:'Protein',p:22,c:0,f:3,k:370,ph:220,na:74,fi:0},
+  {n:'Chicken Breast (grilled 100g)',cal:165,u:'g',cat:'Protein',p:31,c:0,f:4,k:256,ph:220,na:74,fi:0},
+  {n:'Chicken Curry (1 bowl ~150g)',cal:220,u:'pcs',cat:'Protein',p:24,c:5,f:12,k:380,ph:230,na:550,fi:0},
+  {n:'Goat Mutton (raw, boneless)',cal:109,u:'g',cat:'Protein',p:17,c:0,f:4,k:385,ph:190,na:72,fi:0},
+  {n:'Mutton Curry (1 bowl ~150g)',cal:270,u:'pcs',cat:'Protein',p:22,c:6,f:17,k:400,ph:200,na:600,fi:0},
+  {n:'Paneer (raw)',cal:265,u:'g',cat:'Protein',p:18,c:3,f:20,k:130,ph:478,na:42,fi:0},
+  {n:'Paneer (grilled 100g)',cal:280,u:'g',cat:'Protein',p:19,c:4,f:21,k:135,ph:490,na:50,fi:0},
   // ── VEGETABLES ──
-  {n:'Spinach / Palak (raw)',cal:23,u:'g',cat:'Veg',p:2.9,c:3.6,f:0.4,k:558,ph:49,na:79},
-  {n:'Methi Leaves (raw)',cal:49,u:'g',cat:'Veg',p:4.4,c:6,f:0.9,k:770,ph:51,na:76},
-  {n:'Bhindi / Okra (raw)',cal:33,u:'g',cat:'Veg',p:1.9,c:7,f:0.2,k:299,ph:63,na:8},
-  {n:'Lauki / Bottle Gourd (raw)',cal:14,u:'g',cat:'Veg',p:0.6,c:3.4,f:0.1,k:170,ph:13,na:2},
-  {n:'Parwal (raw)',cal:20,u:'g',cat:'Veg',p:2,c:3,f:0.3,k:83,ph:28,na:3},
-  {n:'Tinda (raw)',cal:21,u:'g',cat:'Veg',p:0.9,c:4.5,f:0.1,k:90,ph:20,na:3},
-  {n:'Karela / Bitter Gourd (raw)',cal:17,u:'g',cat:'Veg',p:1,c:3.7,f:0.2,k:296,ph:31,na:5},
-  {n:'Capsicum (raw)',cal:31,u:'g',cat:'Veg',p:1,c:6,f:0.3,k:211,ph:26,na:4},
-  {n:'Carrot (raw)',cal:41,u:'g',cat:'Veg',p:0.9,c:10,f:0.2,k:320,ph:35,na:69},
-  {n:'Cucumber (raw)',cal:15,u:'g',cat:'Veg',p:0.7,c:3.6,f:0.1,k:147,ph:24,na:2},
-  {n:'Tomato (raw)',cal:18,u:'g',cat:'Veg',p:0.9,c:3.9,f:0.2,k:237,ph:24,na:5},
-  {n:'Onion (raw)',cal:40,u:'g',cat:'Veg',p:1.1,c:9,f:0.1,k:146,ph:29,na:4},
-  {n:'Cauliflower (raw)',cal:25,u:'g',cat:'Veg',p:2,c:5,f:0.3,k:299,ph:44,na:30},
-  {n:'Cabbage (raw)',cal:25,u:'g',cat:'Veg',p:1.3,c:6,f:0.1,k:170,ph:26,na:18},
-  {n:'French Beans (raw)',cal:31,u:'g',cat:'Veg',p:1.8,c:7,f:0.1,k:211,ph:38,na:6},
-  {n:'Brinjal / Eggplant (raw)',cal:25,u:'g',cat:'Veg',p:1,c:6,f:0.2,k:229,ph:24,na:2},
-  {n:'Peas (raw)',cal:81,u:'g',cat:'Veg',p:5,c:14,f:0.4,k:244,ph:108,na:5},
-  {n:'Corn / Maize (raw)',cal:86,u:'g',cat:'Veg',p:3.3,c:19,f:1.4,k:270,ph:89,na:15},
-  {n:'Sweet Potato (raw)',cal:86,u:'g',cat:'Veg',p:1.6,c:20,f:0.1,k:337,ph:47,na:55},
-  {n:'Potato (raw)',cal:77,u:'g',cat:'Veg',p:2,c:17,f:0.1,k:421,ph:57,na:6},
-  {n:'Mushroom (raw)',cal:22,u:'g',cat:'Veg',p:3.1,c:3.3,f:0.3,k:318,ph:86,na:5},
-  {n:'Broccoli (raw)',cal:34,u:'g',cat:'Veg',p:2.8,c:7,f:0.4,k:316,ph:66,na:33},
-  {n:'Drumstick / Moringa (raw)',cal:37,u:'g',cat:'Veg',p:2.1,c:8.5,f:0.2,k:461,ph:50,na:42},
+  {n:'Spinach / Palak (raw)',cal:23,u:'g',cat:'Veg',p:2.9,c:3.6,f:0.4,k:558,ph:49,na:79,fi:2.2},
+  {n:'Methi Leaves (raw)',cal:49,u:'g',cat:'Veg',p:4.4,c:6,f:0.9,k:770,ph:51,na:76,fi:7.2},
+  {n:'Bhindi / Okra (raw)',cal:33,u:'g',cat:'Veg',p:1.9,c:7,f:0.2,k:299,ph:63,na:8,fi:3.2},
+  {n:'Lauki / Bottle Gourd (raw)',cal:14,u:'g',cat:'Veg',p:0.6,c:3.4,f:0.1,k:170,ph:13,na:2,fi:0.5},
+  {n:'Parwal (raw)',cal:20,u:'g',cat:'Veg',p:2,c:3,f:0.3,k:83,ph:28,na:3,fi:3},
+  {n:'Tinda (raw)',cal:21,u:'g',cat:'Veg',p:0.9,c:4.5,f:0.1,k:90,ph:20,na:3,fi:0.6},
+  {n:'Karela / Bitter Gourd (raw)',cal:17,u:'g',cat:'Veg',p:1,c:3.7,f:0.2,k:296,ph:31,na:5,fi:2.6},
+  {n:'Capsicum (raw)',cal:31,u:'g',cat:'Veg',p:1,c:6,f:0.3,k:211,ph:26,na:4,fi:1.7},
+  {n:'Carrot (raw)',cal:41,u:'g',cat:'Veg',p:0.9,c:10,f:0.2,k:320,ph:35,na:69,fi:2.8},
+  {n:'Cucumber (raw)',cal:15,u:'g',cat:'Veg',p:0.7,c:3.6,f:0.1,k:147,ph:24,na:2,fi:0.5},
+  {n:'Tomato (raw)',cal:18,u:'g',cat:'Veg',p:0.9,c:3.9,f:0.2,k:237,ph:24,na:5,fi:1.2},
+  {n:'Onion (raw)',cal:40,u:'g',cat:'Veg',p:1.1,c:9,f:0.1,k:146,ph:29,na:4,fi:1.7},
+  {n:'Cauliflower (raw)',cal:25,u:'g',cat:'Veg',p:2,c:5,f:0.3,k:299,ph:44,na:30,fi:2},
+  {n:'Cabbage (raw)',cal:25,u:'g',cat:'Veg',p:1.3,c:6,f:0.1,k:170,ph:26,na:18,fi:2.5},
+  {n:'French Beans (raw)',cal:31,u:'g',cat:'Veg',p:1.8,c:7,f:0.1,k:211,ph:38,na:6,fi:2.4},
+  {n:'Brinjal / Eggplant (raw)',cal:25,u:'g',cat:'Veg',p:1,c:6,f:0.2,k:229,ph:24,na:2,fi:3},
+  {n:'Peas (raw)',cal:81,u:'g',cat:'Veg',p:5,c:14,f:0.4,k:244,ph:108,na:5,fi:5.1},
+  {n:'Corn / Maize (raw)',cal:86,u:'g',cat:'Veg',p:3.3,c:19,f:1.4,k:270,ph:89,na:15,fi:2},
+  {n:'Sweet Potato (raw)',cal:86,u:'g',cat:'Veg',p:1.6,c:20,f:0.1,k:337,ph:47,na:55,fi:3},
+  {n:'Potato (raw)',cal:77,u:'g',cat:'Veg',p:2,c:17,f:0.1,k:421,ph:57,na:6,fi:2.2},
+  {n:'Mushroom (raw)',cal:22,u:'g',cat:'Veg',p:3.1,c:3.3,f:0.3,k:318,ph:86,na:5,fi:1},
+  {n:'Broccoli (raw)',cal:34,u:'g',cat:'Veg',p:2.8,c:7,f:0.4,k:316,ph:66,na:33,fi:2.6},
+  {n:'Drumstick / Moringa (raw)',cal:37,u:'g',cat:'Veg',p:2.1,c:8.5,f:0.2,k:461,ph:50,na:42,fi:2},
   // ── FRUITS ──
-  {n:'Apple (medium ~150g)',cal:78,u:'pcs',cat:'Fruit',p:0.4,c:21,f:0.3,k:161,ph:17,na:2},
-  {n:'Banana (medium ~100g)',cal:89,u:'pcs',cat:'Fruit',p:1.1,c:23,f:0.3,k:358,ph:22,na:1},
-  {n:'Papaya (100g)',cal:43,u:'g',cat:'Fruit',p:0.5,c:11,f:0.3,k:182,ph:10,na:8},
-  {n:'Watermelon (100g)',cal:30,u:'g',cat:'Fruit',p:0.6,c:7.6,f:0.2,k:112,ph:11,na:1},
-  {n:'Guava (medium ~100g)',cal:68,u:'pcs',cat:'Fruit',p:2.6,c:14,f:1,k:417,ph:40,na:2},
-  {n:'Mango (100g)',cal:60,u:'g',cat:'Fruit',p:0.8,c:15,f:0.4,k:168,ph:14,na:1},
-  {n:'Pear (medium ~150g)',cal:86,u:'pcs',cat:'Fruit',p:0.5,c:23,f:0.2,k:174,ph:18,na:2},
-  {n:'Orange (medium ~130g)',cal:62,u:'pcs',cat:'Fruit',p:1.2,c:15,f:0.2,k:237,ph:23,na:0},
-  {n:'Chiku / Sapodilla (100g)',cal:83,u:'g',cat:'Fruit',p:0.4,c:20,f:1.1,k:193,ph:12,na:12},
-  {n:'Pomegranate (100g)',cal:83,u:'g',cat:'Fruit',p:1.7,c:19,f:1.2,k:236,ph:36,na:3},
-  {n:'Grapes (100g)',cal:69,u:'g',cat:'Fruit',p:0.7,c:18,f:0.2,k:191,ph:20,na:2},
-  {n:'Strawberry (100g)',cal:33,u:'g',cat:'Fruit',p:0.7,c:8,f:0.3,k:153,ph:24,na:1},
-  {n:'Pineapple (100g)',cal:50,u:'g',cat:'Fruit',p:0.5,c:13,f:0.1,k:109,ph:8,na:1},
-  {n:'Kiwi (1 medium ~75g)',cal:45,u:'pcs',cat:'Fruit',p:0.8,c:11,f:0.4,k:215,ph:26,na:2},
-  {n:'Amla / Indian Gooseberry (100g)',cal:44,u:'g',cat:'Fruit',p:0.9,c:10,f:0.6,k:198,ph:27,na:1},
-  {n:'Jamun / Java Plum (100g)',cal:60,u:'g',cat:'Fruit',p:0.7,c:14,f:0.2,k:55,ph:17,na:26},
+  {n:'Apple (medium ~150g)',cal:78,u:'pcs',cat:'Fruit',p:0.4,c:21,f:0.3,k:161,ph:17,na:2,fi:2.4},
+  {n:'Banana (medium ~100g)',cal:89,u:'pcs',cat:'Fruit',p:1.1,c:23,f:0.3,k:358,ph:22,na:1,fi:2.6},
+  {n:'Papaya (100g)',cal:43,u:'g',cat:'Fruit',p:0.5,c:11,f:0.3,k:182,ph:10,na:8,fi:1.8},
+  {n:'Watermelon (100g)',cal:30,u:'g',cat:'Fruit',p:0.6,c:7.6,f:0.2,k:112,ph:11,na:1,fi:0.4},
+  {n:'Guava (medium ~100g)',cal:68,u:'pcs',cat:'Fruit',p:2.6,c:14,f:1,k:417,ph:40,na:2,fi:5.4},
+  {n:'Mango (100g)',cal:60,u:'g',cat:'Fruit',p:0.8,c:15,f:0.4,k:168,ph:14,na:1,fi:1.6},
+  {n:'Pear (medium ~150g)',cal:86,u:'pcs',cat:'Fruit',p:0.5,c:23,f:0.2,k:174,ph:18,na:2,fi:3.1},
+  {n:'Orange (medium ~130g)',cal:62,u:'pcs',cat:'Fruit',p:1.2,c:15,f:0.2,k:237,ph:23,na:0,fi:2.4},
+  {n:'Chiku / Sapodilla (100g)',cal:83,u:'g',cat:'Fruit',p:0.4,c:20,f:1.1,k:193,ph:12,na:12,fi:5.3},
+  {n:'Pomegranate (100g)',cal:83,u:'g',cat:'Fruit',p:1.7,c:19,f:1.2,k:236,ph:36,na:3,fi:4},
+  {n:'Grapes (100g)',cal:69,u:'g',cat:'Fruit',p:0.7,c:18,f:0.2,k:191,ph:20,na:2,fi:0.9},
+  {n:'Strawberry (100g)',cal:33,u:'g',cat:'Fruit',p:0.7,c:8,f:0.3,k:153,ph:24,na:1,fi:2},
+  {n:'Pineapple (100g)',cal:50,u:'g',cat:'Fruit',p:0.5,c:13,f:0.1,k:109,ph:8,na:1,fi:2.4},
+  {n:'Kiwi (1 medium ~75g)',cal:45,u:'pcs',cat:'Fruit',p:0.8,c:11,f:0.4,k:215,ph:26,na:2,fi:3},
+  {n:'Amla / Indian Gooseberry (100g)',cal:44,u:'g',cat:'Fruit',p:0.9,c:10,f:0.6,k:198,ph:27,na:1,fi:3.4},
+  {n:'Jamun / Java Plum (100g)',cal:60,u:'g',cat:'Fruit',p:0.7,c:14,f:0.2,k:55,ph:17,na:26,fi:0.9},
   // ── DAIRY ──
-  {n:'Curd / Yogurt (plain)',cal:61,u:'g',cat:'Dairy',p:3.5,c:4.7,f:3.3,k:141,ph:95,na:46},
-  {n:'Low Fat Curd (100g)',cal:45,u:'g',cat:'Dairy',p:4.3,c:5,f:0.4,k:155,ph:105,na:48},
-  {n:'Greek Yogurt (100g)',cal:73,u:'g',cat:'Dairy',p:9,c:4,f:0.4,k:141,ph:135,na:36},
-  {n:'Buttermilk / Chaas (200ml)',cal:50,u:'pcs',cat:'Dairy',p:3.4,c:5,f:1.1,k:280,ph:190,na:256},
-  {n:'Lassi (plain, 200ml)',cal:130,u:'pcs',cat:'Dairy',p:5,c:16,f:4,k:280,ph:180,na:100},
+  {n:'Curd / Yogurt (plain)',cal:61,u:'g',cat:'Dairy',p:3.5,c:4.7,f:3.3,k:141,ph:95,na:46,fi:0},
+  {n:'Low Fat Curd (100g)',cal:45,u:'g',cat:'Dairy',p:4.3,c:5,f:0.4,k:155,ph:105,na:48,fi:0},
+  {n:'Greek Yogurt (100g)',cal:73,u:'g',cat:'Dairy',p:9,c:4,f:0.4,k:141,ph:135,na:36,fi:0},
+  {n:'Buttermilk / Chaas (200ml)',cal:50,u:'pcs',cat:'Dairy',p:3.4,c:5,f:1.1,k:280,ph:190,na:256,fi:0},
+  {n:'Lassi (plain, 200ml)',cal:130,u:'pcs',cat:'Dairy',p:5,c:16,f:4,k:280,ph:180,na:100,fi:0},
   // ── FATS & OILS ──
-  {n:'Ghee (1 tsp ~5g)',cal:45,u:'pcs',cat:'Fat',p:0,c:0,f:5,k:0,ph:0,na:0},
-  {n:'Mustard Oil (1 tsp)',cal:44,u:'pcs',cat:'Fat',p:0,c:0,f:5,k:0,ph:0,na:0},
-  {n:'Coconut Oil (1 tsp)',cal:43,u:'pcs',cat:'Fat',p:0,c:0,f:5,k:0,ph:0,na:0},
-  {n:'Olive Oil (1 tsp)',cal:44,u:'pcs',cat:'Fat',p:0,c:0,f:5,k:0,ph:1,na:0},
+  {n:'Ghee (1 tsp ~5g)',cal:45,u:'pcs',cat:'Fat',p:0,c:0,f:5,k:0,ph:0,na:0,fi:0},
+  {n:'Mustard Oil (1 tsp)',cal:44,u:'pcs',cat:'Fat',p:0,c:0,f:5,k:0,ph:0,na:0,fi:0},
+  {n:'Coconut Oil (1 tsp)',cal:43,u:'pcs',cat:'Fat',p:0,c:0,f:5,k:0,ph:0,na:0,fi:0},
+  {n:'Olive Oil (1 tsp)',cal:44,u:'pcs',cat:'Fat',p:0,c:0,f:5,k:0,ph:1,na:0,fi:0},
   // ── SNACKS ──
-  {n:'Makhana / Fox Nuts (30g)',cal:104,u:'pcs',cat:'Snack',p:2.9,c:23,f:0.03,k:150,ph:60,na:21},
-  {n:'Almonds (10 pieces ~12g)',cal:70,u:'pcs',cat:'Snack',p:2.5,c:2.6,f:6,k:88,ph:58,na:0},
-  {n:'Walnuts (2 pieces ~14g)',cal:92,u:'pcs',cat:'Snack',p:2.1,c:2,f:9,k:62,ph:48,na:0},
-  {n:'Roasted Chana (30g)',cal:105,u:'pcs',cat:'Snack',p:6,c:16,f:2,k:230,ph:90,na:5},
-  {n:'Peanuts (roasted, 30g)',cal:174,u:'pcs',cat:'Snack',p:7.5,c:6,f:14,k:217,ph:106,na:5},
-  {n:'Murmura / Puffed Rice (30g)',cal:113,u:'pcs',cat:'Snack',p:2,c:25,f:0.3,k:30,ph:22,na:60},
-  {n:'Khakhra (1 piece ~25g)',cal:100,u:'pcs',cat:'Snack',p:3,c:15,f:3,k:75,ph:55,na:130},
-  {n:'Rice Cakes (2 pieces)',cal:70,u:'pcs',cat:'Snack',p:1.4,c:15,f:0.5,k:30,ph:25,na:30},
+  {n:'Makhana / Fox Nuts (30g)',cal:104,u:'pcs',cat:'Snack',p:2.9,c:23,f:0.03,k:150,ph:60,na:21,fi:0.5},
+  {n:'Almonds (10 pieces ~12g)',cal:70,u:'pcs',cat:'Snack',p:2.5,c:2.6,f:6,k:88,ph:58,na:0,fi:12.5},
+  {n:'Walnuts (2 pieces ~14g)',cal:92,u:'pcs',cat:'Snack',p:2.1,c:2,f:9,k:62,ph:48,na:0,fi:6.7},
+  {n:'Roasted Chana (30g)',cal:105,u:'pcs',cat:'Snack',p:6,c:16,f:2,k:230,ph:90,na:5,fi:17},
+  {n:'Peanuts (roasted, 30g)',cal:174,u:'pcs',cat:'Snack',p:7.5,c:6,f:14,k:217,ph:106,na:5,fi:8.5},
+  {n:'Murmura / Puffed Rice (30g)',cal:113,u:'pcs',cat:'Snack',p:2,c:25,f:0.3,k:30,ph:22,na:60,fi:0.3},
+  {n:'Khakhra (1 piece ~25g)',cal:100,u:'pcs',cat:'Snack',p:3,c:15,f:3,k:75,ph:55,na:130,fi:2.5},
+  {n:'Rice Cakes (2 pieces)',cal:70,u:'pcs',cat:'Snack',p:1.4,c:15,f:0.5,k:30,ph:25,na:30,fi:0.4},
   // ── PROTEIN SUPPLEMENTS ──
-  {n:'TruNativ Plant Protein (15g serving)',cal:55,u:'pcs',cat:'Supplement',p:13.5,c:1,f:0.5,k:80,ph:60,na:50},
-  {n:'ON Gold Standard Whey (1 scoop ~31g)',cal:120,u:'pcs',cat:'Supplement',p:24,c:3,f:1.5,k:160,ph:190,na:130},
-  {n:'MuscleBlaze Whey Protein (1 scoop ~33g)',cal:126,u:'pcs',cat:'Supplement',p:25,c:3.5,f:1.5,k:180,ph:200,na:120},
-  {n:'Protyze Clear Whey (1 scoop ~27g)',cal:100,u:'pcs',cat:'Supplement',p:23,c:1,f:0,k:100,ph:140,na:50},
-  {n:'Protyze Isolate (1 scoop ~30g)',cal:112,u:'pcs',cat:'Supplement',p:26,c:0.5,f:0,k:130,ph:160,na:60},
-  {n:'Pea Protein Isolate (1 scoop ~30g)',cal:110,u:'pcs',cat:'Supplement',p:24,c:2,f:1,k:70,ph:50,na:280},
-  {n:'Soy Protein Isolate (1 scoop ~30g)',cal:105,u:'pcs',cat:'Supplement',p:25,c:1,f:0.5,k:50,ph:220,na:200},
+  {n:'TruNativ Plant Protein (15g serving)',cal:55,u:'pcs',cat:'Supplement',p:13.5,c:1,f:0.5,k:80,ph:60,na:50,fi:0.5},
+  {n:'ON Gold Standard Whey (1 scoop ~31g)',cal:120,u:'pcs',cat:'Supplement',p:24,c:3,f:1.5,k:160,ph:190,na:130,fi:0},
+  {n:'MuscleBlaze Whey Protein (1 scoop ~33g)',cal:126,u:'pcs',cat:'Supplement',p:25,c:3.5,f:1.5,k:180,ph:200,na:120,fi:0},
+  {n:'Protyze Clear Whey (1 scoop ~27g)',cal:100,u:'pcs',cat:'Supplement',p:23,c:1,f:0,k:100,ph:140,na:50,fi:0},
+  {n:'Protyze Isolate (1 scoop ~30g)',cal:112,u:'pcs',cat:'Supplement',p:26,c:0.5,f:0,k:130,ph:160,na:60,fi:0},
+  {n:'Pea Protein Isolate (1 scoop ~30g)',cal:110,u:'pcs',cat:'Supplement',p:24,c:2,f:1,k:70,ph:50,na:280,fi:1.5},
+  {n:'Soy Protein Isolate (1 scoop ~30g)',cal:105,u:'pcs',cat:'Supplement',p:25,c:1,f:0.5,k:50,ph:220,na:200,fi:1.5},
   // ── RESTAURANT FOODS ──
-  {n:'Dal Tadka (restaurant bowl)',cal:180,u:'pcs',cat:'Restaurant',p:9,c:22,f:6,k:380,ph:160,na:700},
-  {n:'Paneer Butter Masala (restaurant bowl)',cal:320,u:'pcs',cat:'Restaurant',p:12,c:15,f:24,k:250,ph:380,na:850},
-  {n:'Butter Chicken (restaurant bowl)',cal:290,u:'pcs',cat:'Restaurant',p:24,c:10,f:18,k:340,ph:230,na:900},
-  {n:'Tandoori Chicken (2 pieces)',cal:240,u:'pcs',cat:'Restaurant',p:35,c:4,f:10,k:450,ph:280,na:850},
-  {n:'Naan (1 piece)',cal:262,u:'pcs',cat:'Restaurant',p:8,c:49,f:4,k:65,ph:65,na:400},
-  {n:'Jeera Rice (restaurant)',cal:220,u:'pcs',cat:'Restaurant',p:4,c:44,f:4,k:80,ph:60,na:350},
-  {n:'Vegetable Biryani (restaurant)',cal:350,u:'pcs',cat:'Restaurant',p:7,c:58,f:9,k:200,ph:100,na:800},
-  {n:'Chicken Biryani (restaurant)',cal:450,u:'pcs',cat:'Restaurant',p:28,c:55,f:14,k:380,ph:250,na:950},
-  {n:'Grilled Sandwich (veg)',cal:250,u:'pcs',cat:'Restaurant',p:8,c:38,f:7,k:180,ph:100,na:550},
-  {n:'Bowl Meal - Grain + Protein + Veg',cal:380,u:'pcs',cat:'Restaurant',p:25,c:45,f:8,k:400,ph:200,na:500},
-  {n:'Salad (mixed greens, no dressing)',cal:50,u:'pcs',cat:'Restaurant',p:3,c:8,f:0.5,k:300,ph:50,na:50},
-  {n:'Raita (1 bowl ~100g)',cal:55,u:'pcs',cat:'Dairy',p:3,c:5,f:2,k:130,ph:90,na:200},
-  {n:'Papad (1 piece)',cal:45,u:'pcs',cat:'Snack',p:2.5,c:6,f:1,k:70,ph:45,na:320},
+  {n:'Dal Tadka (restaurant bowl)',cal:180,u:'pcs',cat:'Restaurant',p:9,c:22,f:6,k:380,ph:160,na:700,fi:6},
+  {n:'Paneer Butter Masala (restaurant bowl)',cal:320,u:'pcs',cat:'Restaurant',p:12,c:15,f:24,k:250,ph:380,na:850,fi:0},
+  {n:'Butter Chicken (restaurant bowl)',cal:290,u:'pcs',cat:'Restaurant',p:24,c:10,f:18,k:340,ph:230,na:900,fi:0},
+  {n:'Tandoori Chicken (2 pieces)',cal:240,u:'pcs',cat:'Restaurant',p:35,c:4,f:10,k:450,ph:280,na:850,fi:0},
+  {n:'Naan (1 piece)',cal:262,u:'pcs',cat:'Restaurant',p:8,c:49,f:4,k:65,ph:65,na:400,fi:1.5},
+  {n:'Jeera Rice (restaurant)',cal:220,u:'pcs',cat:'Restaurant',p:4,c:44,f:4,k:80,ph:60,na:350,fi:0.5},
+  {n:'Vegetable Biryani (restaurant)',cal:350,u:'pcs',cat:'Restaurant',p:7,c:58,f:9,k:200,ph:100,na:800,fi:1.5},
+  {n:'Chicken Biryani (restaurant)',cal:450,u:'pcs',cat:'Restaurant',p:28,c:55,f:14,k:380,ph:250,na:950,fi:0},
+  {n:'Grilled Sandwich (veg)',cal:250,u:'pcs',cat:'Restaurant',p:8,c:38,f:7,k:180,ph:100,na:550,fi:1.8},
+  {n:'Bowl Meal - Grain + Protein + Veg',cal:380,u:'pcs',cat:'Restaurant',p:25,c:45,f:8,k:400,ph:200,na:500,fi:3},
+  {n:'Salad (mixed greens, no dressing)',cal:50,u:'pcs',cat:'Restaurant',p:3,c:8,f:0.5,k:300,ph:50,na:50,fi:2.5},
+  {n:'Raita (1 bowl ~100g)',cal:55,u:'pcs',cat:'Dairy',p:3,c:5,f:2,k:130,ph:90,na:200,fi:0.3},
+  {n:'Papad (1 piece)',cal:45,u:'pcs',cat:'Snack',p:2.5,c:6,f:1,k:70,ph:45,na:320,fi:0},
   // ── LIQUIDS ──
-  {n:'Water (per glass 250ml)',cal:0,u:'pcs',cat:'Liquid',p:0,c:0,f:0,k:0,ph:0,na:0},
-  {n:'Green Tea (brewed, 200ml)',cal:2,u:'pcs',cat:'Liquid',p:0,c:0.4,f:0,k:16,ph:2,na:2},
-  {n:'Coconut Water (200ml)',cal:38,u:'pcs',cat:'Liquid',p:1.4,c:8,f:0.4,k:500,ph:40,na:210},
-  {n:'Ginger Water (200ml)',cal:6,u:'pcs',cat:'Liquid',p:0,c:1.6,f:0,k:20,ph:4,na:2},
-  {n:'Ajwain Water (200ml)',cal:4,u:'pcs',cat:'Liquid',p:0,c:0.8,f:0,k:10,ph:2,na:2},
-  {n:'Lemon Water (200ml, no sugar)',cal:10,u:'pcs',cat:'Liquid',p:0.2,c:3,f:0,k:50,ph:8,na:2},
-  {n:'Black Coffee (200ml, no sugar)',cal:5,u:'pcs',cat:'Liquid',p:0.3,c:0.7,f:0.1,k:116,ph:7,na:5},
-  {n:'Whey Protein Shake (300ml)',cal:130,u:'pcs',cat:'Liquid',p:25,c:5,f:2,k:200,ph:250,na:180},
+  {n:'Water (per glass 250ml)',cal:0,u:'pcs',cat:'Liquid',p:0,c:0,f:0,k:0,ph:0,na:0,fi:0},
+  {n:'Green Tea (brewed, 200ml)',cal:2,u:'pcs',cat:'Liquid',p:0,c:0.4,f:0,k:16,ph:2,na:2,fi:0},
+  {n:'Coconut Water (200ml)',cal:38,u:'pcs',cat:'Liquid',p:1.4,c:8,f:0.4,k:500,ph:40,na:210,fi:1},
+  {n:'Ginger Water (200ml)',cal:6,u:'pcs',cat:'Liquid',p:0,c:1.6,f:0,k:20,ph:4,na:2,fi:0},
+  {n:'Ajwain Water (200ml)',cal:4,u:'pcs',cat:'Liquid',p:0,c:0.8,f:0,k:10,ph:2,na:2,fi:0},
+  {n:'Lemon Water (200ml, no sugar)',cal:10,u:'pcs',cat:'Liquid',p:0.2,c:3,f:0,k:50,ph:8,na:2,fi:0},
+  {n:'Black Coffee (200ml, no sugar)',cal:5,u:'pcs',cat:'Liquid',p:0.3,c:0.7,f:0.1,k:116,ph:7,na:5,fi:0},
+  {n:'Whey Protein Shake (300ml)',cal:130,u:'pcs',cat:'Liquid',p:25,c:5,f:2,k:200,ph:250,na:180,fi:0},
   // ── CONDIMENTS & SPICES ──
-  {n:'Green Chutney (2 tbsp)',cal:25,u:'pcs',cat:'Condiment',p:0.5,c:3.5,f:1,k:90,ph:20,na:150},
-  {n:'Tomato Ketchup (1 tbsp)',cal:19,u:'pcs',cat:'Condiment',p:0.3,c:4.8,f:0,k:57,ph:6,na:155},
-  {n:'Pickle / Achar (1 tsp)',cal:15,u:'pcs',cat:'Condiment',p:0.2,c:2,f:0.8,k:30,ph:5,na:400},
-  {n:'Honey (1 tsp)',cal:21,u:'pcs',cat:'Condiment',p:0,c:5.7,f:0,k:11,ph:1,na:0},
+  {n:'Green Chutney (2 tbsp)',cal:25,u:'pcs',cat:'Condiment',p:0.5,c:3.5,f:1,k:90,ph:20,na:150,fi:1.5},
+  {n:'Tomato Ketchup (1 tbsp)',cal:19,u:'pcs',cat:'Condiment',p:0.3,c:4.8,f:0,k:57,ph:6,na:155,fi:1.2},
+  {n:'Pickle / Achar (1 tsp)',cal:15,u:'pcs',cat:'Condiment',p:0.2,c:2,f:0.8,k:30,ph:5,na:400,fi:0},
+  {n:'Honey (1 tsp)',cal:21,u:'pcs',cat:'Condiment',p:0,c:5.7,f:0,k:11,ph:1,na:0,fi:0.2},
   // ── INDIAN SWEETS ──
-  {n:'Besan Laddu (1 piece ~30g)',cal:140,u:'pcs',cat:'Sweet',p:3,c:17,f:7,k:80,ph:60,na:5},
-  {n:'Mysore Pak (1 piece ~40g)',cal:220,u:'pcs',cat:'Sweet',p:2.5,c:22,f:14,k:40,ph:40,na:10},
-  {n:'Gulab Jamun (1 piece ~40g)',cal:150,u:'pcs',cat:'Sweet',p:2.5,c:25,f:5,k:50,ph:35,na:50},
-  {n:'Rasgulla (1 piece ~50g)',cal:107,u:'pcs',cat:'Sweet',p:2.8,c:20,f:2,k:45,ph:35,na:40},
-  {n:'Barfi (1 piece ~30g)',cal:130,u:'pcs',cat:'Sweet',p:2,c:18,f:6,k:55,ph:50,na:20},
-  {n:'Jalebi (1 piece ~25g)',cal:100,u:'pcs',cat:'Sweet',p:1,c:22,f:1.5,k:20,ph:10,na:5},
-  {n:'Halwa (sooji, 1 bowl ~100g)',cal:245,u:'pcs',cat:'Sweet',p:3,c:37,f:10,k:85,ph:55,na:100},
-  {n:'Kheer (1 bowl ~150g)',cal:180,u:'pcs',cat:'Sweet',p:5,c:28,f:6,k:200,ph:130,na:60},
+  {n:'Besan Laddu (1 piece ~30g)',cal:140,u:'pcs',cat:'Sweet',p:3,c:17,f:7,k:80,ph:60,na:5,fi:10.9},
+  {n:'Mysore Pak (1 piece ~40g)',cal:220,u:'pcs',cat:'Sweet',p:2.5,c:22,f:14,k:40,ph:40,na:10,fi:0.5},
+  {n:'Gulab Jamun (1 piece ~40g)',cal:150,u:'pcs',cat:'Sweet',p:2.5,c:25,f:5,k:50,ph:35,na:50,fi:0.9},
+  {n:'Rasgulla (1 piece ~50g)',cal:107,u:'pcs',cat:'Sweet',p:2.8,c:20,f:2,k:45,ph:35,na:40,fi:0.2},
+  {n:'Barfi (1 piece ~30g)',cal:130,u:'pcs',cat:'Sweet',p:2,c:18,f:6,k:55,ph:50,na:20,fi:0.5},
+  {n:'Jalebi (1 piece ~25g)',cal:100,u:'pcs',cat:'Sweet',p:1,c:22,f:1.5,k:20,ph:10,na:5,fi:0.3},
+  {n:'Halwa (sooji, 1 bowl ~100g)',cal:245,u:'pcs',cat:'Sweet',p:3,c:37,f:10,k:85,ph:55,na:100,fi:1.5},
+  {n:'Kheer (1 bowl ~150g)',cal:180,u:'pcs',cat:'Sweet',p:5,c:28,f:6,k:200,ph:130,na:60,fi:0.2},
   // ── SOUTH INDIAN SPECIALS ──
-  {n:'Medu Vada (1 piece ~60g)',cal:120,u:'pcs',cat:'South Indian',p:4,c:14,f:5,k:100,ph:80,na:200},
-  {n:'Curd Rice (1 bowl ~200g)',cal:190,u:'pcs',cat:'South Indian',p:5,c:32,f:4,k:200,ph:120,na:300},
-  {n:'Ven Pongal (1 bowl ~200g)',cal:280,u:'pcs',cat:'South Indian',p:7,c:42,f:9,k:150,ph:120,na:400},
-  {n:'Lemon Rice (1 bowl)',cal:230,u:'pcs',cat:'South Indian',p:4,c:42,f:6,k:100,ph:75,na:350},
-  {n:'Tamarind Rice / Puliyogare (1 bowl)',cal:250,u:'pcs',cat:'South Indian',p:4,c:45,f:7,k:180,ph:80,na:500},
-  {n:'Pesarattu (1 piece)',cal:100,u:'pcs',cat:'South Indian',p:5,c:16,f:2,k:120,ph:80,na:150},
-  {n:'Appam (1 piece)',cal:75,u:'pcs',cat:'South Indian',p:2,c:15,f:0.8,k:40,ph:30,na:80},
+  {n:'Medu Vada (1 piece ~60g)',cal:120,u:'pcs',cat:'South Indian',p:4,c:14,f:5,k:100,ph:80,na:200,fi:2},
+  {n:'Curd Rice (1 bowl ~200g)',cal:190,u:'pcs',cat:'South Indian',p:5,c:32,f:4,k:200,ph:120,na:300,fi:0},
+  {n:'Ven Pongal (1 bowl ~200g)',cal:280,u:'pcs',cat:'South Indian',p:7,c:42,f:9,k:150,ph:120,na:400,fi:1.5},
+  {n:'Lemon Rice (1 bowl)',cal:230,u:'pcs',cat:'South Indian',p:4,c:42,f:6,k:100,ph:75,na:350,fi:0.8},
+  {n:'Tamarind Rice / Puliyogare (1 bowl)',cal:250,u:'pcs',cat:'South Indian',p:4,c:45,f:7,k:180,ph:80,na:500,fi:1},
+  {n:'Pesarattu (1 piece)',cal:100,u:'pcs',cat:'South Indian',p:5,c:16,f:2,k:120,ph:80,na:150,fi:3},
+  {n:'Appam (1 piece)',cal:75,u:'pcs',cat:'South Indian',p:2,c:15,f:0.8,k:40,ph:30,na:80,fi:0.8},
   // ── SOFT DRINKS ──
-  {n:'Coca Cola (330ml can)',cal:139,u:'pcs',cat:'Drink',p:0,c:35,f:0,k:11,ph:42,na:33},
-  {n:'Pepsi (330ml can)',cal:133,u:'pcs',cat:'Drink',p:0,c:33,f:0,k:15,ph:35,na:28},
-  {n:'7 Up / Sprite (330ml can)',cal:139,u:'pcs',cat:'Drink',p:0,c:35,f:0,k:7,ph:0,na:35},
-  {n:'Thumbs Up (330ml can)',cal:148,u:'pcs',cat:'Drink',p:0,c:37,f:0,k:8,ph:45,na:34},
-  {n:'Limca (330ml)',cal:128,u:'pcs',cat:'Drink',p:0,c:32,f:0,k:5,ph:0,na:30},
-  {n:'Maaza / Frooti (200ml)',cal:100,u:'pcs',cat:'Drink',p:0,c:25,f:0,k:50,ph:5,na:10},
-  {n:'Tropicana Orange (200ml)',cal:96,u:'pcs',cat:'Drink',p:0.8,c:24,f:0,k:180,ph:10,na:5},
-  {n:'Real Fruit Juice (200ml)',cal:90,u:'pcs',cat:'Drink',p:0.5,c:22,f:0,k:120,ph:10,na:10},
-  {n:'Nimbu Pani / Lemonade (250ml)',cal:60,u:'pcs',cat:'Drink',p:0.2,c:16,f:0,k:80,ph:10,na:100},
-  {n:'Jaljeera (250ml)',cal:50,u:'pcs',cat:'Drink',p:0.5,c:12,f:0.2,k:90,ph:15,na:400},
-  {n:'Aam Panna (250ml)',cal:80,u:'pcs',cat:'Drink',p:0.3,c:20,f:0,k:100,ph:10,na:200},
-  {n:'Sugarcane Juice (250ml)',cal:120,u:'pcs',cat:'Drink',p:0,c:30,f:0,k:160,ph:10,na:10},
-  {n:'Soda Water / Club Soda (300ml)',cal:0,u:'pcs',cat:'Drink',p:0,c:0,f:0,k:10,ph:0,na:75},
-  {n:'Lassi Sweet (200ml)',cal:160,u:'pcs',cat:'Drink',p:5,c:22,f:5,k:280,ph:180,na:80},
-  {n:'Lassi Salt (200ml)',cal:100,u:'pcs',cat:'Drink',p:5,c:8,f:4,k:270,ph:170,na:280},
-  {n:'Chaas / Buttermilk (200ml)',cal:40,u:'pcs',cat:'Drink',p:2.5,c:4,f:0.8,k:200,ph:130,na:200},
+  {n:'Coca Cola (330ml can)',cal:139,u:'pcs',cat:'Drink',p:0,c:35,f:0,k:11,ph:42,na:33,fi:0},
+  {n:'Pepsi (330ml can)',cal:133,u:'pcs',cat:'Drink',p:0,c:33,f:0,k:15,ph:35,na:28,fi:0},
+  {n:'7 Up / Sprite (330ml can)',cal:139,u:'pcs',cat:'Drink',p:0,c:35,f:0,k:7,ph:0,na:35,fi:0},
+  {n:'Thumbs Up (330ml can)',cal:148,u:'pcs',cat:'Drink',p:0,c:37,f:0,k:8,ph:45,na:34,fi:0},
+  {n:'Limca (330ml)',cal:128,u:'pcs',cat:'Drink',p:0,c:32,f:0,k:5,ph:0,na:30,fi:0},
+  {n:'Maaza / Frooti (200ml)',cal:100,u:'pcs',cat:'Drink',p:0,c:25,f:0,k:50,ph:5,na:10,fi:0},
+  {n:'Tropicana Orange (200ml)',cal:96,u:'pcs',cat:'Drink',p:0.8,c:24,f:0,k:180,ph:10,na:5,fi:2.4},
+  {n:'Real Fruit Juice (200ml)',cal:90,u:'pcs',cat:'Drink',p:0.5,c:22,f:0,k:120,ph:10,na:10,fi:0},
+  {n:'Nimbu Pani / Lemonade (250ml)',cal:60,u:'pcs',cat:'Drink',p:0.2,c:16,f:0,k:80,ph:10,na:100,fi:0},
+  {n:'Jaljeera (250ml)',cal:50,u:'pcs',cat:'Drink',p:0.5,c:12,f:0.2,k:90,ph:15,na:400,fi:0.2},
+  {n:'Aam Panna (250ml)',cal:80,u:'pcs',cat:'Drink',p:0.3,c:20,f:0,k:100,ph:10,na:200,fi:0},
+  {n:'Sugarcane Juice (250ml)',cal:120,u:'pcs',cat:'Drink',p:0,c:30,f:0,k:160,ph:10,na:10,fi:0},
+  {n:'Soda Water / Club Soda (300ml)',cal:0,u:'pcs',cat:'Drink',p:0,c:0,f:0,k:10,ph:0,na:75,fi:0},
+  {n:'Lassi Sweet (200ml)',cal:160,u:'pcs',cat:'Drink',p:5,c:22,f:5,k:280,ph:180,na:80,fi:0},
+  {n:'Lassi Salt (200ml)',cal:100,u:'pcs',cat:'Drink',p:5,c:8,f:4,k:270,ph:170,na:280,fi:0},
+  {n:'Chaas / Buttermilk (200ml)',cal:40,u:'pcs',cat:'Drink',p:2.5,c:4,f:0.8,k:200,ph:130,na:200,fi:0},
 
 
   // ── INDIAN HOME COOKED SABZIS ──
-  {n:'Aloo Gobhi Tamatar Sabzi (1 bowl ~150g)',cal:120,u:'pcs',cat:'Sabzi',p:3,c:15,f:5,k:380,ph:65,na:320},
-  {n:'Gobhi Tamatar Sabzi (1 bowl ~150g)',cal:90,u:'pcs',cat:'Sabzi',p:3,c:10,f:4.5,k:340,ph:58,na:280},
-  {n:'Aloo Tamatar Sabzi (1 bowl ~150g)',cal:115,u:'pcs',cat:'Sabzi',p:2.5,c:16,f:5,k:400,ph:60,na:300},
-  {n:'Aloo Gobhi Matar Sabzi (1 bowl)',cal:130,u:'pcs',cat:'Sabzi',p:4,c:17,f:5,k:400,ph:80,na:340},
-  {n:'Lauki / Bottle Gourd Sabzi (1 bowl ~150g)',cal:65,u:'pcs',cat:'Sabzi',p:1.5,c:8,f:3,k:200,ph:25,na:270},
-  {n:'Lauki Chana Dal Sabzi (1 bowl)',cal:120,u:'pcs',cat:'Sabzi',p:6,c:15,f:4,k:280,ph:90,na:300},
-  {n:'Patta Gobhi Sabzi (1 bowl ~150g)',cal:80,u:'pcs',cat:'Sabzi',p:2,c:9,f:4,k:220,ph:40,na:290},
-  {n:'Patta Gobhi Aloo Sabzi (1 bowl)',cal:105,u:'pcs',cat:'Sabzi',p:2.5,c:13,f:4.5,k:280,ph:50,na:310},
-  {n:'Karela Sabzi (1 bowl ~150g)',cal:85,u:'pcs',cat:'Sabzi',p:2.5,c:9,f:4.5,k:320,ph:45,na:280},
-  {n:'Karela Aloo Sabzi (1 bowl)',cal:110,u:'pcs',cat:'Sabzi',p:2.5,c:13,f:5,k:380,ph:55,na:300},
-  {n:'Broccoli Sabzi (1 bowl ~150g)',cal:90,u:'pcs',cat:'Sabzi',p:4,c:9,f:4.5,k:350,ph:90,na:290},
-  {n:'Broccoli Aloo Sabzi (1 bowl)',cal:115,u:'pcs',cat:'Sabzi',p:3.5,c:14,f:5,k:400,ph:80,na:310},
-  {n:'Palak Ka Saag (1 bowl ~150g)',cal:95,u:'pcs',cat:'Sabzi',p:4,c:8,f:5,k:550,ph:70,na:350},
-  {n:'Sarson Ka Saag (1 bowl ~150g)',cal:110,u:'pcs',cat:'Sabzi',p:5,c:9,f:6,k:490,ph:75,na:380},
-  {n:'Methi Aloo Sabzi (1 bowl ~150g)',cal:120,u:'pcs',cat:'Sabzi',p:3.5,c:14,f:5.5,k:480,ph:70,na:330},
-  {n:'Methi Sabzi (1 bowl ~150g)',cal:85,u:'pcs',cat:'Sabzi',p:4,c:8,f:4.5,k:560,ph:60,na:310},
-  {n:'Chaulai / Amaranth Leaves Sabzi (1 bowl)',cal:75,u:'pcs',cat:'Sabzi',p:3.5,c:8,f:3,k:480,ph:55,na:280},
-  {n:'Sem Phali / Flat Beans Sabzi (1 bowl)',cal:90,u:'pcs',cat:'Sabzi',p:3,c:11,f:4,k:250,ph:55,na:280},
-  {n:'Tori / Ridge Gourd Sabzi (1 bowl)',cal:60,u:'pcs',cat:'Sabzi',p:1.5,c:7,f:3,k:180,ph:30,na:260},
-  {n:'Kadu / Pumpkin Sabzi (1 bowl)',cal:75,u:'pcs',cat:'Sabzi',p:1.5,c:10,f:3.5,k:230,ph:35,na:270},
-  {n:'Arbi Sabzi (1 bowl ~150g)',cal:160,u:'pcs',cat:'Sabzi',p:2,c:22,f:7,k:450,ph:85,na:310},
-  {n:'Jackfruit Sabzi / Kathal (1 bowl)',cal:130,u:'pcs',cat:'Sabzi',p:2,c:18,f:5,k:280,ph:40,na:300},
-  {n:'Suran / Yam Sabzi (1 bowl)',cal:140,u:'pcs',cat:'Sabzi',p:2,c:20,f:5.5,k:500,ph:60,na:310},
-  {n:'Baingan Bharta (1 bowl ~150g)',cal:105,u:'pcs',cat:'Sabzi',p:2,c:10,f:6,k:280,ph:40,na:350},
-  {n:'Aloo Baingan Sabzi (1 bowl)',cal:115,u:'pcs',cat:'Sabzi',p:2,c:13,f:5.5,k:320,ph:50,na:320},
-  {n:'Matar Paneer (1 bowl ~150g)',cal:230,u:'pcs',cat:'Sabzi',p:10,c:14,f:15,k:280,ph:320,na:420},
-  {n:'Aloo Matar Sabzi (1 bowl)',cal:120,u:'pcs',cat:'Sabzi',p:4,c:16,f:4.5,k:320,ph:75,na:310},
-  {n:'Chana Masala (1 bowl ~150g)',cal:180,u:'pcs',cat:'Sabzi',p:8,c:25,f:5,k:340,ph:160,na:450},
-  {n:'Mix Veg Sabzi (1 bowl ~150g)',cal:100,u:'pcs',cat:'Sabzi',p:3,c:11,f:5,k:280,ph:60,na:320},
-  {n:'Kaddu Aloo Sabzi (1 bowl)',cal:100,u:'pcs',cat:'Sabzi',p:2,c:13,f:4.5,k:310,ph:50,na:290},
-  {n:'Hara Pyaz Sabzi (Spring Onion, 1 bowl)',cal:75,u:'pcs',cat:'Sabzi',p:2,c:9,f:3.5,k:240,ph:45,na:280},
-  {n:'Gajar Matar Sabzi (1 bowl)',cal:90,u:'pcs',cat:'Sabzi',p:3,c:12,f:4,k:290,ph:55,na:290},
+  {n:'Aloo Gobhi Tamatar Sabzi (1 bowl ~150g)',cal:120,u:'pcs',cat:'Sabzi',p:3,c:15,f:5,k:380,ph:65,na:320,fi:2.5},
+  {n:'Gobhi Tamatar Sabzi (1 bowl ~150g)',cal:90,u:'pcs',cat:'Sabzi',p:3,c:10,f:4.5,k:340,ph:58,na:280,fi:2.5},
+  {n:'Aloo Tamatar Sabzi (1 bowl ~150g)',cal:115,u:'pcs',cat:'Sabzi',p:2.5,c:16,f:5,k:400,ph:60,na:300,fi:1.8},
+  {n:'Aloo Gobhi Matar Sabzi (1 bowl)',cal:130,u:'pcs',cat:'Sabzi',p:4,c:17,f:5,k:400,ph:80,na:340,fi:2.5},
+  {n:'Lauki / Bottle Gourd Sabzi (1 bowl ~150g)',cal:65,u:'pcs',cat:'Sabzi',p:1.5,c:8,f:3,k:200,ph:25,na:270,fi:0.5},
+  {n:'Lauki Chana Dal Sabzi (1 bowl)',cal:120,u:'pcs',cat:'Sabzi',p:6,c:15,f:4,k:280,ph:90,na:300,fi:17.4},
+  {n:'Patta Gobhi Sabzi (1 bowl ~150g)',cal:80,u:'pcs',cat:'Sabzi',p:2,c:9,f:4,k:220,ph:40,na:290,fi:2.5},
+  {n:'Patta Gobhi Aloo Sabzi (1 bowl)',cal:105,u:'pcs',cat:'Sabzi',p:2.5,c:13,f:4.5,k:280,ph:50,na:310,fi:2},
+  {n:'Karela Sabzi (1 bowl ~150g)',cal:85,u:'pcs',cat:'Sabzi',p:2.5,c:9,f:4.5,k:320,ph:45,na:280,fi:2.6},
+  {n:'Karela Aloo Sabzi (1 bowl)',cal:110,u:'pcs',cat:'Sabzi',p:2.5,c:13,f:5,k:380,ph:55,na:300,fi:2.6},
+  {n:'Broccoli Sabzi (1 bowl ~150g)',cal:90,u:'pcs',cat:'Sabzi',p:4,c:9,f:4.5,k:350,ph:90,na:290,fi:2.6},
+  {n:'Broccoli Aloo Sabzi (1 bowl)',cal:115,u:'pcs',cat:'Sabzi',p:3.5,c:14,f:5,k:400,ph:80,na:310,fi:2.6},
+  {n:'Palak Ka Saag (1 bowl ~150g)',cal:95,u:'pcs',cat:'Sabzi',p:4,c:8,f:5,k:550,ph:70,na:350,fi:2.2},
+  {n:'Sarson Ka Saag (1 bowl ~150g)',cal:110,u:'pcs',cat:'Sabzi',p:5,c:9,f:6,k:490,ph:75,na:380,fi:4},
+  {n:'Methi Aloo Sabzi (1 bowl ~150g)',cal:120,u:'pcs',cat:'Sabzi',p:3.5,c:14,f:5.5,k:480,ph:70,na:330,fi:2},
+  {n:'Methi Sabzi (1 bowl ~150g)',cal:85,u:'pcs',cat:'Sabzi',p:4,c:8,f:4.5,k:560,ph:60,na:310,fi:7},
+  {n:'Chaulai / Amaranth Leaves Sabzi (1 bowl)',cal:75,u:'pcs',cat:'Sabzi',p:3.5,c:8,f:3,k:480,ph:55,na:280,fi:4.5},
+  {n:'Sem Phali / Flat Beans Sabzi (1 bowl)',cal:90,u:'pcs',cat:'Sabzi',p:3,c:11,f:4,k:250,ph:55,na:280,fi:3},
+  {n:'Tori / Ridge Gourd Sabzi (1 bowl)',cal:60,u:'pcs',cat:'Sabzi',p:1.5,c:7,f:3,k:180,ph:30,na:260,fi:0.6},
+  {n:'Kadu / Pumpkin Sabzi (1 bowl)',cal:75,u:'pcs',cat:'Sabzi',p:1.5,c:10,f:3.5,k:230,ph:35,na:270,fi:0.5},
+  {n:'Arbi Sabzi (1 bowl ~150g)',cal:160,u:'pcs',cat:'Sabzi',p:2,c:22,f:7,k:450,ph:85,na:310,fi:4.1},
+  {n:'Jackfruit Sabzi / Kathal (1 bowl)',cal:130,u:'pcs',cat:'Sabzi',p:2,c:18,f:5,k:280,ph:40,na:300,fi:1.5},
+  {n:'Suran / Yam Sabzi (1 bowl)',cal:140,u:'pcs',cat:'Sabzi',p:2,c:20,f:5.5,k:500,ph:60,na:310,fi:4.1},
+  {n:'Baingan Bharta (1 bowl ~150g)',cal:105,u:'pcs',cat:'Sabzi',p:2,c:10,f:6,k:280,ph:40,na:350,fi:2.5},
+  {n:'Aloo Baingan Sabzi (1 bowl)',cal:115,u:'pcs',cat:'Sabzi',p:2,c:13,f:5.5,k:320,ph:50,na:320,fi:2},
+  {n:'Matar Paneer (1 bowl ~150g)',cal:230,u:'pcs',cat:'Sabzi',p:10,c:14,f:15,k:280,ph:320,na:420,fi:0},
+  {n:'Aloo Matar Sabzi (1 bowl)',cal:120,u:'pcs',cat:'Sabzi',p:4,c:16,f:4.5,k:320,ph:75,na:310,fi:3},
+  {n:'Chana Masala (1 bowl ~150g)',cal:180,u:'pcs',cat:'Sabzi',p:8,c:25,f:5,k:340,ph:160,na:450,fi:7.5},
+  {n:'Mix Veg Sabzi (1 bowl ~150g)',cal:100,u:'pcs',cat:'Sabzi',p:3,c:11,f:5,k:280,ph:60,na:320,fi:2.5},
+  {n:'Kaddu Aloo Sabzi (1 bowl)',cal:100,u:'pcs',cat:'Sabzi',p:2,c:13,f:4.5,k:310,ph:50,na:290,fi:2},
+  {n:'Hara Pyaz Sabzi (Spring Onion, 1 bowl)',cal:75,u:'pcs',cat:'Sabzi',p:2,c:9,f:3.5,k:240,ph:45,na:280,fi:1.7},
+  {n:'Gajar Matar Sabzi (1 bowl)',cal:90,u:'pcs',cat:'Sabzi',p:3,c:12,f:4,k:290,ph:55,na:290,fi:3.5},
   // ── RAITAS ──
-  {n:'Boondi Raita (1 bowl ~150g)',cal:120,u:'pcs',cat:'Raita',p:4.5,c:14,f:5,k:190,ph:120,na:300},
-  {n:'Cucumber Raita (1 bowl ~150g)',cal:75,u:'pcs',cat:'Raita',p:3.5,c:7,f:3,k:180,ph:100,na:220},
-  {n:'Mixed Veg Raita (1 bowl)',cal:85,u:'pcs',cat:'Raita',p:4,c:9,f:3,k:200,ph:110,na:250},
-  {n:'Onion Tomato Raita (1 bowl)',cal:80,u:'pcs',cat:'Raita',p:3.5,c:8,f:3,k:190,ph:105,na:240},
-  {n:'Palak Raita (1 bowl)',cal:80,u:'pcs',cat:'Raita',p:4,c:7,f:3,k:280,ph:115,na:230},
-  {n:'Mint Raita (1 bowl)',cal:75,u:'pcs',cat:'Raita',p:3.5,c:7,f:3,k:175,ph:100,na:220},
-  {n:'Pineapple Raita (1 bowl)',cal:100,u:'pcs',cat:'Raita',p:3.5,c:14,f:3,k:200,ph:105,na:210},
-  {n:'Tadka Raita (1 bowl)',cal:90,u:'pcs',cat:'Raita',p:4,c:8,f:4.5,k:185,ph:110,na:260},
+  {n:'Boondi Raita (1 bowl ~150g)',cal:120,u:'pcs',cat:'Raita',p:4.5,c:14,f:5,k:190,ph:120,na:300,fi:0.3},
+  {n:'Cucumber Raita (1 bowl ~150g)',cal:75,u:'pcs',cat:'Raita',p:3.5,c:7,f:3,k:180,ph:100,na:220,fi:0.5},
+  {n:'Mixed Veg Raita (1 bowl)',cal:85,u:'pcs',cat:'Raita',p:4,c:9,f:3,k:200,ph:110,na:250,fi:0.5},
+  {n:'Onion Tomato Raita (1 bowl)',cal:80,u:'pcs',cat:'Raita',p:3.5,c:8,f:3,k:190,ph:105,na:240,fi:1.2},
+  {n:'Palak Raita (1 bowl)',cal:80,u:'pcs',cat:'Raita',p:4,c:7,f:3,k:280,ph:115,na:230,fi:2.2},
+  {n:'Mint Raita (1 bowl)',cal:75,u:'pcs',cat:'Raita',p:3.5,c:7,f:3,k:175,ph:100,na:220,fi:0.5},
+  {n:'Pineapple Raita (1 bowl)',cal:100,u:'pcs',cat:'Raita',p:3.5,c:14,f:3,k:200,ph:105,na:210,fi:2.4},
+  {n:'Tadka Raita (1 bowl)',cal:90,u:'pcs',cat:'Raita',p:4,c:8,f:4.5,k:185,ph:110,na:260,fi:0.3},
   // ── PICKLES & CHUTNEYS ──
-  {n:'Mango Pickle / Aam Ka Achar (1 tsp ~10g)',cal:18,u:'pcs',cat:'Condiment',p:0.2,c:2,f:1,k:20,ph:5,na:350},
-  {n:'Mixed Veg Pickle (1 tsp ~10g)',cal:15,u:'pcs',cat:'Condiment',p:0.2,c:1.5,f:0.8,k:18,ph:4,na:380},
-  {n:'Lime / Nimbu Pickle (1 tsp)',cal:12,u:'pcs',cat:'Condiment',p:0.1,c:1.5,f:0.7,k:25,ph:4,na:400},
-  {n:'Dhaniya / Coriander Chutney (2 tbsp ~30g)',cal:20,u:'pcs',cat:'Condiment',p:0.8,c:3,f:0.6,k:120,ph:18,na:180},
-  {n:'Pudina / Mint Chutney (2 tbsp ~30g)',cal:18,u:'pcs',cat:'Condiment',p:0.6,c:2.5,f:0.5,k:100,ph:15,na:200},
-  {n:'Tamatar / Tomato Chutney (2 tbsp)',cal:25,u:'pcs',cat:'Condiment',p:0.5,c:4,f:0.8,k:130,ph:18,na:250},
-  {n:'Imli / Tamarind Chutney (1 tbsp ~15g)',cal:35,u:'pcs',cat:'Condiment',p:0.3,c:9,f:0.1,k:50,ph:8,na:200},
-  {n:'Coconut Chutney (2 tbsp ~30g)',cal:60,u:'pcs',cat:'Condiment',p:0.8,c:3,f:5,k:100,ph:20,na:80},
-  {n:'Peanut Chutney (2 tbsp)',cal:80,u:'pcs',cat:'Condiment',p:3,c:4,f:6,k:90,ph:55,na:150},
-  {n:'Garlic Chutney (1 tbsp)',cal:25,u:'pcs',cat:'Condiment',p:0.5,c:3.5,f:1,k:60,ph:12,na:200},
+  {n:'Mango Pickle / Aam Ka Achar (1 tsp ~10g)',cal:18,u:'pcs',cat:'Condiment',p:0.2,c:2,f:1,k:20,ph:5,na:350,fi:1.6},
+  {n:'Mixed Veg Pickle (1 tsp ~10g)',cal:15,u:'pcs',cat:'Condiment',p:0.2,c:1.5,f:0.8,k:18,ph:4,na:380,fi:1},
+  {n:'Lime / Nimbu Pickle (1 tsp)',cal:12,u:'pcs',cat:'Condiment',p:0.1,c:1.5,f:0.7,k:25,ph:4,na:400,fi:1.5},
+  {n:'Dhaniya / Coriander Chutney (2 tbsp ~30g)',cal:20,u:'pcs',cat:'Condiment',p:0.8,c:3,f:0.6,k:120,ph:18,na:180,fi:1.5},
+  {n:'Pudina / Mint Chutney (2 tbsp ~30g)',cal:18,u:'pcs',cat:'Condiment',p:0.6,c:2.5,f:0.5,k:100,ph:15,na:200,fi:1.5},
+  {n:'Tamatar / Tomato Chutney (2 tbsp)',cal:25,u:'pcs',cat:'Condiment',p:0.5,c:4,f:0.8,k:130,ph:18,na:250,fi:1.2},
+  {n:'Imli / Tamarind Chutney (1 tbsp ~15g)',cal:35,u:'pcs',cat:'Condiment',p:0.3,c:9,f:0.1,k:50,ph:8,na:200,fi:2},
+  {n:'Coconut Chutney (2 tbsp ~30g)',cal:60,u:'pcs',cat:'Condiment',p:0.8,c:3,f:5,k:100,ph:20,na:80,fi:2.4},
+  {n:'Peanut Chutney (2 tbsp)',cal:80,u:'pcs',cat:'Condiment',p:3,c:4,f:6,k:90,ph:55,na:150,fi:3},
+  {n:'Garlic Chutney (1 tbsp)',cal:25,u:'pcs',cat:'Condiment',p:0.5,c:3.5,f:1,k:60,ph:12,na:200,fi:2.1},
 
   // ── EGGS ──
-  {n:'Egg White (boiled, 1 large)',cal:17,u:'pcs',cat:'Protein',p:3.6,c:0.2,f:0,k:54,ph:5,na:55},
-  {n:'Egg White (boiled, 2 whites)',cal:34,u:'pcs',cat:'Protein',p:7.2,c:0.4,f:0,k:108,ph:10,na:110},
-  {n:'Egg (whole boiled, 1 large)',cal:78,u:'pcs',cat:'Protein',p:6,c:0.6,f:5,k:69,ph:99,na:62},
-  {n:'Egg (whole boiled, 2 large)',cal:156,u:'pcs',cat:'Protein',p:12,c:1.2,f:10,k:138,ph:198,na:124},
+  {n:'Egg White (boiled, 1 large)',cal:17,u:'pcs',cat:'Protein',p:3.6,c:0.2,f:0,k:54,ph:5,na:55,fi:0},
+  {n:'Egg White (boiled, 2 whites)',cal:34,u:'pcs',cat:'Protein',p:7.2,c:0.4,f:0,k:108,ph:10,na:110,fi:0},
+  {n:'Egg (whole boiled, 1 large)',cal:78,u:'pcs',cat:'Protein',p:6,c:0.6,f:5,k:69,ph:99,na:62,fi:0},
+  {n:'Egg (whole boiled, 2 large)',cal:156,u:'pcs',cat:'Protein',p:12,c:1.2,f:10,k:138,ph:198,na:124,fi:0},
   // ── SNACKS & FRIED ──
-  {n:'Samosa (1 piece ~80g)',cal:250,u:'pcs',cat:'Snack',p:4,c:28,f:13,k:150,ph:55,na:400},
-  {n:'Palak Bhajiya (4-5 pieces ~80g)',cal:180,u:'pcs',cat:'Snack',p:4,c:20,f:9,k:200,ph:50,na:350},
-  {n:'Pakora / Bhajiya (4-5 pieces)',cal:200,u:'pcs',cat:'Snack',p:4,c:22,f:10,k:160,ph:55,na:380},
-  {n:'Medu Vada (1 piece ~60g)',cal:120,u:'pcs',cat:'South Indian',p:4,c:14,f:5,k:100,ph:80,na:200},
+  {n:'Samosa (1 piece ~80g)',cal:250,u:'pcs',cat:'Snack',p:4,c:28,f:13,k:150,ph:55,na:400,fi:2},
+  {n:'Palak Bhajiya (4-5 pieces ~80g)',cal:180,u:'pcs',cat:'Snack',p:4,c:20,f:9,k:200,ph:50,na:350,fi:2.2},
+  {n:'Pakora / Bhajiya (4-5 pieces)',cal:200,u:'pcs',cat:'Snack',p:4,c:22,f:10,k:160,ph:55,na:380,fi:2.5},
+  {n:'Medu Vada (1 piece ~60g)',cal:120,u:'pcs',cat:'South Indian',p:4,c:14,f:5,k:100,ph:80,na:200,fi:2},
   // ── SWEETS ──
-  {n:'Cake (1 slice ~80g)',cal:250,u:'pcs',cat:'Sweet',p:3,c:38,f:10,k:65,ph:70,na:180},
-  {n:'Chocolate Cake (1 slice ~80g)',cal:290,u:'pcs',cat:'Sweet',p:4,c:42,f:13,k:80,ph:85,na:200},
+  {n:'Cake (1 slice ~80g)',cal:250,u:'pcs',cat:'Sweet',p:3,c:38,f:10,k:65,ph:70,na:180,fi:0.5},
+  {n:'Chocolate Cake (1 slice ~80g)',cal:290,u:'pcs',cat:'Sweet',p:4,c:42,f:13,k:80,ph:85,na:200,fi:0.5},
   // ── FRUITS ──
-  {n:'Apple (medium ~150g)',cal:78,u:'pcs',cat:'Fruit',p:0.4,c:21,f:0.3,k:161,ph:17,na:2},
-  {n:'Muskmelon / Kharbooja (100g)',cal:34,u:'g',cat:'Fruit',p:0.8,c:8,f:0.2,k:267,ph:15,na:16},
-  {n:'Kiwi (1 medium ~75g)',cal:45,u:'pcs',cat:'Fruit',p:0.8,c:11,f:0.4,k:215,ph:26,na:2},
-  {n:'Mango Slice (100g)',cal:60,u:'g',cat:'Fruit',p:0.8,c:15,f:0.4,k:168,ph:14,na:1},
-  {n:'Chikoo / Sapodilla (100g)',cal:83,u:'g',cat:'Fruit',p:0.4,c:20,f:1.1,k:193,ph:12,na:12},
-  {n:'Lychee (100g)',cal:66,u:'g',cat:'Fruit',p:0.8,c:17,f:0.4,k:171,ph:31,na:1},
-  {n:'Pear (medium ~150g)',cal:86,u:'pcs',cat:'Fruit',p:0.5,c:23,f:0.2,k:174,ph:18,na:2},
+  {n:'Apple (medium ~150g)',cal:78,u:'pcs',cat:'Fruit',p:0.4,c:21,f:0.3,k:161,ph:17,na:2,fi:2.4},
+  {n:'Muskmelon / Kharbooja (100g)',cal:34,u:'g',cat:'Fruit',p:0.8,c:8,f:0.2,k:267,ph:15,na:16,fi:0.9},
+  {n:'Kiwi (1 medium ~75g)',cal:45,u:'pcs',cat:'Fruit',p:0.8,c:11,f:0.4,k:215,ph:26,na:2,fi:3},
+  {n:'Mango Slice (100g)',cal:60,u:'g',cat:'Fruit',p:0.8,c:15,f:0.4,k:168,ph:14,na:1,fi:1.6},
+  {n:'Chikoo / Sapodilla (100g)',cal:83,u:'g',cat:'Fruit',p:0.4,c:20,f:1.1,k:193,ph:12,na:12,fi:5.3},
+  {n:'Lychee (100g)',cal:66,u:'g',cat:'Fruit',p:0.8,c:17,f:0.4,k:171,ph:31,na:1,fi:1.3},
+  {n:'Pear (medium ~150g)',cal:86,u:'pcs',cat:'Fruit',p:0.5,c:23,f:0.2,k:174,ph:18,na:2,fi:3.1},
 
   // ── MORE FRUITS ──
-  {n:'Pineapple (100g)',cal:50,u:'g',cat:'Fruit',p:0.5,c:13,f:0.1,k:109,ph:8,na:1},
-  {n:'Pineapple slice (1 slice ~80g)',cal:40,u:'pcs',cat:'Fruit',p:0.4,c:10,f:0.1,k:87,ph:6,na:1},
-  {n:'Watermelon (100g)',cal:30,u:'g',cat:'Fruit',p:0.6,c:7.6,f:0.2,k:112,ph:11,na:1},
-  {n:'Watermelon (1 slice ~200g)',cal:60,u:'pcs',cat:'Fruit',p:1.2,c:15,f:0.4,k:224,ph:22,na:2},
-  {n:'Orange (medium ~130g)',cal:62,u:'pcs',cat:'Fruit',p:1.2,c:15,f:0.2,k:237,ph:23,na:0},
-  {n:'Orange juice (200ml, fresh)',cal:94,u:'pcs',cat:'Fruit',p:1.5,c:22,f:0.4,k:440,ph:42,na:2},
-  {n:'Mosambi / Sweet Lime (medium ~150g)',cal:60,u:'pcs',cat:'Fruit',p:0.9,c:15,f:0.2,k:195,ph:22,na:3},
-  {n:'Grapes (100g)',cal:69,u:'g',cat:'Fruit',p:0.7,c:18,f:0.2,k:191,ph:20,na:2},
-  {n:'Strawberry (100g)',cal:33,u:'g',cat:'Fruit',p:0.7,c:8,f:0.3,k:153,ph:24,na:1},
-  {n:'Blueberry (100g)',cal:57,u:'g',cat:'Fruit',p:0.7,c:14,f:0.3,k:77,ph:12,na:1},
-  {n:'Pomegranate seeds (100g)',cal:83,u:'g',cat:'Fruit',p:1.7,c:19,f:1.2,k:236,ph:36,na:3},
-  {n:'Plum (1 medium ~66g)',cal:30,u:'pcs',cat:'Fruit',p:0.5,c:7.5,f:0.2,k:104,ph:16,na:0},
-  {n:'Peach (1 medium ~150g)',cal:59,u:'pcs',cat:'Fruit',p:1.4,c:15,f:0.4,k:190,ph:30,na:0},
-  {n:'Coconut meat (30g)',cal:100,u:'pcs',cat:'Fruit',p:0.9,c:4.3,f:9.4,k:120,ph:30,na:7},
-  {n:'Fig / Anjeer (1 medium ~40g)',cal:30,u:'pcs',cat:'Fruit',p:0.3,c:7.7,f:0.1,k:77,ph:7,na:1},
-  {n:'Dates / Khajoor (2 pieces ~30g)',cal:83,u:'pcs',cat:'Fruit',p:0.6,c:22,f:0.1,k:168,ph:20,na:1},
+  {n:'Pineapple (100g)',cal:50,u:'g',cat:'Fruit',p:0.5,c:13,f:0.1,k:109,ph:8,na:1,fi:2.4},
+  {n:'Pineapple slice (1 slice ~80g)',cal:40,u:'pcs',cat:'Fruit',p:0.4,c:10,f:0.1,k:87,ph:6,na:1,fi:2.4},
+  {n:'Watermelon (100g)',cal:30,u:'g',cat:'Fruit',p:0.6,c:7.6,f:0.2,k:112,ph:11,na:1,fi:0.4},
+  {n:'Watermelon (1 slice ~200g)',cal:60,u:'pcs',cat:'Fruit',p:1.2,c:15,f:0.4,k:224,ph:22,na:2,fi:0.4},
+  {n:'Orange (medium ~130g)',cal:62,u:'pcs',cat:'Fruit',p:1.2,c:15,f:0.2,k:237,ph:23,na:0,fi:2.4},
+  {n:'Orange juice (200ml, fresh)',cal:94,u:'pcs',cat:'Fruit',p:1.5,c:22,f:0.4,k:440,ph:42,na:2,fi:2.4},
+  {n:'Mosambi / Sweet Lime (medium ~150g)',cal:60,u:'pcs',cat:'Fruit',p:0.9,c:15,f:0.2,k:195,ph:22,na:3,fi:0.5},
+  {n:'Grapes (100g)',cal:69,u:'g',cat:'Fruit',p:0.7,c:18,f:0.2,k:191,ph:20,na:2,fi:0.9},
+  {n:'Strawberry (100g)',cal:33,u:'g',cat:'Fruit',p:0.7,c:8,f:0.3,k:153,ph:24,na:1,fi:2},
+  {n:'Blueberry (100g)',cal:57,u:'g',cat:'Fruit',p:0.7,c:14,f:0.3,k:77,ph:12,na:1,fi:2.4},
+  {n:'Pomegranate seeds (100g)',cal:83,u:'g',cat:'Fruit',p:1.7,c:19,f:1.2,k:236,ph:36,na:3,fi:4},
+  {n:'Plum (1 medium ~66g)',cal:30,u:'pcs',cat:'Fruit',p:0.5,c:7.5,f:0.2,k:104,ph:16,na:0,fi:1.4},
+  {n:'Peach (1 medium ~150g)',cal:59,u:'pcs',cat:'Fruit',p:1.4,c:15,f:0.4,k:190,ph:30,na:0,fi:1.5},
+  {n:'Coconut meat (30g)',cal:100,u:'pcs',cat:'Fruit',p:0.9,c:4.3,f:9.4,k:120,ph:30,na:7,fi:9},
+  {n:'Fig / Anjeer (1 medium ~40g)',cal:30,u:'pcs',cat:'Fruit',p:0.3,c:7.7,f:0.1,k:77,ph:7,na:1,fi:2.9},
+  {n:'Dates / Khajoor (2 pieces ~30g)',cal:83,u:'pcs',cat:'Fruit',p:0.6,c:22,f:0.1,k:168,ph:20,na:1,fi:7.5},
 
   // ── PURIS & FRIED BREADS ──
-  {n:'Puri (1 piece ~30g)',cal:130,u:'pcs',cat:'Grain',p:2.5,c:15,f:6.5,k:45,ph:40,na:150},
-  {n:'Palak Puri (1 piece ~35g)',cal:135,u:'pcs',cat:'Grain',p:3,c:15,f:7,k:80,ph:45,na:160},
-  {n:'Methi Puri (1 piece ~35g)',cal:138,u:'pcs',cat:'Grain',p:3,c:15,f:7.5,k:90,ph:50,na:155},
-  {n:'Aloo Stuffed Puri (1 piece ~60g)',cal:190,u:'pcs',cat:'Grain',p:3.5,c:22,f:9,k:160,ph:55,na:220},
-  {n:'Dal Kachori (1 piece ~60g)',cal:220,u:'pcs',cat:'Grain',p:5,c:24,f:11,k:120,ph:70,na:280},
-  {n:'Bedmi Puri / Dal Puri (1 piece ~50g)',cal:185,u:'pcs',cat:'Grain',p:5,c:20,f:9,k:110,ph:65,na:250},
-  {n:'Bhatura (1 piece ~80g)',cal:280,u:'pcs',cat:'Grain',p:6,c:35,f:12,k:80,ph:65,na:350},
+  {n:'Puri (1 piece ~30g)',cal:130,u:'pcs',cat:'Grain',p:2.5,c:15,f:6.5,k:45,ph:40,na:150,fi:1.5},
+  {n:'Palak Puri (1 piece ~35g)',cal:135,u:'pcs',cat:'Grain',p:3,c:15,f:7,k:80,ph:45,na:160,fi:2.2},
+  {n:'Methi Puri (1 piece ~35g)',cal:138,u:'pcs',cat:'Grain',p:3,c:15,f:7.5,k:90,ph:50,na:155,fi:1.5},
+  {n:'Aloo Stuffed Puri (1 piece ~60g)',cal:190,u:'pcs',cat:'Grain',p:3.5,c:22,f:9,k:160,ph:55,na:220,fi:1.5},
+  {n:'Dal Kachori (1 piece ~60g)',cal:220,u:'pcs',cat:'Grain',p:5,c:24,f:11,k:120,ph:70,na:280,fi:4.5},
+  {n:'Bedmi Puri / Dal Puri (1 piece ~50g)',cal:185,u:'pcs',cat:'Grain',p:5,c:20,f:9,k:110,ph:65,na:250,fi:1.5},
+  {n:'Bhatura (1 piece ~80g)',cal:280,u:'pcs',cat:'Grain',p:6,c:35,f:12,k:80,ph:65,na:350,fi:1.5},
   // ── FIBRE FOODS ──
-  {n:'Maize Dextrin Fiber (6g serving)',cal:25,u:'pcs',cat:'Supplement',p:0,c:6,f:0,k:0,ph:0,na:5},
-  {n:'Psyllium Husk / Isabgol (1 tsp ~5g)',cal:15,u:'pcs',cat:'Supplement',p:0.2,c:4,f:0.1,k:20,ph:8,na:3},
-  {n:'Oat Bran (30g)',cal:80,u:'pcs',cat:'Grain',p:4,c:15,f:2,k:130,ph:100,na:2},
-  {n:'Flaxseed / Alsi (1 tbsp ~10g)',cal:55,u:'pcs',cat:'Fat',p:1.9,c:3,f:4.3,k:83,ph:66,na:3},
-  {n:'Chia Seeds (1 tbsp ~12g)',cal:58,u:'pcs',cat:'Fat',p:2,c:5,f:3.7,k:44,ph:89,na:2},
+  {n:'Maize Dextrin Fiber (6g serving)',cal:25,u:'pcs',cat:'Supplement',p:0,c:6,f:0,k:0,ph:0,na:5,fi:6},
+  {n:'Psyllium Husk / Isabgol (1 tsp ~5g)',cal:15,u:'pcs',cat:'Supplement',p:0.2,c:4,f:0.1,k:20,ph:8,na:3,fi:71},
+  {n:'Oat Bran (30g)',cal:80,u:'pcs',cat:'Grain',p:4,c:15,f:2,k:130,ph:100,na:2,fi:15.4},
+  {n:'Flaxseed / Alsi (1 tbsp ~10g)',cal:55,u:'pcs',cat:'Fat',p:1.9,c:3,f:4.3,k:83,ph:66,na:3,fi:27.3},
+  {n:'Chia Seeds (1 tbsp ~12g)',cal:58,u:'pcs',cat:'Fat',p:2,c:5,f:3.7,k:44,ph:89,na:2,fi:34.4},
+
+  // ── FIBRE RICH FOODS ──
+  {n:'Isabgol / Psyllium Husk (1 tsp ~5g)',cal:15,u:'pcs',cat:'Supplement',p:0.2,c:4,f:0.1,k:20,ph:8,na:3,fi:3.5},
+  {n:'Isabgol in water (1 tbsp ~10g)',cal:30,u:'pcs',cat:'Supplement',p:0.4,c:8,f:0.2,k:40,ph:16,na:6,fi:7},
+  {n:'Safed Matar / White Dried Peas (raw)',cal:335,u:'g',cat:'Dal',p:22,c:60,f:1.1,k:985,ph:360,na:16,fi:25},
+  {n:'Safed Matar (cooked, 1 bowl ~150g)',cal:130,u:'pcs',cat:'Dal',p:8,c:23,f:0.4,k:370,ph:135,na:6,fi:9},
+  {n:'Kala Chana / Black Chickpea (cooked)',cal:164,u:'g',cat:'Dal',p:9,c:27,f:2.6,k:291,ph:168,na:7,fi:8},
+  {n:'Green Moong (whole, cooked)',cal:105,u:'g',cat:'Dal',p:7,c:19,f:0.4,k:369,ph:99,na:4,fi:7.6},
+  {n:'Oat Bran (30g)',cal:80,u:'pcs',cat:'Grain',p:4,c:15,f:2,k:130,ph:100,na:2,fi:4.5},
+  {n:'Flaxseed / Alsi (1 tbsp ~10g)',cal:55,u:'pcs',cat:'Fat',p:1.9,c:3,f:4.3,k:83,ph:66,na:3,fi:2.7},
+  {n:'Chia Seeds (1 tbsp ~12g)',cal:58,u:'pcs',cat:'Fat',p:2,c:5,f:3.7,k:44,ph:89,na:2,fi:4.1},
+  {n:'Mixed Seeds (flax+chia+sesame 10g)',cal:52,u:'pcs',cat:'Snack',p:1.8,c:3,f:4,k:75,ph:80,na:2,fi:3.5},
+
+  // ── CHEELA & KADHI ──
+  {n:'Suji Vegetable Cheela (1 piece ~80g)',cal:130,u:'pcs',cat:'Dish',p:4,c:20,f:4,k:150,ph:70,na:280,fi:1.5},
+  {n:'Besan Cheela (1 piece ~80g)',cal:150,u:'pcs',cat:'Dish',p:6.5,c:18,f:5.5,k:180,ph:90,na:300,fi:2.5},
+  {n:'Moong Dal Cheela (1 piece ~80g)',cal:120,u:'pcs',cat:'Dish',p:7,c:16,f:3,k:200,ph:80,na:250,fi:3},
+  {n:'Besan Dahi Pakodi Kadhi (1 bowl ~200g)',cal:160,u:'pcs',cat:'Dish',p:6,c:18,f:7,k:220,ph:120,na:480,fi:1.5},
+  {n:'Punjabi Kadhi Pakoda (1 bowl ~200g)',cal:210,u:'pcs',cat:'Dish',p:6,c:22,f:11,k:230,ph:130,na:550,fi:1.5},
+  {n:'Plain Kadhi (1 bowl ~200g)',cal:100,u:'pcs',cat:'Dish',p:4,c:10,f:5,k:200,ph:110,na:420,fi:0.5},
+  {n:'Pakoda / Bhajiyas (4-5 pieces ~80g)',cal:200,u:'pcs',cat:'Snack',p:4,c:22,f:10,k:160,ph:55,na:380,fi:2.5},
+
+  // ── COMFORT MEALS ──
+  {n:'Dal Chawal (1 plate — dal + rice)',cal:380,u:'pcs',cat:'Dish',p:12,c:68,f:4,k:580,ph:210,na:420,fi:8},
+  {n:'Dal Dahi Chawal (1 plate — dal + curd + rice)',cal:430,u:'pcs',cat:'Dish',p:15,c:72,f:6,k:650,ph:280,na:450,fi:8},
+  {n:'Tadka Dal (1 bowl)',cal:180,u:'pcs',cat:'Dish',p:9,c:22,f:6,k:380,ph:160,na:700,fi:6.5},
+  {n:'Steamed Rice (1 bowl ~150g cooked)',cal:195,u:'pcs',cat:'Grain',p:4,c:43,f:0.4,k:52,ph:64,na:2,fi:0.6},
+  // ── CHOCOLATES ──
+  {n:'Toblerone (1 triangle ~10g)',cal:54,u:'pcs',cat:'Sweet',p:0.8,c:6,f:3,k:30,ph:20,na:5,fi:0.2},
+  {n:'Toblerone (100g bar)',cal:540,u:'g',cat:'Sweet',p:7,c:60,f:30,k:280,ph:195,na:48,fi:2},
+  {n:'Dark Chocolate 70%+ (1 square ~10g)',cal:60,u:'pcs',cat:'Sweet',p:0.8,c:5,f:4,k:40,ph:28,na:1,fi:0.7},
+  {n:'Milk Chocolate (1 square ~10g)',cal:55,u:'pcs',cat:'Sweet',p:0.7,c:6,f:3.2,k:25,ph:18,na:12,fi:0.1},
+  {n:'KitKat (2 finger ~21g)',cal:107,u:'pcs',cat:'Sweet',p:1.2,c:14,f:5.3,k:40,ph:35,na:16,fi:0.3},
+  {n:'Ferrero Rocher (1 piece ~12g)',cal:73,u:'pcs',cat:'Sweet',p:1.1,c:6,f:5,k:28,ph:22,na:6,fi:0.3},
+  // ── PASTRIES & PREMIUM CAKES (Smoor-style) ──
+  {n:'Chocolate Truffle Pastry (1 slice ~80g)',cal:310,u:'pcs',cat:'Sweet',p:4,c:35,f:17,k:80,ph:90,na:150,fi:1.5},
+  {n:'Blueberry Cheesecake (1 slice ~100g)',cal:320,u:'pcs',cat:'Sweet',p:6,c:30,f:20,k:100,ph:110,na:180,fi:0.8},
+  {n:'Chocolate Mousse Cake (1 slice ~90g)',cal:340,u:'pcs',cat:'Sweet',p:5,c:38,f:19,k:90,ph:100,na:120,fi:1.5},
+  {n:'Red Velvet Pastry (1 slice ~80g)',cal:300,u:'pcs',cat:'Sweet',p:4,c:38,f:15,k:70,ph:80,na:200,fi:0.5},
+  {n:'Fruit Tart (1 piece ~90g)',cal:260,u:'pcs',cat:'Sweet',p:4,c:34,f:12,k:120,ph:75,na:90,fi:1.2},
+  {n:'Croissant (1 piece ~60g)',cal:230,u:'pcs',cat:'Sweet',p:5,c:26,f:12,k:60,ph:60,na:280,fi:1},
+  {n:'Pain au Chocolat (1 piece ~70g)',cal:270,u:'pcs',cat:'Sweet',p:5.5,c:30,f:14,k:70,ph:70,na:220,fi:1.2},
+  {n:'Tiramisu (1 portion ~100g)',cal:290,u:'pcs',cat:'Sweet',p:5,c:28,f:17,k:80,ph:95,na:100,fi:0.3},
+  {n:'Brownie (1 piece ~60g)',cal:240,u:'pcs',cat:'Sweet',p:3,c:34,f:11,k:80,ph:70,na:120,fi:1.5},
+  {n:'Eclair (1 piece ~60g)',cal:200,u:'pcs',cat:'Sweet',p:4,c:22,f:10,k:60,ph:65,na:130,fi:0.5},
   // ── SWEETENERS ──
-  {n:'TruActive Monkfruit Sweetener (1 tsp)',cal:0,u:'pcs',cat:'Condiment',p:0,c:0,f:0,k:0,ph:0,na:0},
-  {n:'Monkfruit Sweetener (1 tsp)',cal:0,u:'pcs',cat:'Condiment',p:0,c:0,f:0,k:0,ph:0,na:0},
-  {n:'Stevia (1 tsp)',cal:0,u:'pcs',cat:'Condiment',p:0,c:1,f:0,k:2,ph:1,na:1},
-  {n:'Sugar (white, 1 tsp ~4g)',cal:16,u:'pcs',cat:'Condiment',p:0,c:4.2,f:0,k:0,ph:0,na:0},
-  {n:'Jaggery / Gud (1 tsp ~5g)',cal:19,u:'pcs',cat:'Condiment',p:0,c:4.9,f:0,k:48,ph:4,na:1},
+  {n:'TruActive Monkfruit Sweetener (1 tsp)',cal:0,u:'pcs',cat:'Condiment',p:0,c:0,f:0,k:0,ph:0,na:0,fi:0},
+  {n:'Monkfruit Sweetener (1 tsp)',cal:0,u:'pcs',cat:'Condiment',p:0,c:0,f:0,k:0,ph:0,na:0,fi:0},
+  {n:'Stevia (1 tsp)',cal:0,u:'pcs',cat:'Condiment',p:0,c:1,f:0,k:2,ph:1,na:1,fi:0},
+  {n:'Sugar (white, 1 tsp ~4g)',cal:16,u:'pcs',cat:'Condiment',p:0,c:4.2,f:0,k:0,ph:0,na:0,fi:0},
+  {n:'Jaggery / Gud (1 tsp ~5g)',cal:19,u:'pcs',cat:'Condiment',p:0,c:4.9,f:0,k:48,ph:4,na:1,fi:0.4},
   // ── DALIYA & PORRIDGE ──
-  {n:'Daliya / Broken Wheat (raw)',cal:342,u:'g',cat:'Grain',p:12,c:71,f:2,k:374,ph:300,na:7},
-  {n:'Daliya (cooked, plain)',cal:78,u:'g',cat:'Grain',p:2.8,c:16,f:0.5,k:90,ph:72,na:3},
-  {n:'Daliya Khichdi (1 bowl)',cal:160,u:'pcs',cat:'Dish',p:6,c:28,f:3,k:180,ph:110,na:300},
-  {n:'Daliya Upma (1 bowl)',cal:175,u:'pcs',cat:'Dish',p:5,c:30,f:4,k:150,ph:90,na:350},
+  {n:'Daliya / Broken Wheat (raw)',cal:342,u:'g',cat:'Grain',p:12,c:71,f:2,k:374,ph:300,na:7,fi:12},
+  {n:'Daliya (cooked, plain)',cal:78,u:'g',cat:'Grain',p:2.8,c:16,f:0.5,k:90,ph:72,na:3,fi:3},
+  {n:'Daliya Khichdi (1 bowl)',cal:160,u:'pcs',cat:'Dish',p:6,c:28,f:3,k:180,ph:110,na:300,fi:3},
+  {n:'Daliya Upma (1 bowl)',cal:175,u:'pcs',cat:'Dish',p:5,c:30,f:4,k:150,ph:90,na:350,fi:1.8},
   // ── MILK & TEA ──
-  {n:'Milk Tea / Chai (1 cup ~150ml)',cal:60,u:'pcs',cat:'Liquid',p:1.8,c:9,f:1.8,k:140,ph:80,na:30},
-  {n:'Milk Tea with Sugar (1 cup)',cal:80,u:'pcs',cat:'Liquid',p:1.8,c:13,f:1.8,k:140,ph:80,na:30},
-  {n:'Cow Milk (100ml)',cal:61,u:'ml',cat:'Dairy',p:3.2,c:4.8,f:3.2,k:150,ph:93,na:43},
-  {n:'Toned Milk (100ml)',cal:44,u:'ml',cat:'Dairy',p:3.5,c:4.9,f:1.5,k:153,ph:95,na:47},
-  {n:'Skimmed Milk (100ml)',cal:35,u:'ml',cat:'Dairy',p:3.4,c:5,f:0.1,k:156,ph:101,na:50},
+  {n:'Milk Tea / Chai (1 cup ~150ml)',cal:60,u:'pcs',cat:'Liquid',p:1.8,c:9,f:1.8,k:140,ph:80,na:30,fi:0},
+  {n:'Milk Tea with Sugar (1 cup)',cal:80,u:'pcs',cat:'Liquid',p:1.8,c:13,f:1.8,k:140,ph:80,na:30,fi:0},
+  {n:'Cow Milk (100ml)',cal:61,u:'ml',cat:'Dairy',p:3.2,c:4.8,f:3.2,k:150,ph:93,na:43,fi:0},
+  {n:'Toned Milk (100ml)',cal:44,u:'ml',cat:'Dairy',p:3.5,c:4.9,f:1.5,k:153,ph:95,na:47,fi:0},
+  {n:'Skimmed Milk (100ml)',cal:35,u:'ml',cat:'Dairy',p:3.4,c:5,f:0.1,k:156,ph:101,na:50,fi:0},
   // ── GHEE & BUTTER ──
-  {n:'Ghee (1 tsp ~5g)',cal:45,u:'pcs',cat:'Fat',p:0,c:0,f:5,k:0,ph:0,na:1},
-  {n:'Ghee (per 100g)',cal:900,u:'g',cat:'Fat',p:0,c:0,f:100,k:5,ph:3,na:2},
-  {n:'Butter (unsalted, 1 tsp ~5g)',cal:36,u:'pcs',cat:'Fat',p:0,c:0,f:4,k:1,ph:1,na:1},
-  {n:'Butter (unsalted, per 100g)',cal:717,u:'g',cat:'Fat',p:0.9,c:0,f:81,k:24,ph:24,na:11},
-  {n:'Butter (salted, 1 tsp ~5g)',cal:36,u:'pcs',cat:'Fat',p:0,c:0,f:4,k:1,ph:1,na:38},
+  {n:'Ghee (1 tsp ~5g)',cal:45,u:'pcs',cat:'Fat',p:0,c:0,f:5,k:0,ph:0,na:1,fi:0},
+  {n:'Ghee (per 100g)',cal:900,u:'g',cat:'Fat',p:0,c:0,f:100,k:5,ph:3,na:2,fi:0},
+  {n:'Butter (unsalted, 1 tsp ~5g)',cal:36,u:'pcs',cat:'Fat',p:0,c:0,f:4,k:1,ph:1,na:1,fi:0},
+  {n:'Butter (unsalted, per 100g)',cal:717,u:'g',cat:'Fat',p:0.9,c:0,f:81,k:24,ph:24,na:11,fi:0},
+  {n:'Butter (salted, 1 tsp ~5g)',cal:36,u:'pcs',cat:'Fat',p:0,c:0,f:4,k:1,ph:1,na:38,fi:0},
   // ── AROMATICS ──
-  {n:'Garlic (raw)',cal:149,u:'g',cat:'Spice',p:6.4,c:33,f:0.5,k:401,ph:153,na:17},
-  {n:'Garlic (1 clove ~3g)',cal:4,u:'pcs',cat:'Spice',p:0.2,c:1,f:0,k:12,ph:5,na:1},
-  {n:'Ginger (raw)',cal:80,u:'g',cat:'Spice',p:1.8,c:18,f:0.8,k:415,ph:34,na:13},
-  {n:'Ginger (1 tsp grated ~5g)',cal:4,u:'pcs',cat:'Spice',p:0.1,c:0.9,f:0,k:21,ph:2,na:1},
-  {n:'Lemon (1 medium ~58g)',cal:17,u:'pcs',cat:'Fruit',p:0.6,c:5.4,f:0.2,k:80,ph:13,na:1},
-  {n:'Lemon Juice (1 tbsp ~15ml)',cal:4,u:'pcs',cat:'Condiment',p:0.1,c:1.3,f:0,k:20,ph:3,na:0},
-  {n:'Green Chillies (raw)',cal:40,u:'g',cat:'Spice',p:2,c:9,f:0.4,k:340,ph:58,na:7},
-  {n:'Coriander Leaves (raw)',cal:23,u:'g',cat:'Spice',p:2.1,c:3.7,f:0.5,k:521,ph:48,na:46},
+  {n:'Garlic (raw)',cal:149,u:'g',cat:'Spice',p:6.4,c:33,f:0.5,k:401,ph:153,na:17,fi:2.1},
+  {n:'Garlic (1 clove ~3g)',cal:4,u:'pcs',cat:'Spice',p:0.2,c:1,f:0,k:12,ph:5,na:1,fi:2.1},
+  {n:'Ginger (raw)',cal:80,u:'g',cat:'Spice',p:1.8,c:18,f:0.8,k:415,ph:34,na:13,fi:2},
+  {n:'Ginger (1 tsp grated ~5g)',cal:4,u:'pcs',cat:'Spice',p:0.1,c:0.9,f:0,k:21,ph:2,na:1,fi:0},
+  {n:'Lemon (1 medium ~58g)',cal:17,u:'pcs',cat:'Fruit',p:0.6,c:5.4,f:0.2,k:80,ph:13,na:1,fi:2.8},
+  {n:'Lemon Juice (1 tbsp ~15ml)',cal:4,u:'pcs',cat:'Condiment',p:0.1,c:1.3,f:0,k:20,ph:3,na:0,fi:0},
+  {n:'Green Chillies (raw)',cal:40,u:'g',cat:'Spice',p:2,c:9,f:0.4,k:340,ph:58,na:7,fi:3.7},
+  {n:'Coriander Leaves (raw)',cal:23,u:'g',cat:'Spice',p:2.1,c:3.7,f:0.5,k:521,ph:48,na:46,fi:2.8},
   // ── SPICES ──
-  {n:'Salt (1g)',cal:0,u:'g',cat:'Spice',p:0,c:0,f:0,k:1,ph:0,na:388},
-  {n:'Turmeric Powder (1 tsp ~3g)',cal:10,u:'pcs',cat:'Spice',p:0.3,c:2,f:0.3,k:56,ph:11,na:1},
-  {n:'Cumin / Jeera (1 tsp ~3g)',cal:12,u:'pcs',cat:'Spice',p:0.5,c:1.4,f:0.6,k:107,ph:14,na:4},
-  {n:'Coriander Powder (1 tsp ~3g)',cal:9,u:'pcs',cat:'Spice',p:0.4,c:1.5,f:0.4,k:72,ph:14,na:2},
-  {n:'Red Chilli Powder (1 tsp ~3g)',cal:9,u:'pcs',cat:'Spice',p:0.4,c:1.6,f:0.4,k:70,ph:15,na:2},
-  {n:'Garam Masala (1 tsp ~3g)',cal:10,u:'pcs',cat:'Spice',p:0.4,c:1.8,f:0.3,k:80,ph:14,na:3},
-  {n:'Mustard Seeds (1 tsp ~4g)',cal:20,u:'pcs',cat:'Spice',p:1.1,c:0.7,f:1.4,k:50,ph:32,na:0},
-  {n:'Fenugreek / Methi Seeds (1 tsp)',cal:12,u:'pcs',cat:'Spice',p:0.9,c:2.2,f:0.2,k:85,ph:24,na:2},
-  {n:'Asafoetida / Hing (pinch ~0.5g)',cal:2,u:'pcs',cat:'Spice',p:0,c:0.4,f:0,k:6,ph:2,na:1},
+  {n:'Salt (1g)',cal:0,u:'g',cat:'Spice',p:0,c:0,f:0,k:1,ph:0,na:388,fi:0},
+  {n:'Turmeric Powder (1 tsp ~3g)',cal:10,u:'pcs',cat:'Spice',p:0.3,c:2,f:0.3,k:56,ph:11,na:1,fi:2.1},
+  {n:'Cumin / Jeera (1 tsp ~3g)',cal:12,u:'pcs',cat:'Spice',p:0.5,c:1.4,f:0.6,k:107,ph:14,na:4,fi:10.5},
+  {n:'Coriander Powder (1 tsp ~3g)',cal:9,u:'pcs',cat:'Spice',p:0.4,c:1.5,f:0.4,k:72,ph:14,na:2,fi:41.9},
+  {n:'Red Chilli Powder (1 tsp ~3g)',cal:9,u:'pcs',cat:'Spice',p:0.4,c:1.6,f:0.4,k:70,ph:15,na:2,fi:14.3},
+  {n:'Garam Masala (1 tsp ~3g)',cal:10,u:'pcs',cat:'Spice',p:0.4,c:1.8,f:0.3,k:80,ph:14,na:3,fi:16.2},
+  {n:'Mustard Seeds (1 tsp ~4g)',cal:20,u:'pcs',cat:'Spice',p:1.1,c:0.7,f:1.4,k:50,ph:32,na:0,fi:12},
+  {n:'Fenugreek / Methi Seeds (1 tsp)',cal:12,u:'pcs',cat:'Spice',p:0.9,c:2.2,f:0.2,k:85,ph:24,na:2,fi:24.6},
+  {n:'Asafoetida / Hing (pinch ~0.5g)',cal:2,u:'pcs',cat:'Spice',p:0,c:0.4,f:0,k:6,ph:2,na:1,fi:0},
   // ── VEGETABLES (additional) ──
-  {n:'Broccoli (raw)',cal:34,u:'g',cat:'Veg',p:2.8,c:7,f:0.4,k:316,ph:66,na:33},
-  {n:'Button Mushroom (raw)',cal:22,u:'g',cat:'Veg',p:3.1,c:3.3,f:0.3,k:318,ph:86,na:5},
-  {n:'Zucchini (raw)',cal:17,u:'g',cat:'Veg',p:1.2,c:3.1,f:0.3,k:261,ph:38,na:8},
-  {n:'Lettuce (raw)',cal:15,u:'g',cat:'Veg',p:1.4,c:2.9,f:0.2,k:194,ph:29,na:28},
-  {n:'Spring Onion / Scallion (raw)',cal:32,u:'g',cat:'Veg',p:1.8,c:7.3,f:0.2,k:276,ph:37,na:16},
-  {n:'Baby Spinach (raw)',cal:23,u:'g',cat:'Veg',p:2.9,c:3.6,f:0.4,k:558,ph:49,na:79},
-  {n:'Celery (raw)',cal:14,u:'g',cat:'Veg',p:0.7,c:3,f:0.2,k:260,ph:24,na:80},
-  {n:'Beetroot (raw)',cal:43,u:'g',cat:'Veg',p:1.6,c:10,f:0.2,k:325,ph:40,na:78},
-  {n:'Radish / Mooli (raw)',cal:16,u:'g',cat:'Veg',p:0.7,c:3.4,f:0.1,k:233,ph:20,na:39},
-  {n:'Arbi / Taro Root (raw)',cal:112,u:'g',cat:'Veg',p:1.5,c:26,f:0.2,k:591,ph:84,na:11},
-  {n:'Suran / Yam (raw)',cal:118,u:'g',cat:'Veg',p:1.5,c:28,f:0.2,k:816,ph:55,na:9},
-  {n:'Raw Banana (raw)',cal:89,u:'g',cat:'Veg',p:1.3,c:23,f:0.1,k:358,ph:22,na:1},
-  {n:'Jackfruit (raw, unripe)',cal:95,u:'g',cat:'Veg',p:1.7,c:24,f:0.1,k:301,ph:21,na:2},
-  {n:'Lotus Stem / Kamal Kakdi (raw)',cal:74,u:'g',cat:'Veg',p:2.6,c:17,f:0.1,k:556,ph:100,na:45},
-  {n:'Ivy Gourd / Tindora (raw)',cal:20,u:'g',cat:'Veg',p:1,c:4,f:0.1,k:180,ph:30,na:3},
+  {n:'Broccoli (raw)',cal:34,u:'g',cat:'Veg',p:2.8,c:7,f:0.4,k:316,ph:66,na:33,fi:2.6},
+  {n:'Button Mushroom (raw)',cal:22,u:'g',cat:'Veg',p:3.1,c:3.3,f:0.3,k:318,ph:86,na:5,fi:1},
+  {n:'Zucchini (raw)',cal:17,u:'g',cat:'Veg',p:1.2,c:3.1,f:0.3,k:261,ph:38,na:8,fi:1},
+  {n:'Lettuce (raw)',cal:15,u:'g',cat:'Veg',p:1.4,c:2.9,f:0.2,k:194,ph:29,na:28,fi:1.3},
+  {n:'Spring Onion / Scallion (raw)',cal:32,u:'g',cat:'Veg',p:1.8,c:7.3,f:0.2,k:276,ph:37,na:16,fi:1.7},
+  {n:'Baby Spinach (raw)',cal:23,u:'g',cat:'Veg',p:2.9,c:3.6,f:0.4,k:558,ph:49,na:79,fi:2.2},
+  {n:'Celery (raw)',cal:14,u:'g',cat:'Veg',p:0.7,c:3,f:0.2,k:260,ph:24,na:80,fi:1.6},
+  {n:'Beetroot (raw)',cal:43,u:'g',cat:'Veg',p:1.6,c:10,f:0.2,k:325,ph:40,na:78,fi:2.8},
+  {n:'Radish / Mooli (raw)',cal:16,u:'g',cat:'Veg',p:0.7,c:3.4,f:0.1,k:233,ph:20,na:39,fi:1.6},
+  {n:'Arbi / Taro Root (raw)',cal:112,u:'g',cat:'Veg',p:1.5,c:26,f:0.2,k:591,ph:84,na:11,fi:4.1},
+  {n:'Suran / Yam (raw)',cal:118,u:'g',cat:'Veg',p:1.5,c:28,f:0.2,k:816,ph:55,na:9,fi:4.1},
+  {n:'Raw Banana (raw)',cal:89,u:'g',cat:'Veg',p:1.3,c:23,f:0.1,k:358,ph:22,na:1,fi:2.6},
+  {n:'Jackfruit (raw, unripe)',cal:95,u:'g',cat:'Veg',p:1.7,c:24,f:0.1,k:301,ph:21,na:2,fi:1.5},
+  {n:'Lotus Stem / Kamal Kakdi (raw)',cal:74,u:'g',cat:'Veg',p:2.6,c:17,f:0.1,k:556,ph:100,na:45,fi:4.9},
+  {n:'Ivy Gourd / Tindora (raw)',cal:20,u:'g',cat:'Veg',p:1,c:4,f:0.1,k:180,ph:30,na:3,fi:1.8},
 ];
 
 const TARGET_KCAL=1600;
@@ -881,12 +930,12 @@ const EX=[
     {id:'breathwork',n:'Breathwork',ic:'🧘',d:'Sit comfortably. 4 count inhale through nose. 6 count exhale through mouth. 5 min. Every morning without fail.',dur:'5 min',pts:5},
     {id:'walk_lake',n:'Morning Walk — To Lake & Back',ic:'🚶',d:'Walk from home to Jakkur Lake (700m) and return. 1.4km total. Brisk but conversational pace. No rushing.',dur:'20 min',pts:15},
     {id:'rope',n:'Jumping Rope',ic:'🪢',d:'Max reps per set, rest fully between sets. 40+ reps = Good · 20-39 = Improving · Under 20 = Building. Log your best set reps when you tick.',dur:'3 sets',pts:10},
-    {id:'band_chest',n:'Band — Chest Pull-Apart',ic:'🟡',d:'Hold band at shoulder width in front of chest. Pull apart horizontally until arms fully extended sideways. Slow return. 12 reps × 3 rounds.',dur:'3 rounds',pts:4},
-    {id:'band_row',n:'Band — Seated Row',ic:'🟡',d:'Sit on floor, legs extended. Loop band around feet. Pull elbows back squeezing shoulder blades. Slow return. 12 reps × 3 rounds.',dur:'3 rounds',pts:4},
-    {id:'band_clam',n:'Band — Clamshell',ic:'🟡',d:'Lie on side, band above knees. Rotate top knee upward, hold 2 sec. 12 reps each side × 3 rounds.',dur:'3 rounds',pts:3},
-    {id:'band_curl',n:'Band — Bicep Curl',ic:'🟡',d:'Stand on band. Curl toward shoulders without swinging. Slow lower. 12 reps × 3 rounds.',dur:'3 rounds',pts:3},
-    {id:'band_walk',n:'Band — Lateral Walk',ic:'🟡',d:'Band above ankles. Slight squat. Step sideways 10 steps left, 10 right. 3 rounds.',dur:'3 rounds',pts:3},
-    {id:'band_press',n:'Band — Overhead Press',ic:'🟡',d:'Stand on band. Press straight up from shoulder height. Slow return. 10 reps × 3 rounds. Light resistance only.',dur:'3 rounds',pts:3},
+    {id:'band_chest',n:'Band — Upper Back',ic:'🟡',d:'Week A: Chest Pull-Apart — hold band at shoulder width, pull arms apart horizontally. 12 reps × 3 rounds. // Week B: Face Pull — hold band at eye level, pull toward face with elbows high and wide. 12 reps × 3 rounds.',dur:'3 rounds',pts:4},
+    {id:'band_row',n:'Band — Back Row',ic:'🟡',d:'Week A: Seated Row — sit on floor, loop band around feet, pull elbows back squeezing shoulder blades. 12 reps × 3 rounds. // Week B: Single Arm Row — anchor band, pull one arm at a time, elbow drives back. 12 each side × 3 rounds.',dur:'3 rounds',pts:4},
+    {id:'band_clam',n:'Band — Clamshell',ic:'🟡',d:'Lie on side, band above knees. Rotate top knee upward, HOLD 3 sec at top. 12 reps each side × 3 rounds. (Week A)',dur:'3 rounds',pts:3},
+    {id:'band_curl',n:'Band — Arm Curl',ic:'🟡',d:'Week A: Bicep Curl — stand on band, palms up, curl toward shoulders. 12 reps × 3 rounds. // Week B: Hammer Curl — same but palms facing each other throughout. Hits brachialis. 12 reps × 3 rounds.',dur:'3 rounds',pts:3},
+    {id:'band_walk',n:'Band — Hip Exercise',ic:'🟡',d:'Week A: Seated Hip Abduction — sit on chair, band above knees, push knees outward against band, hold 3 sec, release. 15 reps × 3 rounds. // Week B: Bridge with Band — lie on back, knees bent, band above knees, push knees slightly out while raising hips. Hold 2 sec at top. 12 reps × 3 rounds.',dur:'3 rounds',pts:3},
+    {id:'band_press',n:'Band — Shoulder',ic:'🟡',d:'Week A: Overhead Press — stand on band, press straight up from shoulder height. 10 reps × 3 rounds. // Week B: Lateral Raise — stand on band, arms slightly bent, raise out to sides to shoulder height. 12 reps × 3 rounds.',dur:'3 rounds',pts:3},
     {id:'eve_walk',n:'Evening Walk',ic:'🌇',d:'15 min neighborhood walk after dinner prep. Easy pace. Just move.',dur:'15 min',pts:10},
    ]},
   {ph:2,name:'Lake Circuit',unlockKg:92,desc:'Quarter lake added. Cycling begins.',
@@ -910,12 +959,12 @@ const EX=[
 ];
 
 const BAND_GUIDE=[
-  {n:'Chest Pull-Apart',steps:'Hold band at shoulder width in front of chest with both hands. Pull apart horizontally until arms are fully extended sideways. Slow return. Targets upper back and posture. 12 reps.'},
-  {n:'Seated Row',steps:'Sit on floor, legs extended. Loop band around feet. Hold both ends. Pull elbows back squeezing shoulder blades together. Slow return. 12 reps. Great for kidney-area posture.'},
-  {n:'Clamshell',steps:'Lie on your side, knees bent 45 degrees, band just above knees. Keep feet together and rotate top knee upward like a clamshell opening. Hold 2 sec. 12 each side. Hip strengthening.'},
-  {n:'Standing Bicep Curl',steps:'Stand on band with both feet. Hold ends, palms facing up. Curl toward shoulders without swinging. Slow lower. 12 reps.'},
-  {n:'Lateral Band Walk',steps:'Band just above ankles. Slight squat position. Step sideways 10 steps left, 10 steps right. Keeps hips strong for walking and cycling.'},
-  {n:'Overhead Press',steps:'Stand on band. Hold ends at shoulder height, palms forward. Press straight up overhead. Slow return. 10 reps. Light resistance only.'},
+  {n:'Chest Pull-Apart',steps:'Hold band at shoulder width in front of chest with both hands. Pull apart horizontally until arms are fully extended sideways. Slow return. Targets upper back and posture. 12 reps.',fi:0},
+  {n:'Seated Row',steps:'Sit on floor, legs extended. Loop band around feet. Hold both ends. Pull elbows back squeezing shoulder blades together. Slow return. 12 reps. Great for kidney-area posture.',fi:0},
+  {n:'Clamshell',steps:'Lie on your side, knees bent 45 degrees, band just above knees. Keep feet together and rotate top knee upward like a clamshell opening. Hold 2 sec. 12 each side. Hip strengthening.',fi:0},
+  {n:'Standing Bicep Curl',steps:'Stand on band with both feet. Hold ends, palms facing up. Curl toward shoulders without swinging. Slow lower. 12 reps.',fi:0},
+  {n:'Lateral Band Walk',steps:'Band just above ankles. Slight squat position. Step sideways 10 steps left, 10 steps right. Keeps hips strong for walking and cycling.',fi:0},
+  {n:'Overhead Press',steps:'Stand on band. Hold ends at shoulder height, palms forward. Press straight up overhead. Slow return. 10 reps. Light resistance only.',fi:0},
 ];
 
 const CAT_COL={r:'var(--blue)',e:'var(--green)',s:'var(--gold)',m:'var(--orange)',med:'var(--red)'};
@@ -928,7 +977,8 @@ const NOTIFS=[
   {h:10,m:30,title:'Mid-morning snack',body:'Makhana or 1 fruit. Keep it light.'},
   {h:13,m:0,title:'Lunch time',body:'Biggest meal of the day. Eat well, Divy.'},
   {h:16,m:30,title:'Evening snack',body:'Makhana or 1 banana.'},
-  {h:18,m:30,title:'MetXL 25mg',body:'Evening dose.'},
+  {h:12,m:0,title:'Cilindinpine 5mg',body:'Noon dose — new from March 31.'},
+  {h:18,m:30,title:'MetXL 50mg + Telma 40mg',body:'Evening dose.'},
   {h:19,m:0,title:'Dinner time',body:'Lightest meal. Finish by 7:30 PM.'},
   {h:20,m:0,title:'Mycofit + Atorva + Telma',body:'Three together at 8 PM.'},
   {h:20,m:30,title:'Wind down',body:'No screens. Spend time with Iti and Chittu.'},
@@ -1339,7 +1389,7 @@ function searchFood(q){
   menu.innerHTML=results.map(f=>`
     <div class="dd-item" onclick="${f.isUser?`selectUserFood(${f.i})`:`selectFood(${f.i})`}" style="${f.isUser?'border-left:2px solid var(--gold);':''}">
       <div class="dd-n">${esc(f.n)}${f.isUser?' <span style="font-size:9px;color:var(--gold)">MY FOOD</span>':''}</div>
-      <div class="dd-c">${f.cal} kcal · P:${f.p||0}g C:${f.c||0}g F:${f.f||0}g ${f.u==='pcs'?'per piece':'per 100'+f.u}</div>
+      <div class="dd-c">${f.cal} kcal · P:${f.p||0}g C:${f.c||0}g F:${f.f||0}g Fi:${f.fi||0}g ${f.u==='pcs'?'per piece':'per 100'+f.u}</div>
     </div>`).join('')+(results.length===0?'<div class="dd-item"><div class="dd-n" style="color:var(--muted)">Not found — add custom below</div></div>':'');
   menu.classList.add('open');
 }
@@ -1397,6 +1447,7 @@ function addFoodItem(){
     k:Math.round((SEL_FOOD.k||0)*ratio),
     ph:Math.round((SEL_FOOD.ph||0)*ratio),
     na:Math.round((SEL_FOOD.na||0)*ratio),
+    fi:Math.round((SEL_FOOD.fi||0)*ratio*10)/10,
     time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})
   });
   saveFood();
@@ -1417,6 +1468,7 @@ function addCustomFood(){
   const p=parseFloat(document.getElementById('cf-p')?document.getElementById('cf-p').value:0)||0;
   const c=parseFloat(document.getElementById('cf-c')?document.getElementById('cf-c').value:0)||0;
   const fv=parseFloat(document.getElementById('cf-f')?document.getElementById('cf-f').value:0)||0;
+  const fi=parseFloat(document.getElementById('cf-fi')?document.getElementById('cf-fi').value:0)||0;
   const k=parseInt(document.getElementById('cf-k')?document.getElementById('cf-k').value:0)||0;
   const ph=parseInt(document.getElementById('cf-ph')?document.getElementById('cf-ph').value:0)||0;
   const na=parseInt(document.getElementById('cf-na')?document.getElementById('cf-na').value:0)||0;
@@ -1425,11 +1477,11 @@ function addCustomFood(){
   const meal=document.getElementById('food-meal')?document.getElementById('food-meal').value:'lunch';
   // Save to personal library if new
   if(!USER_FOODS.find(uf=>uf.n.toLowerCase()===name.toLowerCase())){
-    USER_FOODS.unshift({n:name,cal:kcalPer,u:unit,cat:'My Foods',p,c,f:fv,k,ph,na});
+    USER_FOODS.unshift({n:name,cal:kcalPer,u:unit,cat:'My Foods',p,c,f:fv,fi,k,ph,na});
     saveS('dv4-user-foods',USER_FOODS);
   }
   FOOD_LOG.push({name,qty,unit,kcal:Math.round(kcalPer*ratio),meal,
-    p:Math.round(p*ratio*10)/10,c:Math.round(c*ratio*10)/10,f:Math.round(fv*ratio*10)/10,
+    p:Math.round(p*ratio*10)/10,c:Math.round(c*ratio*10)/10,f:Math.round(fv*ratio*10)/10,fi:Math.round(fi*ratio*10)/10,
     k:Math.round(k*ratio),ph:Math.round(ph*ratio),na:Math.round(na*ratio),
     time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})});
   saveFood();
@@ -2097,7 +2149,7 @@ function rEx(mode){
           <div class="ei-ic">${ex.ic}</div>
           <div class="ei-inf">
             <div class="ei-n">${esc(ex.n)}</div>
-            <div class="ei-d">${esc(ex.d)}</div>
+            <div class="ei-d">${esc(exDesc)}</div>
             <div class="ei-dur">${ex.dur}</div>
           </div>
           <div class="ei-pts">+${ex.pts}</div>
@@ -2978,7 +3030,7 @@ function checkDayLock(){
   const yd=`${y}-${m}-${day}`;
   if(yd<PREP_START) return false; // before journey
   if(DAY_LOCK.lastDate===TODAY) return false; // already handled today
-  if(d.getDay()===0) return false; // Sunday — 60% threshold, no lock needed
+  if(d.getDay()===0&&yd>=PROTOCOL_V2) return false; // Sunday — 60% threshold from May 11
   const comp=getDayCompletion(yd);
   if(comp.pass) return false; // passed threshold = no lock
   return yd;
@@ -3297,12 +3349,15 @@ function getDayCompletion(dateStr){
   // ── PILLAR 5: NUTRITION (calories in range) ──
   const dayFood=isToday?FOOD_LOG:loadS('dv4-food-'+dateStr,[]);
   const kcal=Array.isArray(dayFood)?dayFood.reduce((s,f)=>s+(f.kcal||0),0):0;
-  const calPass=kcal>=1200&&kcal<=1700?1:0;
+  const isFastDay2=!isPrep&&new Date(dateStr).getDay()===FAST_DAY&&dateStr>=MEDITATION_START;
+  const calPass=isFastDay2?(kcal>0&&kcal<=FAST_CAL_TARGET?1:0):(kcal>=1200&&kcal<=1700?1:0);
   const calTotal=1;
 
   // ── PILLAR 6: WATER ──
   const dayWater=isToday?WATER.ml:(loadS('dv4-water-'+dateStr,{ml:0}).ml||0);
-  const waterPass=dayWater>=2500?1:0;
+  const isFastDay=!isPrep&&new Date(dateStr).getDay()===FAST_DAY&&dateStr>=MEDITATION_START;
+  const waterMinTarget=isFastDay?FAST_WATER_TARGET:2500;
+  const waterPass=dayWater>=waterMinTarget?1:0;
   const waterTotal=1;
 
   // Exercise — each item counts individually (no pass/fail single point)
@@ -3310,8 +3365,8 @@ function getDayCompletion(dateStr){
   const done=schDone+exDone+medDone+calPass+waterPass;
   const total=schTotal+exTotal+medTotal+calTotal+waterTotal;
   const pct=total>0?Math.round((done/total)*100):0;
-  const isSundayDate=new Date(dateStr).getDay()===0;
-  const passThreshold=isSundayDate?60:80; // Sunday = 60%, all other days = 80%
+  const isSundayDate=new Date(dateStr).getDay()===0&&dateStr>=PROTOCOL_V2;
+  const passThreshold=isSundayDate?60:80; // Sunday 60% only from PROTOCOL_V2 onwards
 
   const result={
     done,total,pct,pass:pct>=passThreshold,passThreshold,
@@ -3419,6 +3474,18 @@ function rCalDay(dateStr){
     const sch=prepDay?prepDay.movement:effectiveMode==='hotel'?SCH_HOTEL:effectiveMode==='intl'?SCH_INTL:SCH_HOME;
     // Only show meditation items from MEDITATION_START onwards
     const displaySch=dateStr>=MEDITATION_START?sch:sch.filter(item=>item.ic!=='🧘'&&item.ic!=='🌙');
+
+    // Wednesday fast day banner (only for home mode, from today onwards)
+    if(!isPrep&&new Date(dateStr).getDay()===FAST_DAY&&effectiveMode==='home'&&dateStr>=MEDITATION_START){
+      html+=`<div style="background:#fff8e0;border:1px solid var(--gold);border-radius:10px;padding:12px;margin-bottom:10px;text-align:center">
+        <div style="font-size:18px;margin-bottom:4px">🌿</div>
+        <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px">Wednesday — Mercury Fast Day</div>
+        <div style="font-size:11px;color:var(--sub);line-height:1.7">Liquids only · Coconut water · Lemon water · Ginger water · Chaas<br>
+        Isabgol twice · Water minimum 3L<br>
+        Small banana or 2 dates before each medication<br>
+        <span style="color:var(--gold)">Break fast Thursday with daliya or khichdi.</span></div>
+      </div>`;
+    }
 
     if(isPrep){
       html+=`<div style="background:#dceeff;border:1px solid #4a90d0;border-radius:10px;padding:12px;margin-bottom:10px">
@@ -3609,11 +3676,38 @@ function rCalDay(dateStr){
     }
   }
   else if(CAL_DAY_TAB==='exercise'){
+    const wkSet=getWeekSet();
     html+=`<div style="background:linear-gradient(135deg,var(--p3),var(--p2));border:1px solid var(--gold);border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
       <div><div style="font-size:26px;font-weight:700;color:var(--gold)">${exPts()} pts</div>
       <div style="font-size:11px;color:var(--sub)">Movement points</div></div>
-      <div style="text-align:right;font-size:11px;color:var(--sub)">80% of day<br>= green ✅</div>
+      <div style="text-align:right">
+        <div style="font-size:13px;font-weight:700;color:var(--gold)">Week ${wkSet}</div>
+        <div style="font-size:10px;color:var(--muted)">${wkSet==='A'?'Seated abduction + Clamshell hold':'Bridge with Band'}</div>
+      </div>
     </div>`;
+
+    // Progressive rope target
+    const ropeLog=isToday?EX_LOG:loadS('dv4-ex-'+dateStr,{});
+    const rEntry=ropeLog['rope'];
+    const allDays7=[];
+    for(let i=6;i>=0;i--){const dd=new Date();dd.setDate(dd.getDate()-i);const y=dd.getFullYear(),m=String(dd.getMonth()+1).padStart(2,'0'),d2=String(dd.getDate()).padStart(2,'0');allDays7.push(`${y}-${m}-${d2}`);}
+    const weekBest=allDays7.reduce((best,ds)=>{const ex=ds===TODAY?EX_LOG:loadS('dv4-ex-'+ds,{});const r=ex['rope'];if(r&&r.sets&&r.sets.length){const b=Math.max(...r.sets);return b>best?b:best;}return best;},0);
+    const showRopeTarget=dateStr>=PROTOCOL_V2;
+    const ROPE_TARGET=100;
+    const ropeProgress=Math.min(100,Math.round(weekBest/ROPE_TARGET*100));
+    if(showRopeTarget) html+=`<div style="background:var(--p2);border-radius:10px;padding:10px 12px;margin-bottom:10px;display:flex;align-items:center;gap:12px">
+      <div style="font-size:24px">🪢</div>
+      <div style="flex:1">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <div style="font-size:11px;font-weight:700;color:var(--text)">Rope Target: ${ROPE_TARGET} reps continuous</div>
+          <div style="font-size:11px;font-weight:700;color:${weekBest>=ROPE_TARGET?'var(--green)':'var(--gold)'}">${weekBest}/${ROPE_TARGET}</div>
+        </div>
+        <div style="height:5px;background:var(--b1);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${ropeProgress}%;background:${weekBest>=ROPE_TARGET?'var(--green)':'var(--gold)'};border-radius:3px;transition:width .5s"></div>
+        </div>
+        <div style="font-size:9px;color:var(--muted);margin-top:3px">This week's best set — target 100 reps continuous</div>
+      </div>
+    </div>` ;
 
     if(isSunday&&!isPrep){
       html+=`<div style="background:#f5f0e0;border:1px solid var(--gold);border-radius:10px;padding:14px;margin-bottom:10px;text-align:center">
@@ -3676,7 +3770,19 @@ function rCalDay(dateStr){
           const exEntry=dayExLog[ex.id];
           const done=exEntry&&exEntry.done;
           const isRope=ex.id==='rope';
+          const isClamshell=ex.id==='band_clam';
+          const weekSet=getWeekSet();
           const timeStamp=done&&exEntry.time?exEntry.time:'';
+          // Dynamic description for alternating exercises — all band exercises alternate Week A/B
+          let exDesc=ex.d;
+          if(ex.id.startsWith('band_')&&ex.d.includes('//')){
+            const parts=ex.d.split('//');
+            const wkPart=weekSet==='A'?parts[0]:parts[1];
+            exDesc=wkPart.replace(/Week [AB]:\s*/,'').trim();
+          }
+          if(isClamshell){
+            exDesc='Lie on side, band above knees. Rotate top knee upward, HOLD 3 sec at top. Lower slowly. 12 reps each side × 3 rounds.';
+          }
 
           if(isRope){
             const sets=(done&&exEntry.sets)||[];
@@ -3719,7 +3825,7 @@ function rCalDay(dateStr){
                   ${[1,2,3].map(r=>`<div onclick="setRounds('${ex.id}',${r})" style="padding:3px 10px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid ${rounds===r?'var(--green)':'var(--b2)'};background:${rounds===r?'#d0f5e0':'var(--p1)'};color:${rounds===r?'#2a6a3a':'var(--muted)'}">${r} round${r>1?'s':''}</div>`).join('')}
                 </div>`
                 :isBand&&done?`<div style="font-size:10px;color:var(--green);margin-top:3px">${rounds>0?rounds+' round'+(rounds>1?'s':''):'completed'}</div>`
-                :`<div class="ei-d">${esc(ex.d)}</div>`}
+                :`<div class="ei-d">${esc(exDesc)}</div>`}
                 <div class="ei-dur">${ex.dur}</div>
               </div>
               <div class="ei-pts">+${ex.pts}</div>
@@ -3730,7 +3836,7 @@ function rCalDay(dateStr){
         html+='</div>';
       });
       // Band guide only on March 28+
-      html+=`<div class="c c-blue"><div class="ctitle">🟡 Band Guide</div>
+      html+=`<div class="c c-blue"><div class="ctitle">🟡 Band Guide — Week ${wkSet}</div><div style="font-size:10px;color:var(--sub);margin-bottom:8px">${wkSet==='A'?'Pull-Apart · Seated Row · Bicep Curl · Overhead Press · Seated Abduction':'Face Pull · Single Arm Row · Hammer Curl · Lateral Raise · Bridge with Band'}</div>
         ${BAND_GUIDE.map(b=>`<div class="bg-ex"><div class="bg-name">${b.n}</div><div class="bg-step">${b.steps}</div></div>`).join('')}
       </div>`;
     }
@@ -3738,13 +3844,23 @@ function rCalDay(dateStr){
 
   // ── FOOD TAB ──
   else if(CAL_DAY_TAB==='food'){
+    // Friday Venus day craving warning
+    if(isToday&&new Date(TODAY).getDay()===5&&TODAY>=PROTOCOL_V2){
+      html+=`<div style="background:#fff0f8;border:1px solid #d080a0;border-radius:10px;padding:10px 12px;margin-bottom:10px;display:flex;gap:10px;align-items:center">
+        <div style="font-size:20px">⚠️</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#b0508a">Friday — Venus Day</div>
+          <div style="font-size:11px;color:var(--sub);margin-top:2px">Sweet cravings peak today. Two dates or one fruit instead. Log everything.</div>
+        </div>
+      </div>`;
+    }
     const dayFood=isToday?FOOD_LOG:loadS('dv4-food-'+dateStr,[]);
     const daySupps=isToday?SUPPS:loadS('dv4-supps-'+dateStr,{});
 
     // Auto-add supplement nutrition if ticked
     const suppNutrition=[];
     if(daySupps.trunativ) suppNutrition.push({name:'TruNativ Protein (supplement)',kcal:55,p:13.5,c:1,f:0.5,k:80,ph:60,na:50});
-    if(daySupps.fiber) suppNutrition.push({name:'Fiber / Maize Dextrin (supplement)',kcal:25,p:0,c:6,f:0,k:0,ph:0,na:0});
+    if(daySupps.fiber) suppNutrition.push({name:'Fiber / Maize Dextrin (supplement)',kcal:25,p:0,c:6,f:0,k:0,ph:0,na:0,fi:6});
 
     const allFood=[...dayFood,...suppNutrition];
     const tk=allFood.reduce((s,f)=>s+(f.kcal||0),0);
@@ -3754,13 +3870,14 @@ function rCalDay(dateStr){
     const tka=allFood.reduce((s,f)=>s+(f.k||0),0);
     const tph=allFood.reduce((s,f)=>s+(f.ph||0),0);
     const tna=allFood.reduce((s,f)=>s+(f.na||0),0);
+    const tfi=allFood.reduce((s,f)=>s+(f.fi||0),0);
     const kcalOk=tk>=1200&&tk<=TARGET_KCAL;
     const kcalLow=tk<1200&&tk>0;
     const kcalOver=tk>TARGET_KCAL;
     const kcalColor=kcalLow?'var(--orange)':kcalOk?'var(--green)':kcalOver?'var(--red)':'var(--gold)';
 
     // Targets
-    const TGT={p:90,k:2500,ph:1200,na:1700};
+    const TGT={p:90,k:2500,ph:1200,na:1700,fi:40};
 
     html+=`<div class="c" style="background:var(--p2);border-color:var(--gold)">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
@@ -3777,11 +3894,12 @@ function rCalDay(dateStr){
       <div class="kb"><div class="kf ${kcalOk?'kf-ok':'kf-ov'}" style="width:${Math.min(100,(tk/TARGET_KCAL)*100)}%"></div></div>
 
       <!-- Macro bars -->
-      <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px">
         ${[
           {l:'Protein',v:tp,t:TGT.p,u:'g',c:'var(--green)'},
           {l:'Carbs',v:tc,t:Math.round(TARGET_KCAL*0.45/4),u:'g',c:'var(--gold)'},
           {l:'Fat',v:tf,t:Math.round(TARGET_KCAL*0.30/9),u:'g',c:'var(--orange)'},
+          {l:'Fibre',v:tfi,t:40,u:'g',c:'var(--teal)'},
         ].map(m=>`<div style="background:var(--p2);border-radius:8px;padding:8px">
           <div style="font-size:10px;color:var(--muted);margin-bottom:3px">${m.l}</div>
           <div style="font-size:14px;font-weight:700;color:${m.v>=m.t?m.c:'var(--text)'}">${m.v.toFixed(1)}g</div>
@@ -3852,10 +3970,11 @@ function rCalDay(dateStr){
             <input id="cf-kcal" class="inp inp-sm" type="number" placeholder="kcal/100g"/>
           </div>
           <div style="font-size:10px;color:var(--sub);margin-bottom:4px">Macros per 100g (optional)</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:6px">
             <input id="cf-p" class="inp inp-sm" type="number" step="0.1" placeholder="Protein g"/>
             <input id="cf-c" class="inp inp-sm" type="number" step="0.1" placeholder="Carbs g"/>
             <input id="cf-f" class="inp inp-sm" type="number" step="0.1" placeholder="Fat g"/>
+            <input id="cf-fi" class="inp inp-sm" type="number" step="0.1" placeholder="Fibre g"/>
           </div>
           <div style="font-size:10px;color:var(--sub);margin-bottom:4px">Kidney minerals per 100g (optional)</div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">
@@ -4055,7 +4174,8 @@ MEDICATIONS (never adjust, just acknowledge timing):
 - 7:15 AM: Omnacortil 5mg + MetXL 50mg (after breakfast)
 - 8:00 AM: Mycofit 360mg
 - 9:00 AM: Takfa 4mg (Tacrolimus — immunosuppressant, critical)
-- 6:30 PM: MetXL 25mg
+- 6:30 PM: MetXL 50mg + Telma 40mg (from March 31)
+- 12:00 PM: Cilindinpine 5mg (from March 31)
 - 8:00 PM: Mycofit 360mg + Atorva 10mg + Telma 40mg
 - 9:00 PM: Takfa 4mg
 - Supplements at lunch (1–1:30 PM): Ubiquinol 100mg + Omega-3 + D3 alt days + Magnesium
@@ -4453,7 +4573,7 @@ function rWeeklyDashboard(){
     if(ds>TODAY) return null;
     const dayEx=ds===TODAY?EX_LOG:loadS('dv4-ex-'+ds,{});
     const EX_IDS=['breathwork','walk_lake','rope','band_chest','band_row','band_clam','band_curl','band_walk','band_press','eve_walk'];
-    const EX_LABELS={breathwork:'Brth',walk_lake:'Walk',rope:'Rope',band_chest:'Chest',band_row:'Row',band_clam:'Clam',band_curl:'Curl',band_walk:'BandW',band_press:'Press',eve_walk:'Eve'};
+    const EX_LABELS={breathwork:'Brth',walk_lake:'Walk',rope:'Rope',band_chest:'Chest',band_row:'Row',band_clam:'Clam',band_curl:'Curl',band_walk:'Hip',band_press:'Press',eve_walk:'Eve'};
     const items=EX_IDS.map(id=>{
       const e=dayEx[id];
       const done=e&&e.done;
@@ -4763,6 +4883,16 @@ function logBP(dateStr,slot,sysId,diaId){
   saveS('dv4-bp-'+dateStr,bp);
   flash(slot==='morning'?'Morning BP logged ✓':'Evening BP logged ✓');
   renderTab('cal');
+}
+
+// Week alternation helper — odd weeks from START_DATE = Set A, even = Set B
+function getWeekSet(dateStr){
+  const ds=dateStr||TODAY;
+  if(ds<PROTOCOL_V2) return 'A'; // Before May 11 — always original exercises
+  const d=new Date(PROTOCOL_V2); // Count weeks from protocol start
+  const target=new Date(ds);
+  const weekNum=Math.floor((target-d)/(7*24*60*60*1000));
+  return weekNum%2===0?'A':'B'; // Week 0,2,4 = A; Week 1,3,5 = B
 }
 // ═══════════ INIT ═══════════
 updateHeader();
