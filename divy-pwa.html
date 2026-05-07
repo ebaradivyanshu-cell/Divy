@@ -1226,14 +1226,14 @@ function openDay(dateStr,innerTab){
 
 function tickDay(){
   // Check if already marked today
-  if(S.calData[TODAY]&&(S.calData[TODAY]==='done'||S.calData[TODAY].done)) return;
+  if(S.calData[TODAY]==='done') return;
   const comp=getDayCompletion(TODAY);
   if(!comp.pass) return; // Not 80% yet
   const done=S.cycleDay===8;
   const prev=S.cycleDay;
   S.cycleDay=done?1:S.cycleDay+1;
   if(done){S.totalCycles++;S.streak++;}
-  S.calData[TODAY]={done:true,pct:comp.pct,ts:Date.now()}; // snapshot score at completion
+  S.calData[TODAY]='done';
   saveMain();
   if(done){
     flash('🎉 Cycle '+S.totalCycles+' complete! Reward unlocked.');
@@ -1245,7 +1245,7 @@ function tickDay(){
 
 // Auto-check day completion on every render
 function autoTickIfComplete(){
-  if(S.calData[TODAY]&&(S.calData[TODAY]==='done'||S.calData[TODAY].done)) return; // Already done today
+  if(S.calData[TODAY]==='done') return; // Already done today
   if(TODAY<START_DATE&&TODAY<PREP_START) return; // Before journey
   const comp=getDayCompletion(TODAY);
   if(comp.pass) tickDay();
@@ -1671,7 +1671,7 @@ function rHome(){
         ${S.cycleDay===8?'Cycle complete! Reward earned 🎁':''+dLeft+' day'+( dLeft===1?'':'s')+' remaining in this cycle'}
       </div>
       ${weighBox}
-      ${S.calData[TODAY]&&(S.calData[TODAY]==='done'||S.calData[TODAY].done)
+      ${S.calData[TODAY]==='done'
         ?`<div style="background:#d0f5e0;border:1px solid var(--green2);border-radius:10px;padding:12px;text-align:center">
             <div style="font-size:14px;font-weight:700;color:#2a6a3a">✅ Day ${S.cycleDay>1?S.cycleDay-1:8} Complete</div>
             <div style="font-size:11px;color:var(--sub);margin-top:4px">Auto-marked when 80% reached</div>
@@ -1930,12 +1930,11 @@ function rCal(){
     let cls='cal-day';
     const comp=getDayCompletion(ds);
     const tripDay=getTripForDate(ds);
-    const snapDone=S.calData[ds]&&(S.calData[ds]==='done'||S.calData[ds].done);
-    const hasSomeActivity=comp.total>0||snapDone;
+    const hasSomeActivity=comp.total>0;
 
     if(isToday) cls+=' today';
     else if(isStart) cls+=' start';
-    else if(isPast&&(snapDone||comp.pass)) cls+=isPrep?' prep-done':' done';
+    else if(isPast&&hasSomeActivity&&comp.pass) cls+=isPrep?' prep-done':' done';
     else if(isPast&&hasSomeActivity&&!comp.pass&&ds>=PREP_START) cls+=' skipped';
     else if(isPrep&&!isPast) cls+=' prep';
     else if(isFuture) cls+=' future';
@@ -3292,16 +3291,6 @@ function rSOS(){
 
 // ═══════════ CALENDAR DAY VIEW ═══════════
 function getDayCompletion(dateStr){
-  // For past completed days — use saved snapshot to avoid retroactive scoring changes
-  if(dateStr!==TODAY&&S.calData[dateStr]){
-    const snap=S.calData[dateStr];
-    if(snap&&typeof snap==='object'&&snap.done&&snap.pct!==undefined){
-      const result={done:snap.pct,total:100,pct:snap.pct,pass:true,passThreshold:snap.passThreshold||80,
-        breakdown:{sch:{done:1,total:1},ex:{done:1,total:1,pass:true,isPrep:false},
-          med:{done:1,total:1},supp:{done:0,total:0},cal:{done:1,total:1,kcal:0},water:{done:1,total:1,ml:0}}};
-      return result;
-    }
-  }
   // Cache management
   if(_compCacheDate!==TODAY){_compCache={};_compCacheDate=TODAY;}
   const d=new Date(TODAY);d.setDate(d.getDate()-7);
@@ -3329,15 +3318,20 @@ function getDayCompletion(dateStr){
   let exDone=0,exTotal=0,exPass=false;
   if(!isPrep){
     const dayExLog=isToday?EX_LOG:loadS('dv4-ex-'+dateStr,{});
-    // Count every individual exercise — no more pass/fail single point
-    const availPhases=EX.filter(p=>p.unlockKg===999||S.wt<=p.unlockKg);
-    const allExItems=availPhases.flatMap(p=>p.list);
-    exTotal=allExItems.length;
-    exDone=allExItems.filter(ex=>dayExLog[ex.id]&&dayExLog[ex.id].done).length;
-    // Mandatory minimum still tracked for display (not scoring)
-    const breathDone=dayExLog['breathwork']&&dayExLog['breathwork'].done;
-    const walkDone=dayExLog['walk_lake']&&dayExLog['walk_lake'].done;
+    const breathDone=!!(dayExLog['breathwork']&&dayExLog['breathwork'].done);
+    const walkDone=!!(dayExLog['walk_lake']&&dayExLog['walk_lake'].done);
     exPass=breathDone&&walkDone;
+    if(dateStr>=PROTOCOL_V2){
+      // From May 11: count every individual exercise item
+      const availPhases=EX.filter(p=>p.unlockKg===999||S.wt<=p.unlockKg);
+      const allExItems=availPhases.flatMap(p=>p.list);
+      exTotal=allExItems.length;
+      exDone=allExItems.filter(ex=>dayExLog[ex.id]&&dayExLog[ex.id].done).length;
+    } else {
+      // Before May 11: 2-item formula (breathwork + walk) — preserves historical scores
+      exTotal=2;
+      exDone=(breathDone?1:0)+(walkDone?1:0);
+    }
   }
 
   // ── PILLAR 3: MEDICATIONS (6 items) ──
@@ -4907,20 +4901,6 @@ function getWeekSet(dateStr){
 }
 // ═══════════ INIT ═══════════
 updateHeader();
-
-// One-time migration: convert old string 'done' calData to snapshot objects
-(function migratCalData(){
-  let changed=false;
-  Object.keys(S.calData).forEach(ds=>{
-    if(S.calData[ds]==='done'||S.calData[ds]==='grace-travel'||S.calData[ds]==='grace-health'||S.calData[ds]==='grace-work'){
-      const isGrace=typeof S.calData[ds]==='string'&&S.calData[ds].startsWith('grace');
-      const comp=getDayCompletion(ds);
-      S.calData[ds]={done:true,pct:comp.pct||82,ts:Date.now(),migrated:true,grace:isGrace};
-      changed=true;
-    }
-  });
-  if(changed) saveMain();
-})();
 
 renderTab('home');
 schedNotifs();
